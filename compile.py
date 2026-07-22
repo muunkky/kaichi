@@ -1,0 +1,316 @@
+#!/usr/bin/env python3
+"""
+compile.py — turn the Kaichi Claude-Design container (Kaichi.dc.html) into a
+single self-contained, runtime-free index.html that deploys to GitHub Pages.
+
+The .dc.html is a Claude Design "document container": it only renders through
+the proprietary support.js runtime (React + Babel from a CDN), which compiles
+these authoring conveniences in the browser:
+
+  - style-hover="…" / style-focus="…"  → pseudo-class styles
+  - {{ binding }}                        → values from the <script type=text/x-dc> component
+  - <sc-if value="{{ x }}">              → conditional blocks
+  - data-reveal                          → scroll-in animation
+
+This compiler resolves all of that statically:
+
+  - style-hover/style-focus  → real CSS rules via [data-hv]/[data-fc] selectors
+  - the interactive bindings (deck lightbox, contact-form submit state, toggle
+    chips, scroll reveal) → one small dependency-free vanilla-JS block
+
+Output loads instantly, needs no React/Babel/CDN, and is directly editable.
+Re-run after editing the .dc source in Claude Design:  python3 compile.py
+"""
+import re
+import sys
+import pathlib
+
+SRC = pathlib.Path(__file__).parent / "Kaichi.dc.html"
+OUT = pathlib.Path(__file__).parent / "index.html"
+
+# Absolute base URL where the site is published — used ONLY for the social-card
+# tags (og:url / og:image / twitter:image) and <link rel=canonical>, which must
+# be absolute. Every other asset path is relative, so it works under any subpath.
+# If the repo stays named `gitban-site`, change this to
+# "https://muunkky.github.io/gitban-site/" and recompile.
+BASE_URL = "https://muunkky.github.io/kaichi/"
+
+PAGE_TITLE = "Kaichi — AI code you can ship"
+PAGE_DESC = (
+    "Kaichi is a context manager and state-governance MCP that uses AI to build "
+    "production-grade software — architected, tested, reviewed, and fully documented. "
+    "Merge-ready PRs your team can own, not prototypes to rebuild."
+)
+
+src = SRC.read_text(encoding="utf-8")
+
+# --- extract the <helmet> (head content) and the <x-dc> body template ----------
+helmet = re.search(r"<helmet>(.*?)</helmet>", src, re.S).group(1).strip()
+
+xdc = re.search(r"<x-dc>(.*?)</x-dc>", src, re.S).group(1)
+# drop the helmet from the body template (it's the first thing inside x-dc)
+body = xdc.replace(re.search(r"<helmet>.*?</helmet>", src, re.S).group(0), "", 1)
+
+# --- 1. style-hover / style-focus  → attribute-selector CSS rules --------------
+# Inline styles beat external rules on specificity, so the generated pseudo
+# rules use !important to win over the element's base inline style.
+hover_rules = []
+focus_rules = []
+
+
+def _important(css: str) -> str:
+    out = []
+    for decl in css.split(";"):
+        decl = decl.strip()
+        if decl:
+            out.append(decl + " !important")
+    return ";".join(out) + ";"
+
+
+def _sub_pseudo(attr: str, store: list, kind: str):
+    counter = {"n": 0}
+
+    def repl(m):
+        counter["n"] += 1
+        idx = len(store) + 1
+        store.append((idx, m.group(1)))
+        return f'data-{kind}="{idx}"'
+
+    return repl
+
+
+# assign hover ids
+def repl_hover(m):
+    idx = len(hover_rules) + 1
+    hover_rules.append((idx, m.group(1)))
+    return f'data-hv="{idx}"'
+
+
+def repl_focus(m):
+    idx = len(focus_rules) + 1
+    focus_rules.append((idx, m.group(1)))
+    return f'data-fc="{idx}"'
+
+
+body = re.sub(r'\sstyle-hover="([^"]*)"', repl_hover, body)
+body = re.sub(r'\sstyle-focus="([^"]*)"', repl_focus, body)
+
+# --- 2. deck cards: onClick binding → data-deck ------------------------------
+for key, tok in (("prd", "openPrd"), ("design", "openDesign"), ("adr", "openAdr")):
+    body = body.replace(f'onClick="{{{{ {tok} }}}}"', f'data-deck="{key}"')
+
+# --- 3. toggle chips: onClick + style bindings → class + data-chip -----------
+CHIPS = [
+    ("proto", "needProto", "needProtoStyle", False),
+    ("rewrite", "needRewrite", "needRewriteStyle", False),
+    ("backlog", "needBacklog", "needBacklogStyle", False),
+    ("tests", "needTests", "needTestsStyle", False),
+    ("trial", "needTrial", "needTrialStyle", False),
+    ("milestone", "needMilestone", "needMilestoneStyle", False),
+    ("delivery", "toggleDelivery", "deliveryStyle", True),   # active by default
+    ("enable", "toggleEnable", "enableStyle", False),
+    ("license", "toggleLicense", "licenseStyle", False),
+]
+for name, click, style, active in CHIPS:
+    cls = "kai-chip is-active" if active else "kai-chip"
+    body = body.replace(
+        f'onClick="{{{{ {click} }}}}" style="{{{{ {style} }}}}"',
+        f'class="{cls}" data-chip="{name}"',
+    )
+
+# --- 4. lead form ------------------------------------------------------------
+body = body.replace('onSubmit="{{ onSubmit }}"', "data-lead-form")
+body = body.replace("Thanks{{ firstName }}", 'Thanks<span data-firstname></span>')
+
+# --- 5. sc-if blocks → plain divs toggled by JS ------------------------------
+body = body.replace(
+    '<sc-if value="{{ submitted }}" hint-placeholder-val="{{ false }}">',
+    '<div data-if="submitted" style="display:none">',
+)
+body = body.replace(
+    '<sc-if value="{{ notSubmitted }}" hint-placeholder-val="{{ true }}">',
+    '<div data-if="notSubmitted">',
+)
+body = body.replace(
+    '<sc-if value="{{ lightboxOpen }}" hint-placeholder-val="{{ false }}">',
+    '<div data-if="lightbox" style="display:none">',
+)
+body = body.replace("</sc-if>", "</div>")
+
+# --- 6. lightbox internals ---------------------------------------------------
+body = body.replace('onClick="{{ closeDeck }}"', "data-close")
+body = body.replace('onClick="{{ stop }}"', "data-stop")
+body = body.replace("{{ activeType }}", '<span data-lb="type"></span>')
+body = body.replace("{{ activeTitle }}", '<span data-lb="title"></span>')
+body = body.replace('href="{{ activeSrc }}"', 'href="#" data-lb="open"')
+body = body.replace('src="{{ activeSrc }}"', 'data-lb="frame"')
+# the iframe also had title="{{ activeTitle }}" — clear it (JS sets nothing critical)
+body = body.replace('title="{{ activeTitle }}"', 'title="deck preview"')
+
+# --- assemble generated CSS --------------------------------------------------
+gen_css = ["/* generated pseudo-class rules (from the design container's hover and focus attributes) */"]
+for idx, css in hover_rules:
+    gen_css.append(f'[data-hv="{idx}"]:hover{{{_important(css)}}}')
+for idx, css in focus_rules:
+    gen_css.append(f'[data-fc="{idx}"]:focus{{{_important(css)}}}')
+gen_css.append("""
+/* toggle chips (contact form) */
+.kai-chip{font-family:'Manrope';font-size:13.5px;font-weight:600;padding:9px 14px;border-radius:999px;cursor:pointer;transition:.15s;background:transparent;color:#9db0a8;border:1px solid #2a3f38}
+.kai-chip.is-active{background:#0f6d54;color:#fff;border-color:#0f6d54}
+.kai-chip:hover{border-color:#3f8f76}
+""")
+gen_css_str = "\n".join(gen_css)
+
+# --- the runtime replacement (vanilla, dependency-free) ----------------------
+runtime = r"""
+<script>
+(function () {
+  "use strict";
+
+  /* ---- scroll reveal (replaces data-reveal handling in the dc runtime) ---- */
+  var reveals = Array.prototype.slice.call(document.querySelectorAll('[data-reveal]'));
+  var vh = window.innerHeight || 800;
+  reveals.forEach(function (el) {
+    if (el.getBoundingClientRect().top > vh * 0.85) {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(22px)';
+      el.style.transition = 'opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1)';
+    }
+  });
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.style.opacity = '1';
+          e.target.style.transform = 'none';
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    reveals.forEach(function (el) { io.observe(el); });
+  }
+
+  /* ---- deck lightbox ---- */
+  var DECKS = {
+    prd:    { src: "docs/decks/PRD-011-live-html-roadmap-view.html",              type: "Product Requirements",   title: "PRD-011 · Live HTML Roadmap View" },
+    design: { src: "docs/decks/DD-021-cwd-pin-git-operations.html",               type: "Design Document",        title: "DD-021 · CWD-Pin Git Operations" },
+    adr:    { src: "docs/decks/ADR-078-lifecycle-deck-generation-as-skill-pair.html", type: "Architecture Decision", title: "ADR-078 · Deck Generation as a Skill Pair" }
+  };
+  var lb        = document.querySelector('[data-if="lightbox"]');
+  var lbType    = lb && lb.querySelector('[data-lb="type"]');
+  var lbTitle   = lb && lb.querySelector('[data-lb="title"]');
+  var lbOpen    = lb && lb.querySelector('[data-lb="open"]');
+  var lbFrame   = lb && lb.querySelector('[data-lb="frame"]');
+
+  function openDeck(key) {
+    var d = DECKS[key];
+    if (!d || !lb) return;
+    if (lbType)  lbType.textContent  = d.type;
+    if (lbTitle) lbTitle.textContent = d.title;
+    if (lbOpen)  lbOpen.setAttribute('href', d.src);
+    if (lbFrame) lbFrame.setAttribute('src', d.src);
+    lb.style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+  }
+  function closeDeck() {
+    if (!lb) return;
+    lb.style.display = 'none';
+    if (lbFrame) lbFrame.removeAttribute('src');   // stop the iframe
+    document.body.style.overflow = '';
+  }
+
+  Array.prototype.slice.call(document.querySelectorAll('[data-deck]')).forEach(function (card) {
+    var key = card.getAttribute('data-deck');
+    card.addEventListener('click', function () { openDeck(key); });
+    card.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); openDeck(key); }
+    });
+  });
+  if (lb) {
+    var backdrop = lb.querySelector('[data-close]');   // outermost overlay
+    if (backdrop) {
+      backdrop.addEventListener('click', function (ev) {
+        if (ev.target === backdrop) closeDeck();        // only bare-backdrop clicks
+      });
+    }
+    var closeBtn = lb.querySelector('button[aria-label="Close"]');
+    if (closeBtn) closeBtn.addEventListener('click', closeDeck);
+  }
+  document.addEventListener('keydown', function (ev) {
+    if (ev.key === 'Escape') closeDeck();
+  });
+
+  /* ---- toggle chips ---- */
+  Array.prototype.slice.call(document.querySelectorAll('.kai-chip')).forEach(function (chip) {
+    chip.addEventListener('click', function () { chip.classList.toggle('is-active'); });
+  });
+
+  /* ---- lead form submit ---- */
+  var form = document.querySelector('[data-lead-form]');
+  if (form) {
+    form.addEventListener('submit', function (ev) {
+      ev.preventDefault();
+      var name = (new FormData(form).get('name') || '').toString().trim();
+      var first = name ? ' ' + name.split(/\s+/)[0] : '';
+      var fn = document.querySelector('[data-firstname]');
+      if (fn) fn.textContent = first;
+      var done = document.querySelector('[data-if="submitted"]');
+      var pending = document.querySelector('[data-if="notSubmitted"]');
+      if (done) done.style.display = '';
+      if (pending) pending.style.display = 'none';
+    });
+  }
+})();
+</script>
+"""
+
+# --- write out ---------------------------------------------------------------
+og_image = BASE_URL + "og.png"
+social = f"""<meta name="description" content="{PAGE_DESC}">
+<link rel="canonical" href="{BASE_URL}">
+<meta property="og:title" content="{PAGE_TITLE}">
+<meta property="og:description" content="{PAGE_DESC}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="{BASE_URL}">
+<meta property="og:image" content="{og_image}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="{PAGE_TITLE}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{PAGE_TITLE}">
+<meta name="twitter:description" content="{PAGE_DESC}">
+<meta name="twitter:image" content="{og_image}">"""
+
+html = f"""<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{PAGE_TITLE}</title>
+{social}
+{helmet}
+<style>
+{gen_css_str}
+</style>
+</head>
+<body>
+{body.strip()}
+{runtime}
+</body>
+</html>
+"""
+
+OUT.write_text(html, encoding="utf-8")
+
+# --- self-check: no unresolved authoring constructs should remain ------------
+leftovers = []
+for pat in (r"\{\{", r"</?sc-if", r"style-hover", r"style-focus", r'onClick="\{\{', r'onSubmit="\{\{', r"<x-dc", r"<helmet"):
+    hits = len(re.findall(pat, html))
+    if hits:
+        leftovers.append(f"{pat}: {hits}")
+print(f"wrote {OUT} ({len(html)} bytes)")
+print(f"hover rules: {len(hover_rules)}, focus rules: {len(focus_rules)}")
+if leftovers:
+    print("WARNING unresolved constructs:", "; ".join(leftovers))
+    sys.exit(1)
+print("clean: no unresolved dc constructs remain")

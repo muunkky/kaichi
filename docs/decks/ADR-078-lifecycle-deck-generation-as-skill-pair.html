@@ -1,0 +1,880 @@
+<!-- gitban-deck
+{
+  "source": "docs/adr/ADR-078-lifecycle-deck-generation-as-skill-pair.md",
+  "source_commit": "d56a0419",
+  "source_dirty": false,
+  "generated": "2026-07-09",
+  "mode": "standalone",
+  "review": {
+    "verdict": "APPROVED",
+    "date": "2026-07-09",
+    "rounds": 1,
+    "strongest_finding": "the ADR-086 supersession caveat recurs on ~7 of 12 slides — each instance honest, but the cumulative repetition mildly risks blurring live-decision vs historical narration; not blocking"
+  },
+  "steering": ["a pre-read for a skeptical senior advisor reading it cold"]
+}
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ADR-078 — Lifecycle Artifact Decks via a Repo-Local Writer ⇄ Reviewer Skill Pair</title>
+  <style>
+/* ==========================================================================
+   deck.css — the one deck stylesheet (gitban lifecycle artifact decks)
+
+   Embedded verbatim in every generated deck; never edited per-deck. All
+   chrome lives here — the writer composes semantic HTML within the grammar
+   documented in references/visual-system.md and authors no CSS of its own.
+   Light-first, print-safe, executive-document aesthetic. Zero external
+   references: system fonts only, no imports, no images.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Tokens — the complete palette and scale. Every color in a deck
+      (including inline-SVG evidence, via the fill- and stroke- utility
+      classes in §9) resolves from these custom properties; nothing else is
+      sanctioned. NOTE: never write a literal star-slash sequence inside a
+      comment — it terminates the comment early and the stray prose becomes
+      an invalid selector that eats the entire next rule block.
+   -------------------------------------------------------------------------- */
+:root {
+  /* Surfaces */
+  --paper: #faf9f6;          /* page + slide ground: warm near-white */
+  --surface: #ffffff;        /* raised panels (vs-options, code) */
+  --surface-tint: #eef2f7;   /* accent-tinted panels (ask slide, callout) */
+
+  /* Ink */
+  --ink: #1f242e;            /* primary text */
+  --ink-secondary: #4a5160;  /* supporting text, captions */
+  --ink-muted: #878d9a;      /* footers, colophon, labels */
+  --ink-inverse: #ffffff;    /* SVG label text placed ON a dark fill (see §8/§9) */
+
+  /* Accent — defaults to PRD blue; the deck root's type modifier
+     (.deck--prd/.deck--adr/.deck--design, §1b) remaps this per artifact type */
+  --accent: #14508c;
+  --accent-ink: #103e6d;     /* accent used AS text on light ground */
+
+  /* Rules & borders */
+  --rule: #e0e3e9;
+  --rule-strong: #b7bdc9;
+
+  /* Semantic */
+  --good: #1e7d43;
+  --warn: #9a6a00;
+  --bad: #b3372e;
+
+  /* Data palette (inline-SVG evidence) */
+  --data-1: #14508c;
+  --data-2: #1e7d43;
+  --data-3: #9a6a00;
+  --data-4: #7a4a9e;
+  --data-5: #b3372e;
+  --data-6: #3d7a8a;
+
+  /* Type */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+               "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Code", Consolas,
+               "Liberation Mono", Menlo, monospace;
+  --text-s: 0.85rem;
+  --text-0: 1.125rem;                               /* body */
+  --text-1: 1.4rem;
+  --text-2: clamp(1.5rem, 1.1rem + 1.6vw, 2.1rem);  /* slide headline */
+  --text-3: clamp(2rem, 1.4rem + 2.6vw, 3rem);      /* title headline */
+  --text-stat: clamp(2.2rem, 1.6rem + 2.8vw, 3.4rem);
+
+  /* Layout */
+  --slide-max: 62rem;        /* content column ceiling */
+  --pad-x: clamp(1.25rem, 5vw, 4rem);
+  --pad-y: clamp(2.5rem, 7vh, 5rem);
+  --gap: 1.5rem;
+  --radius: 6px;
+}
+
+/* --------------------------------------------------------------------------
+   1b. Per-artifact-type accent theming.
+       The deck root <main> carries exactly ONE type modifier
+       (deck--prd | deck--adr | deck--design) that remaps the accent so the
+       WHOLE deck — title badge, kicker rule, links, list markers, the ask
+       slide, callouts, .fill-accent SVG — reads in its artifact type's color:
+       PRD blue, ADR/NOM amber, design-doc teal. Each type's --accent-ink
+       (used AS text) clears WCAG AA (>=4.5:1) on paper; the brighter --accent
+       is used only for rules/fills/markers (>=3:1). The data palette
+       (--data-*) is deliberately NOT retinted — it stays stable across types
+       so a chart means the same thing in any deck.
+   -------------------------------------------------------------------------- */
+.deck--prd    { --accent: #14508c; --accent-ink: #103e6d; }
+.deck--adr    { --accent: #b5730a; --accent-ink: #7a4900; }
+.deck--design { --accent: #2f7d90; --accent-ink: #1b5563; }
+
+/* --------------------------------------------------------------------------
+   2. Base
+   -------------------------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  /* This deck is a light-only document. Declaring color-scheme: light opts it
+     out of browser force-dark (Chrome Auto Dark Mode, dark-mode extensions, OS
+     "invert" settings): without it a forcing browser auto-inverts the page and
+     mangles the token-fill SVG evidence into unreadable dark-on-dark. The
+     within-deck contrast rules can only guarantee legibility when the browser
+     honors the declared scheme — this is the declaration that makes them hold. */
+  color-scheme: light;
+  /* The document scroller IS the deck surface: gentle snap at slide starts,
+     never mandatory — a tall slide must scroll freely (design D4). */
+  scroll-snap-type: y proximity;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: var(--text-0);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection { background: var(--surface-tint); color: var(--accent-ink); }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+a { color: var(--accent-ink); text-decoration-thickness: 1px; text-underline-offset: 0.15em; }
+
+strong { color: var(--ink); font-weight: 650; }
+
+/* --------------------------------------------------------------------------
+   3. The slide frame
+      Viewport-height minimum, NO fixed height: content taller than the
+      viewport grows the slide and scrolls freely. Flex column centers
+      content vertically and pins the footer to the bottom edge.
+   -------------------------------------------------------------------------- */
+.deck { display: block; }
+
+.slide {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: var(--pad-y) var(--pad-x);
+  scroll-snap-align: start;
+}
+
+.slide + .slide { border-top: 1px solid var(--rule); }
+
+/* Centered content column */
+.slide > * {
+  width: 100%;
+  max-width: var(--slide-max);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* --------------------------------------------------------------------------
+   4. Text roles
+   -------------------------------------------------------------------------- */
+.kicker {
+  margin: 0 auto 0.75rem;   /* keep the .slide > * horizontal centering — a
+                               0-margin shorthand here would reset it and push
+                               the kicker off the content column on wide viewports */
+  font-size: var(--text-s);
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-ink);
+}
+
+.headline {
+  margin: 0 auto;           /* same: preserve the centered content column */
+  font-size: var(--text-2);
+  font-weight: 700;
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.evidence { margin-top: var(--gap); color: var(--ink); }
+.evidence > :first-child { margin-top: 0; }
+.evidence > :last-child { margin-bottom: 0; }
+
+.slide-foot {
+  margin-top: auto;          /* pin to the slide's bottom edge */
+  padding-top: var(--gap);
+  font-size: var(--text-s);
+  color: var(--ink-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------------------------
+   5. Slide variants
+   -------------------------------------------------------------------------- */
+.slide--title .headline { font-size: var(--text-3); letter-spacing: -0.02em; }
+
+/* The artifact-type badge — the one consistent, prominent signal of WHICH kind
+   of source this deck presents (Product Requirements / Architecture Decision /
+   Design Document). A pill in the type's accent, always the first element on
+   the title slide. Reads instantly and prints in color. */
+.slide--title .artifact-type {
+  display: inline-block;
+  margin-bottom: 1.1rem;
+  /* pin to the centered content column's left edge, like the kicker */
+  margin-left: max(calc((100% - var(--slide-max)) / 2), 0rem);
+  padding: 0.3rem 0.85rem;
+  border: 1.5px solid var(--accent);
+  border-radius: 999px;
+  font-size: var(--text-s);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent-ink);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.slide--title .kicker {
+  border-top: 4px solid var(--accent);
+  padding-top: 1rem;
+  width: fit-content; /* the accent bar hugs the kicker text */
+  /* fit-content + auto margins would center it; pin its left edge to the
+     centered content column instead (offset = half the space the column
+     leaves over, never negative) */
+  margin-left: max(calc((100% - var(--slide-max)) / 2), 0rem);
+}
+
+.slide--title .evidence { color: var(--ink-secondary); font-size: var(--text-1); }
+
+.slide--ask {
+  background: var(--surface-tint);
+  border-left: 6px solid var(--accent);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.slide--ask .headline { color: var(--accent-ink); }
+
+.slide--colophon { font-size: var(--text-s); color: var(--ink-secondary); }
+.slide--colophon .headline { font-size: var(--text-1); color: var(--ink-secondary); }
+.slide--colophon .evidence { color: var(--ink-secondary); }
+.slide--colophon a { color: var(--ink-secondary); }
+
+/* --------------------------------------------------------------------------
+   6. Evidence content — standard HTML, no classes needed
+   -------------------------------------------------------------------------- */
+.evidence p, .evidence ul, .evidence ol { margin: 0 0 0.9em; }
+
+.evidence ul, .evidence ol { padding-left: 1.4em; }
+.evidence li { margin-bottom: 0.35em; }
+.evidence li::marker { color: var(--accent); }
+
+.evidence table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 1em;
+  font-size: 0.95em;
+}
+.evidence th {
+  text-align: left;
+  font-weight: 650;
+  border-bottom: 2px solid var(--rule-strong);
+  padding: 0.45em 0.9em 0.45em 0;
+}
+.evidence td {
+  border-bottom: 1px solid var(--rule);
+  padding: 0.45em 0.9em 0.45em 0;
+  vertical-align: top;
+}
+
+.evidence blockquote {
+  margin: 0 0 1em;
+  padding: 0.1em 0 0.1em 1.1em;
+  border-left: 3px solid var(--rule-strong);
+  color: var(--ink-secondary);
+}
+
+.evidence figure { margin: 0 0 1em; }
+.evidence figcaption {
+  margin-top: 0.5em;
+  font-size: var(--text-s);
+  color: var(--ink-muted);
+}
+
+.evidence code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  background: var(--surface-tint);
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
+}
+.evidence pre {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: 1em 1.25em;
+  overflow-x: auto;
+  margin: 0 0 1em;
+}
+.evidence pre code { background: none; padding: 0; font-size: 0.85em; }
+
+.evidence hr {
+  border: 0;
+  border-top: 1px solid var(--rule);
+  margin: 1.5em 0;
+}
+
+/* --------------------------------------------------------------------------
+   7. Evidence utilities
+   -------------------------------------------------------------------------- */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gap) calc(var(--gap) * 1.5);
+  margin: 0 0 1em;
+}
+
+.stat { display: flex; flex-direction: column; gap: 0.25rem; }
+.stat-value {
+  font-size: var(--text-stat);
+  font-weight: 750;
+  line-height: 1;
+  color: var(--accent-ink);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+.stat-label { font-size: var(--text-s); color: var(--ink-muted); }
+
+.callout {
+  background: var(--surface-tint);
+  border-left: 4px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 0.9rem 1.25rem;
+  margin: 0 0 1em;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.callout > :first-child { margin-top: 0; }
+.callout > :last-child { margin-bottom: 0; }
+
+.vs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: var(--gap);
+  margin: 0 0 1em;
+}
+.vs-option {
+  background: var(--surface);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+}
+.vs-option > h3 {
+  margin: 0 0 0.5rem;
+  font-size: var(--text-s);
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-secondary);
+}
+.vs-option > :last-child { margin-bottom: 0; }
+.vs-option--chosen {
+  border: 2px solid var(--accent);
+  background: var(--surface);
+}
+.vs-option--chosen > h3 { color: var(--accent-ink); }
+
+/* Design-doc grammar: build-sequence / phases — the sequencing movement as an
+   ordered, numbered vertical timeline; the build order legible at a skim. Each
+   step is an <li> (an <ol class="sequence"> gives the ordering for free); the
+   number node and connecting rail are drawn from the counter, so reordering
+   steps renumbers them automatically. */
+.sequence {
+  list-style: none;
+  margin: 0 0 1em;
+  padding: 0;
+  counter-reset: seq;
+}
+.sequence-step {
+  position: relative;
+  counter-increment: seq;
+  padding: 0 0 1.15rem 3rem;
+}
+.sequence-step:last-child { padding-bottom: 0; }
+.sequence-step::before {          /* the numbered node */
+  content: counter(seq);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1.9rem;
+  height: 1.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--surface);
+  font-size: var(--text-s);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.sequence-step::after {           /* the connecting rail to the next node */
+  content: "";
+  position: absolute;
+  left: 0.9rem;
+  top: 1.9rem;
+  bottom: 0;
+  width: 2px;
+  background: var(--rule-strong);
+}
+.sequence-step:last-child::after { display: none; }
+.sequence-step > h3 {
+  margin: 0 0 0.35rem;
+  font-size: var(--text-1);
+  font-weight: 650;
+  line-height: 1.25;
+  color: var(--ink);
+}
+.sequence-step > :last-child { margin-bottom: 0; }
+
+/* Design-doc grammar: architecture / component map — peer building blocks and
+   their roles as a labeled block diagram. Distinct from .vs (which compares
+   alternatives and marks one chosen): these are co-existing parts of the one
+   design. Genuine wiring/topology (arrows between parts) still uses the
+   inline-SVG valve; this is the labeled-parts layout. */
+.components {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: var(--gap);
+  margin: 0 0 1em;
+}
+.component {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-top: 3px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 0.9rem 1.1rem;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.component > h3 {
+  margin: 0 0 0.4rem;
+  font-size: var(--text-0);
+  font-weight: 650;
+  color: var(--ink);
+}
+.component > :last-child { margin-bottom: 0; }
+
+/* Design-doc grammar: right-sizing comparison — this design against a simpler
+   and a bigger option on one scope axis, making "every element earns its keep"
+   visual. The flanking options (roads not taken) recede in dashed/muted tone;
+   the chosen middle is solid and accented. Order the three columns
+   simpler → chosen → bigger so the axis reads left-to-right. */
+.rightsize {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--gap);
+  margin: 0 0 1em;
+  align-items: stretch;
+}
+.rightsize-option {
+  background: var(--paper);
+  border: 1px dashed var(--rule-strong);
+  border-radius: var(--radius);
+  padding: 0.9rem 1.1rem;
+  color: var(--ink-secondary);
+}
+.rightsize-option > h3 {
+  margin: 0 0 0.4rem;
+  font-size: var(--text-s);
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+.rightsize-option--chosen {
+  background: var(--surface);
+  border: 2px solid var(--accent);
+  color: var(--ink);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.rightsize-option--chosen > h3 { color: var(--accent-ink); }
+.rightsize-option > :last-child { margin-bottom: 0; }
+
+/* --------------------------------------------------------------------------
+   8. Inline-SVG evidence
+   -------------------------------------------------------------------------- */
+.evidence svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto 1em;
+}
+.evidence svg text {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  fill: var(--ink-secondary);
+}
+
+/* --------------------------------------------------------------------------
+   9. SVG color utilities — the token-palette escape valve.
+      CSS var() does not resolve inside SVG presentation attributes, so
+      colors are applied via these classes; raw color literals in a deck
+      are a chrome-drift finding.
+   -------------------------------------------------------------------------- */
+.fill-data-1 { fill: var(--data-1); }  .stroke-data-1 { stroke: var(--data-1); }
+.fill-data-2 { fill: var(--data-2); }  .stroke-data-2 { stroke: var(--data-2); }
+.fill-data-3 { fill: var(--data-3); }  .stroke-data-3 { stroke: var(--data-3); }
+.fill-data-4 { fill: var(--data-4); }  .stroke-data-4 { stroke: var(--data-4); }
+.fill-data-5 { fill: var(--data-5); }  .stroke-data-5 { stroke: var(--data-5); }
+.fill-data-6 { fill: var(--data-6); }  .stroke-data-6 { stroke: var(--data-6); }
+.fill-good   { fill: var(--good); }    .stroke-good   { stroke: var(--good); }
+.fill-warn   { fill: var(--warn); }    .stroke-warn   { stroke: var(--warn); }
+.fill-bad    { fill: var(--bad); }     .stroke-bad    { stroke: var(--bad); }
+.fill-accent { fill: var(--accent); }  .stroke-accent { stroke: var(--accent); }
+.fill-ink    { fill: var(--ink); }     .stroke-ink    { stroke: var(--ink); }
+.fill-muted  { fill: var(--ink-muted); } .stroke-muted { stroke: var(--ink-muted); }
+.stroke-rule { stroke: var(--rule-strong); }
+.fill-surface { fill: var(--surface); }
+.fill-surface-tint { fill: var(--surface-tint); }  /* light labeled-box ground: makes the
+                                                       light band SVG-reachable so a rule-
+                                                       following author gets a filled rect,
+                                                       not the SVG default (black). */
+.fill-inverse { fill: var(--ink-inverse); }  /* light label ink for text ON a dark fill */
+.fill-none   { fill: none; }
+
+/* --------------------------------------------------------------------------
+   10. Position indicator (created by deck-nav.js; absent without JS)
+   -------------------------------------------------------------------------- */
+.deck-pos {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 10;
+  padding: 0.25rem 0.7rem;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  box-shadow: 0 1px 3px rgba(31, 36, 46, 0.08);
+  font-size: var(--text-s);
+  color: var(--ink-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------------------------
+   11. Narrow viewports (phone reading is a first-class path)
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .grid-2 { grid-template-columns: 1fr; }
+  /* The right-size spectrum stacks; simpler → chosen → bigger reads top-to-bottom
+     on a phone. .components auto-fits and .sequence is already vertical. */
+  .rightsize { grid-template-columns: 1fr; }
+  /* Wide tables scroll within their slide instead of overflowing the page —
+     a ≥4-column table's min-content width beats a phone viewport (observed
+     at 375px in Chromium and Firefox); same containment pattern as
+     `.evidence pre`. */
+  .evidence table { font-size: 0.85em; display: block; overflow-x: auto; max-width: 100%; }
+  .evidence th, .evidence td { padding-right: 0.5em; }
+}
+
+/* --------------------------------------------------------------------------
+   12. Print — one slide per page, nothing clipped, no screen chrome
+   -------------------------------------------------------------------------- */
+@media print {
+  html { scroll-snap-type: none; scroll-behavior: auto; }
+  body { background: #fff; }
+
+  .slide {
+    min-height: 0;           /* natural height on paper; no vh games */
+    padding: 0.35in 0.25in;
+    break-after: page;
+    page-break-after: always; /* legacy engines */
+    border-top: none;
+  }
+  .slide:last-of-type { break-after: auto; page-break-after: auto; }
+
+  .deck-pos { display: none; }
+
+  .callout, .vs-option, .stat, .evidence figure { break-inside: avoid; }
+  .component, .rightsize-option, .sequence-step { break-inside: avoid; }
+  .evidence tr { break-inside: avoid; }
+
+  .slide--ask { border-left-width: 10px; } /* survives background stripping */
+
+  a { color: inherit; }
+}
+  </style>
+</head>
+<body>
+  <main class="deck deck--adr">
+    <section class="slide slide--title" id="s1">
+      <p class="artifact-type">Architecture Decision</p>
+      <p class="kicker">ADR-078 · Accepted 2026-07-02</p>
+      <h1 class="headline">Deck generation ships as a repo-local writer ⇄ reviewer skill pair: the agent writes each deck editorially, and a fresh-context review gates every one</h1>
+      <div class="evidence">
+        <p>Lifecycle Artifact Decks via a Repo-Local Writer ⇄ Reviewer Skill Pair — the decision record for Phase 1 of PRD-024, distilled from the design doc's full deliberation. The headlines alone carry the decision and what it asks of you.</p>
+        <p>Its <em>deployment scope</em> was later superseded-in-part by ADR-086 (2026-07-05): the pair now ships in the scaffold to every client. Every other decision recorded here — the editorial writer ⇄ reviewer contract, the visual system, the provenance stamping — stands unchanged.</p>
+      </div>
+      <footer class="slide-foot">ADR-078 · d56a0419 · 1/12</footer>
+    </section>
+
+    <section class="slide" id="s2">
+      <p class="kicker">Situation · complication · question</p>
+      <h2 class="headline">PRD-024 demands decks that are LLM-written, judgment-reviewed, hermetic, and one considered system — constraints no template pipeline can meet</h2>
+      <div class="evidence">
+        <p><strong>Situation.</strong> Lifecycle artifacts (PRDs, ADRs, and later design docs, roadmap branches, sprints) exist only as long-form markdown. <strong>Complication.</strong> The owner has no fast visual re-read of their own documents and no leadership-quality presentation form when an artifact needs sign-off from time-constrained senior reviewers. <strong>Question.</strong> How should Phase 1 deliver "one conversational request turns any PRD or ADR into a reviewed, self-contained, browser-openable, email-attachable deck"?</p>
+        <p>The PRD's binding constraints shape the architecture:</p>
+        <ul>
+          <li>The generator must be the resident LLM agent, not a template pipeline — "LLM-quality ceiling, not template ceiling" (C2).</li>
+          <li>Quality criteria SC3–SC6 are reviewer <em>judgments</em> applied to every deck, never reducible to a checklist or rubric (C2 binds the per-deck gate).</li>
+          <li>Output must be hermetic and zero-tooling for recipients (C1/C3); the source document stays authoritative (C4); all decks must read as one considered visual system (G10).</li>
+        </ul>
+      </div>
+      <footer class="slide-foot">ADR-078 · d56a0419 · 2/12</footer>
+    </section>
+
+    <section class="slide" id="s3">
+      <p class="kicker">The decision</p>
+      <h2 class="headline">A repo-local skill pair — gitban-deck-writer ⇄ gitban-deck-reviewer — with no MCP tools, no Python pipeline, no hooks, and no gate framework</h2>
+      <div class="evidence">
+        <p>The resident LLM agent <strong>writes each deck editorially</strong>: structure, slide count, emphasis, headlines, and on-slide evidence are per-artifact judgments within per-type narrative arcs that are defaults, never slide skeletons. A <strong>fresh-context reviewer sub-agent</strong> applies PRD SC3–SC6 as judgments on every deck before it can be called done.</p>
+        <div class="callout">
+          <p><strong>The key tradeoff:</strong> we accept non-deterministic generation gated by non-deterministic judgment — an LLM writer checked by an LLM reviewer, with the known risk of reviewer leniency drift — in exchange for escaping the template ceiling.</p>
+        </div>
+        <p>The editorial work <em>is</em> the generation: a deck's value is per-artifact judgment about what matters and how to argue it — exactly what a deterministic renderer cannot compute. Every tool-shaped delivery reintroduces the template ceiling C2 forbids.</p>
+        <p><strong>Deployment-scope note.</strong> The "repo-local, outside the scaffold manifest" facet of this decision was later reversed by ADR-086 (2026-07-05): the pair is now promoted into the scaffold and shipped to every client via the deploy engine. The editorial writer ⇄ reviewer contract, the chrome system, the gate, and the provenance stamping decided here are unchanged.</p>
+      </div>
+      <footer class="slide-foot">ADR-078 · d56a0419 · 3/12</footer>
+    </section>
+
+    <section class="slide" id="s4">
+      <p class="kicker">The shape of the delivery</p>
+      <h2 class="headline">The PRD forbids templating the content and demands system-izing the chrome — different layers, opposite treatments</h2>
+      <div class="evidence">
+        <ul>
+          <li><strong>Chrome:</strong> one curated embedded CSS system (<code>assets/deck.css</code> plus a documented per-slide HTML grammar). The writer composes freely within the grammar and never authors freeform CSS; the sole escape valve is inline SVG evidence constrained to the token palette.</li>
+          <li><strong>Runtime:</strong> a scrolling Slidedoc of slide sections with ~60 lines of dependency-free, noscript-degradable navigation JS.</li>
+          <li><strong>Identity:</strong> decks are committed artifacts at <code>docs/decks/&lt;source-basename&gt;.html</code> — one deck per source; regeneration overwrites in place; source renames (including NOM→ADR promotion) regenerate at the new basename and delete the orphan.</li>
+          <li><strong>Provenance:</strong> source path, source-content commit (with <code>+dirty</code> / <code>uncommitted</code> honesty markers), mode, append-only steering history, and the review outcome transcribed from the reviewer's verdict — never writer-asserted — in an in-file HTML-comment block plus visible title/colophon stamping.</li>
+          <li><strong>One advisory script</strong> (stdlib-only, always exit 0) scans for portability, hygiene-leak, and chrome-discipline defects; it informs iteration and can never gate.</li>
+        </ul>
+      </div>
+      <footer class="slide-foot">ADR-078 · d56a0419 · 4/12</footer>
+    </section>
+
+    <section class="slide" id="s5">
+      <p class="kicker">The gate</p>
+      <h2 class="headline">A deck is done only when a fresh-context reviewer says so: deck-first read, structured verdict, at most two revision rounds, failing closed</h2>
+      <div class="evidence">
+        <ul>
+          <li><strong>Deck-first read order</strong> — the headline and craft judgments are formed cold, before the reviewer opens the source; the source is read second, in full, for faithfulness.</li>
+          <li><strong>Structured verdict</strong> — APPROVED / REVISE / REJECT, with a mandatory headline-story restatement and a named strongest doubt in every verdict, including APPROVED.</li>
+          <li><strong>At most 2 revision rounds</strong>; on REJECT or rounds exhausted the loop <strong>fails closed</strong> — the owner receives a failure report and the draft is left uncommitted.</li>
+          <li>The review contract resists rubber-stamping structurally: a fresh context per round with the writer's rationale withheld, and the outcome transcribed into the artifact rather than asserted by the writer. Human SC6 blind spot-checks sit above the loop at launch.</li>
+        </ul>
+      </div>
+      <footer class="slide-foot">ADR-078 · d56a0419 · 5/12</footer>
+    </section>
+
+    <section class="slide" id="s6">
+      <p class="kicker">Positions on the design's open questions</p>
+      <h2 class="headline">Four questions are closed here: dirty decks commit with advice, permalinks default-suppress, steering resets conversationally, the reviewer inherits the session model</h2>
+      <div class="evidence">
+        <ol>
+          <li><strong>Dirty-source decks are committable.</strong> The <code>&lt;sha&gt;+dirty</code> stamp and colophon statement make the state honest; the writer <em>advises</em> holding the commit until the source lands but does not block — blocking would make the deck less available exactly when the owner is iterating hardest. On APPROVED with a dirty stamp, the writer still commits per the loop contract and surfaces the hold-advice.</li>
+          <li><strong>Forge permalink: default SUPPRESS.</strong> "Public https forge URL" is undecidable at generation time and probing is forbidden; a wrong guess leaks a private permalink into an emailed file. Include only on a once-asked, recorded owner affirmation that the origin is public. SSH and unconfirmed https origins always suppress; a local path is never emitted.</li>
+          <li><strong>Steering history is append-only, with conversational reset.</strong> "Regenerate fresh" drops prior steering; no dedicated verb or mechanism ships. Revisit if steering histories accrete contradictions the conversation can't clear.</li>
+          <li><strong>The reviewer inherits the session model.</strong> No pinning to a strongest-model knob; the PRD's SC6 blind spot-checks arbitrate whether inherited-model review is sufficient, and a failed spot-check is the trigger to reconsider.</li>
+        </ol>
+      </div>
+      <footer class="slide-foot">ADR-078 · d56a0419 · 6/12</footer>
+    </section>
+
+    <section class="slide" id="s7">
+      <p class="kicker">Alternatives considered — the tool-shaped deliveries</p>
+      <h2 class="headline">A deterministic renderer — MCP tool or Jinja pipeline — is the template ceiling PRD C2 rejects, however it is packaged</h2>
+      <div class="evidence">
+        <div class="vs">
+          <div class="vs-option">
+            <h3>MCP tool (render_deck) / Python pipeline</h3>
+            <p>A deterministic renderer is the template ceiling PRD C2 rejects; it also adds manifest/release coupling and an adopter-visible surface out of scope.</p>
+          </div>
+          <div class="vs-option">
+            <h3>Extending the gitban/views/ Jinja pipeline</h3>
+            <p>The same objection in existing-code form: it projects structured state into fixed layouts, and deck content has no data model to project.</p>
+          </div>
+          <div class="vs-option vs-option--chosen">
+            <h3>Repo-local skill pair (chosen)</h3>
+            <p>The agent writes editorially within a fixed chrome system; judgment gates every deck. No template ceiling — the decisive win. (Deployment scope later revisited by ADR-086.)</p>
+          </div>
+        </div>
+      </div>
+      <footer class="slide-foot">ADR-078 · d56a0419 · 7/12</footer>
+    </section>
+
+    <section class="slide" id="s8">
+      <p class="kicker">Alternatives considered — the looser and heavier options</p>
+      <h2 class="headline">Freeform CSS defeats the one-system goal, a vendored framework reads as a default, and sidecars or disposable decks break identity</h2>
+      <div class="evidence">
+        <table>
+          <thead><tr><th>Alternative</th><th>Why it lost</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Per-deck freeform CSS</strong></td><td>Maximal generator freedom, but per-generation taste variance defeats G10 on its face; every review would re-litigate typography.</td></tr>
+            <tr><td><strong>Third-party deck framework (e.g., reveal.js inlined)</strong></td><td>Vendored dependency, ~10k lines per file, presenter-oriented, and reads as a framework default rather than a considered system.</td></tr>
+            <tr><td><strong>Sidecar metadata files</strong></td><td>Doubles the artifact count, can drift, breaks one-file-travels; the deck itself is the always-co-located metadata home.</td></tr>
+            <tr><td><strong>Disposable (uncommitted) decks</strong></td><td>No stable identity for regeneration, linking, or diffing; "the deck tracks the doc" becomes meaningless.</td></tr>
+            <tr><td><strong>Freshness automation (staleness hooks/CI)</strong></td><td>Scoped out by the PRD; the stamp makes staleness detectable and regeneration is cheap. Future consideration, revisit with usage.</td></tr>
+          </tbody>
+        </table>
+        <p>All alternatives were weighed in full in the design doc; this record distills them.</p>
+      </div>
+      <footer class="slide-foot">ADR-078 · d56a0419 · 8/12</footer>
+    </section>
+
+    <section class="slide" id="s9">
+      <p class="kicker">Consequences, stated honestly</p>
+      <h2 class="headline">The honest bill: every deck costs a generation plus review, reviewer leniency drift is a standing risk, and committed decks can go stale</h2>
+      <div class="evidence">
+        <div class="grid-2">
+          <div>
+            <p><strong>Positive.</strong></p>
+            <ul>
+              <li>No shipped-surface footprint at decision time — no manifest, package, hook, or scaffold changes; rollback is deleting two skill directories, <code>docs/decks/</code>, and one test file. (Deployment scope later revisited by ADR-086.)</li>
+              <li>"Done" carries evidence: the transcribed review outcome is an auditable per-deck record that judgment ran — without replacing the judgment.</li>
+              <li>Stable deck identity makes regeneration idempotent and the source⇄deck mapping bijective, with no registry or sidecar files.</li>
+              <li>Chrome consistency is a property of one versioned stylesheet, evolved by normal PRs; every deck benefits from each fix.</li>
+            </ul>
+          </div>
+          <div>
+            <p><strong>Negative.</strong></p>
+            <ul>
+              <li>Every deck costs a full generation plus at least one fresh-context review — including one-slide steering tweaks. Slower and costlier than a renderer.</li>
+              <li>Reviewer leniency drift is a standing risk that structure mitigates but cannot eliminate; the backstop is human spot-checking, which does not scale automatically.</li>
+              <li>Committed decks shared stale remain possible; detectability, not prevention, is the guarantee.</li>
+              <li>Regenerated decks produce wholesale, effectively unreviewable HTML diffs in PRs and grow the repo over time.</li>
+              <li>Skill-prose contracts are enforced by agent compliance plus one advisory script — weaker than code-enforced invariants, by explicit PRD design.</li>
+            </ul>
+          </div>
+        </div>
+        <p><strong>Neutral:</strong> repo-local only — adopters get nothing until a separate, later scaffold-packaging decision. <em>This specific consequence was reversed by ADR-086, which made exactly that decision and promoted the pair into the scaffold.</em> Phase 2 extends the same architecture, and nothing here forecloses it.</p>
+      </div>
+      <footer class="slide-foot">ADR-078 · d56a0419 · 9/12</footer>
+    </section>
+
+    <section class="slide" id="s10">
+      <p class="kicker">Validation</p>
+      <h2 class="headline">The launch gate is PRD SC1–SC9 demonstrated on real artifacts — including the blind protocol and forced failure paths — with named revisit triggers</h2>
+      <div class="evidence">
+        <p><strong>Launch gate (Phase B of the design):</strong> SC1–SC9 demonstrated on real artifacts from this repo — including the SC6 blind protocol (independent rater, not told the deck is generated, source withheld first) — plus forced REVISE and REJECT paths behaving per the loop contract, and the owner having used it on a document they actually care about (a named human-accepted criterion). Outcomes recorded in the design doc's revision history; per-deck review objects are the audit trail.</p>
+        <p><strong>Revisit triggers:</strong></p>
+        <ul>
+          <li>An SC6 spot-check failure — reconsider reviewer model inheritance (question 4).</li>
+          <li>Steering histories accreting contradictions in practice (question 3).</li>
+          <li>Staleness causing real incidents — reopen freshness automation.</li>
+          <li>Phase 2 presenter mode — deck-identity variants.</li>
+          <li>Any scaffold-packaging proposal — a separate decision; the repo-local pair is what would be promoted, not bypassed. <em>(This trigger has since fired: ADR-086 promoted the pair into the scaffold.)</em></li>
+        </ul>
+      </div>
+      <footer class="slide-foot">ADR-078 · d56a0419 · 10/12</footer>
+    </section>
+
+    <section class="slide slide--ask" id="s11">
+      <p class="kicker">Where this record stands</p>
+      <h2 class="headline">Accepted 2026-07-02 after adversarial review and revision — hold it to its launch gate, and reopen it only on a named revisit trigger</h2>
+      <div class="evidence">
+        <p>This is the first decision record for the deck capability; it supersedes nothing — though ADR-086 (2026-07-05) later superseded it <em>in part</em>, reversing the deployment scope so the pair now ships in the scaffold, while every other decision here stands. It decides PRD-024's open question 1 (deck home: committed at <code>docs/decks/</code>) and the design doc's four open questions, as recorded on slide 6.</p>
+        <p>What acceptance asks of a reader now: judge the capability against the launch gate on the previous slide, and raise a revisit trigger if you see one firing — the record stands until one does.</p>
+      </div>
+      <footer class="slide-foot">ADR-078 · d56a0419 · 11/12</footer>
+    </section>
+
+    <section class="slide slide--colophon" id="s12">
+      <h2 class="headline">Provenance</h2>
+      <div class="evidence">
+        <p>Source: <code>docs/adr/ADR-078-lifecycle-deck-generation-as-skill-pair.md</code> (status: Accepted; deployment scope superseded-in-part by ADR-086) at commit <code>d56a0419</code> (clean). Generated 2026-07-09.</p>
+        <p>Steering history: "a pre-read for a skeptical senior advisor reading it cold"</p>
+        <p>This deck is a view; the source document is authoritative. The full deliberation — loop contract, grammar, stamping mechanics, phasing — lives in the design doc the ADR distills.</p>
+      </div>
+      <footer class="slide-foot">ADR-078 · d56a0419 · 12/12</footer>
+    </section>
+
+  </main>
+  <script>
+/* deck-nav.js — gitban deck navigation. Embedded verbatim in every deck.
+ * Zero dependencies. Progressive enhancement only: with JS off the deck is a
+ * complete scrolling document — this script adds keyboard slide-jumps and a
+ * live n/N position indicator, nothing else. Normative behaviors:
+ * references/visual-system.md §4. */
+(function () {
+  "use strict";
+
+  var slides = Array.prototype.slice.call(
+    document.querySelectorAll("main.deck > section.slide")
+  );
+  if (slides.length === 0) { return; }
+
+  /* Live position indicator — exists only when JS runs. */
+  var pos = document.createElement("div");
+  pos.className = "deck-pos";
+  pos.setAttribute("role", "status");
+  pos.setAttribute("aria-live", "polite");
+  document.body.appendChild(pos);
+
+  var current = 0;
+  function render() {
+    pos.textContent = (current + 1) + "/" + slides.length;
+  }
+
+  /* A slide is "current" when it crosses the vertical middle of the
+   * viewport. The -50% root margins collapse the intersection zone to that
+   * midline, so the definition keeps working for slides taller than the
+   * viewport, where any ratio threshold would never fire. */
+  if (typeof IntersectionObserver === "function") {
+    var observer = new IntersectionObserver(function (entries) {
+      for (var i = 0; i < entries.length; i++) {
+        if (entries[i].isIntersecting) {
+          current = slides.indexOf(entries[i].target);
+          render();
+        }
+      }
+    }, { rootMargin: "-50% 0px -50% 0px", threshold: 0 });
+    for (var j = 0; j < slides.length; j++) { observer.observe(slides[j]); }
+  }
+  render();
+
+  function goTo(index) {
+    current = Math.max(0, Math.min(slides.length - 1, index));
+    slides[current].scrollIntoView({ block: "start" });
+    render();
+  }
+
+  /* Unmodified navigation keys only; preventDefault() stops native scrolling
+   * from double-firing on the same keystroke. Modified combinations and
+   * editable-element focus are left to the browser untouched. */
+  document.addEventListener("keydown", function (ev) {
+    if (ev.altKey || ev.ctrlKey || ev.metaKey || ev.shiftKey) { return; }
+    if (ev.defaultPrevented) { return; }
+    var el = ev.target;
+    if (el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "SELECT" || el.isContentEditable)) { return; }
+    switch (ev.key) {
+      case "ArrowDown": case "ArrowRight": case "PageDown": goTo(current + 1); break;
+      case "ArrowUp": case "ArrowLeft": case "PageUp": goTo(current - 1); break;
+      case "Home": goTo(0); break;
+      case "End": goTo(slides.length - 1); break;
+      default: return;
+    }
+    ev.preventDefault();
+  });
+})();
+  </script>
+</body>
+</html>

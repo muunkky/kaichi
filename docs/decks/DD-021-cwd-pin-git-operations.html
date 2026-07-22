@@ -1,0 +1,866 @@
+<!-- gitban-deck
+{
+  "source": "docs/designs/DD-021-cwd-pin-git-operations.md",
+  "source_commit": "d56a0419",
+  "source_dirty": false,
+  "generated": "2026-07-09",
+  "mode": "standalone",
+  "review": {
+    "verdict": "APPROVED",
+    "date": "2026-07-09",
+    "rounds": 1,
+    "strongest_finding": "the Migration & Rollback movement is nearly gone — the deck shows the forward migration (advisory mode) but not the escape story (clean git revert, recovery options A/B/C); compressible since the sequence is intact, so not blocked"
+  },
+  "steering": []
+}
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CWD-Pin Git Operations (ADR-051) · design deck</title>
+<style>
+/* ==========================================================================
+   deck.css — the one deck stylesheet (gitban lifecycle artifact decks)
+
+   Embedded verbatim in every generated deck; never edited per-deck. All
+   chrome lives here — the writer composes semantic HTML within the grammar
+   documented in references/visual-system.md and authors no CSS of its own.
+   Light-first, print-safe, executive-document aesthetic. Zero external
+   references: system fonts only, no imports, no images.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Tokens — the complete palette and scale. Every color in a deck
+      (including inline-SVG evidence, via the fill- and stroke- utility
+      classes in §9) resolves from these custom properties; nothing else is
+      sanctioned. NOTE: never write a literal star-slash sequence inside a
+      comment — it terminates the comment early and the stray prose becomes
+      an invalid selector that eats the entire next rule block.
+   -------------------------------------------------------------------------- */
+:root {
+  /* Surfaces */
+  --paper: #faf9f6;          /* page + slide ground: warm near-white */
+  --surface: #ffffff;        /* raised panels (vs-options, code) */
+  --surface-tint: #eef2f7;   /* accent-tinted panels (ask slide, callout) */
+
+  /* Ink */
+  --ink: #1f242e;            /* primary text */
+  --ink-secondary: #4a5160;  /* supporting text, captions */
+  --ink-muted: #878d9a;      /* footers, colophon, labels */
+  --ink-inverse: #ffffff;    /* SVG label text placed ON a dark fill (see §8/§9) */
+
+  /* Accent — defaults to PRD blue; the deck root's type modifier
+     (.deck--prd/.deck--adr/.deck--design, §1b) remaps this per artifact type */
+  --accent: #14508c;
+  --accent-ink: #103e6d;     /* accent used AS text on light ground */
+
+  /* Rules & borders */
+  --rule: #e0e3e9;
+  --rule-strong: #b7bdc9;
+
+  /* Semantic */
+  --good: #1e7d43;
+  --warn: #9a6a00;
+  --bad: #b3372e;
+
+  /* Data palette (inline-SVG evidence) */
+  --data-1: #14508c;
+  --data-2: #1e7d43;
+  --data-3: #9a6a00;
+  --data-4: #7a4a9e;
+  --data-5: #b3372e;
+  --data-6: #3d7a8a;
+
+  /* Type */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+               "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Code", Consolas,
+               "Liberation Mono", Menlo, monospace;
+  --text-s: 0.85rem;
+  --text-0: 1.125rem;                               /* body */
+  --text-1: 1.4rem;
+  --text-2: clamp(1.5rem, 1.1rem + 1.6vw, 2.1rem);  /* slide headline */
+  --text-3: clamp(2rem, 1.4rem + 2.6vw, 3rem);      /* title headline */
+  --text-stat: clamp(2.2rem, 1.6rem + 2.8vw, 3.4rem);
+
+  /* Layout */
+  --slide-max: 62rem;        /* content column ceiling */
+  --pad-x: clamp(1.25rem, 5vw, 4rem);
+  --pad-y: clamp(2.5rem, 7vh, 5rem);
+  --gap: 1.5rem;
+  --radius: 6px;
+}
+
+/* --------------------------------------------------------------------------
+   1b. Per-artifact-type accent theming.
+       The deck root <main> carries exactly ONE type modifier
+       (deck--prd | deck--adr | deck--design) that remaps the accent so the
+       WHOLE deck — title badge, kicker rule, links, list markers, the ask
+       slide, callouts, .fill-accent SVG — reads in its artifact type's color:
+       PRD blue, ADR/NOM amber, design-doc teal. Each type's --accent-ink
+       (used AS text) clears WCAG AA (>=4.5:1) on paper; the brighter --accent
+       is used only for rules/fills/markers (>=3:1). The data palette
+       (--data-*) is deliberately NOT retinted — it stays stable across types
+       so a chart means the same thing in any deck.
+   -------------------------------------------------------------------------- */
+.deck--prd    { --accent: #14508c; --accent-ink: #103e6d; }
+.deck--adr    { --accent: #b5730a; --accent-ink: #7a4900; }
+.deck--design { --accent: #2f7d90; --accent-ink: #1b5563; }
+
+/* --------------------------------------------------------------------------
+   2. Base
+   -------------------------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  /* This deck is a light-only document. Declaring color-scheme: light opts it
+     out of browser force-dark (Chrome Auto Dark Mode, dark-mode extensions, OS
+     "invert" settings): without it a forcing browser auto-inverts the page and
+     mangles the token-fill SVG evidence into unreadable dark-on-dark. The
+     within-deck contrast rules can only guarantee legibility when the browser
+     honors the declared scheme — this is the declaration that makes them hold. */
+  color-scheme: light;
+  /* The document scroller IS the deck surface: gentle snap at slide starts,
+     never mandatory — a tall slide must scroll freely (design D4). */
+  scroll-snap-type: y proximity;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: var(--text-0);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection { background: var(--surface-tint); color: var(--accent-ink); }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+a { color: var(--accent-ink); text-decoration-thickness: 1px; text-underline-offset: 0.15em; }
+
+strong { color: var(--ink); font-weight: 650; }
+
+/* --------------------------------------------------------------------------
+   3. The slide frame
+      Viewport-height minimum, NO fixed height: content taller than the
+      viewport grows the slide and scrolls freely. Flex column centers
+      content vertically and pins the footer to the bottom edge.
+   -------------------------------------------------------------------------- */
+.deck { display: block; }
+
+.slide {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: var(--pad-y) var(--pad-x);
+  scroll-snap-align: start;
+}
+
+.slide + .slide { border-top: 1px solid var(--rule); }
+
+/* Centered content column */
+.slide > * {
+  width: 100%;
+  max-width: var(--slide-max);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* --------------------------------------------------------------------------
+   4. Text roles
+   -------------------------------------------------------------------------- */
+.kicker {
+  margin: 0 auto 0.75rem;   /* keep the .slide > * horizontal centering — a
+                               0-margin shorthand here would reset it and push
+                               the kicker off the content column on wide viewports */
+  font-size: var(--text-s);
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-ink);
+}
+
+.headline {
+  margin: 0 auto;           /* same: preserve the centered content column */
+  font-size: var(--text-2);
+  font-weight: 700;
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.evidence { margin-top: var(--gap); color: var(--ink); }
+.evidence > :first-child { margin-top: 0; }
+.evidence > :last-child { margin-bottom: 0; }
+
+.slide-foot {
+  margin-top: auto;          /* pin to the slide's bottom edge */
+  padding-top: var(--gap);
+  font-size: var(--text-s);
+  color: var(--ink-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------------------------
+   5. Slide variants
+   -------------------------------------------------------------------------- */
+.slide--title .headline { font-size: var(--text-3); letter-spacing: -0.02em; }
+
+/* The artifact-type badge — the one consistent, prominent signal of WHICH kind
+   of source this deck presents (Product Requirements / Architecture Decision /
+   Design Document). A pill in the type's accent, always the first element on
+   the title slide. Reads instantly and prints in color. */
+.slide--title .artifact-type {
+  display: inline-block;
+  margin-bottom: 1.1rem;
+  /* pin to the centered content column's left edge, like the kicker */
+  margin-left: max(calc((100% - var(--slide-max)) / 2), 0rem);
+  padding: 0.3rem 0.85rem;
+  border: 1.5px solid var(--accent);
+  border-radius: 999px;
+  font-size: var(--text-s);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent-ink);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.slide--title .kicker {
+  border-top: 4px solid var(--accent);
+  padding-top: 1rem;
+  width: fit-content; /* the accent bar hugs the kicker text */
+  /* fit-content + auto margins would center it; pin its left edge to the
+     centered content column instead (offset = half the space the column
+     leaves over, never negative) */
+  margin-left: max(calc((100% - var(--slide-max)) / 2), 0rem);
+}
+
+.slide--title .evidence { color: var(--ink-secondary); font-size: var(--text-1); }
+
+.slide--ask {
+  background: var(--surface-tint);
+  border-left: 6px solid var(--accent);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.slide--ask .headline { color: var(--accent-ink); }
+
+.slide--colophon { font-size: var(--text-s); color: var(--ink-secondary); }
+.slide--colophon .headline { font-size: var(--text-1); color: var(--ink-secondary); }
+.slide--colophon .evidence { color: var(--ink-secondary); }
+.slide--colophon a { color: var(--ink-secondary); }
+
+/* --------------------------------------------------------------------------
+   6. Evidence content — standard HTML, no classes needed
+   -------------------------------------------------------------------------- */
+.evidence p, .evidence ul, .evidence ol { margin: 0 0 0.9em; }
+
+.evidence ul, .evidence ol { padding-left: 1.4em; }
+.evidence li { margin-bottom: 0.35em; }
+.evidence li::marker { color: var(--accent); }
+
+.evidence table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 1em;
+  font-size: 0.95em;
+}
+.evidence th {
+  text-align: left;
+  font-weight: 650;
+  border-bottom: 2px solid var(--rule-strong);
+  padding: 0.45em 0.9em 0.45em 0;
+}
+.evidence td {
+  border-bottom: 1px solid var(--rule);
+  padding: 0.45em 0.9em 0.45em 0;
+  vertical-align: top;
+}
+
+.evidence blockquote {
+  margin: 0 0 1em;
+  padding: 0.1em 0 0.1em 1.1em;
+  border-left: 3px solid var(--rule-strong);
+  color: var(--ink-secondary);
+}
+
+.evidence figure { margin: 0 0 1em; }
+.evidence figcaption {
+  margin-top: 0.5em;
+  font-size: var(--text-s);
+  color: var(--ink-muted);
+}
+
+.evidence code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  background: var(--surface-tint);
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
+}
+.evidence pre {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: 1em 1.25em;
+  overflow-x: auto;
+  margin: 0 0 1em;
+}
+.evidence pre code { background: none; padding: 0; font-size: 0.85em; }
+
+.evidence hr {
+  border: 0;
+  border-top: 1px solid var(--rule);
+  margin: 1.5em 0;
+}
+
+/* --------------------------------------------------------------------------
+   7. Evidence utilities
+   -------------------------------------------------------------------------- */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gap) calc(var(--gap) * 1.5);
+  margin: 0 0 1em;
+}
+
+.stat { display: flex; flex-direction: column; gap: 0.25rem; }
+.stat-value {
+  font-size: var(--text-stat);
+  font-weight: 750;
+  line-height: 1;
+  color: var(--accent-ink);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+.stat-label { font-size: var(--text-s); color: var(--ink-muted); }
+
+.callout {
+  background: var(--surface-tint);
+  border-left: 4px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 0.9rem 1.25rem;
+  margin: 0 0 1em;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.callout > :first-child { margin-top: 0; }
+.callout > :last-child { margin-bottom: 0; }
+
+.vs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: var(--gap);
+  margin: 0 0 1em;
+}
+.vs-option {
+  background: var(--surface);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+}
+.vs-option > h3 {
+  margin: 0 0 0.5rem;
+  font-size: var(--text-s);
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-secondary);
+}
+.vs-option > :last-child { margin-bottom: 0; }
+.vs-option--chosen {
+  border: 2px solid var(--accent);
+  background: var(--surface);
+}
+.vs-option--chosen > h3 { color: var(--accent-ink); }
+
+/* Design-doc grammar: build-sequence / phases — the sequencing movement as an
+   ordered, numbered vertical timeline; the build order legible at a skim. Each
+   step is an <li> (an <ol class="sequence"> gives the ordering for free); the
+   number node and connecting rail are drawn from the counter, so reordering
+   steps renumbers them automatically. */
+.sequence {
+  list-style: none;
+  margin: 0 0 1em;
+  padding: 0;
+  counter-reset: seq;
+}
+.sequence-step {
+  position: relative;
+  counter-increment: seq;
+  padding: 0 0 1.15rem 3rem;
+}
+.sequence-step:last-child { padding-bottom: 0; }
+.sequence-step::before {          /* the numbered node */
+  content: counter(seq);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1.9rem;
+  height: 1.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--surface);
+  font-size: var(--text-s);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.sequence-step::after {           /* the connecting rail to the next node */
+  content: "";
+  position: absolute;
+  left: 0.9rem;
+  top: 1.9rem;
+  bottom: 0;
+  width: 2px;
+  background: var(--rule-strong);
+}
+.sequence-step:last-child::after { display: none; }
+.sequence-step > h3 {
+  margin: 0 0 0.35rem;
+  font-size: var(--text-1);
+  font-weight: 650;
+  line-height: 1.25;
+  color: var(--ink);
+}
+.sequence-step > :last-child { margin-bottom: 0; }
+
+/* Design-doc grammar: architecture / component map — peer building blocks and
+   their roles as a labeled block diagram. Distinct from .vs (which compares
+   alternatives and marks one chosen): these are co-existing parts of the one
+   design. Genuine wiring/topology (arrows between parts) still uses the
+   inline-SVG valve; this is the labeled-parts layout. */
+.components {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: var(--gap);
+  margin: 0 0 1em;
+}
+.component {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-top: 3px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 0.9rem 1.1rem;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.component > h3 {
+  margin: 0 0 0.4rem;
+  font-size: var(--text-0);
+  font-weight: 650;
+  color: var(--ink);
+}
+.component > :last-child { margin-bottom: 0; }
+
+/* Design-doc grammar: right-sizing comparison — this design against a simpler
+   and a bigger option on one scope axis, making "every element earns its keep"
+   visual. The flanking options (roads not taken) recede in dashed/muted tone;
+   the chosen middle is solid and accented. Order the three columns
+   simpler → chosen → bigger so the axis reads left-to-right. */
+.rightsize {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--gap);
+  margin: 0 0 1em;
+  align-items: stretch;
+}
+.rightsize-option {
+  background: var(--paper);
+  border: 1px dashed var(--rule-strong);
+  border-radius: var(--radius);
+  padding: 0.9rem 1.1rem;
+  color: var(--ink-secondary);
+}
+.rightsize-option > h3 {
+  margin: 0 0 0.4rem;
+  font-size: var(--text-s);
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+.rightsize-option--chosen {
+  background: var(--surface);
+  border: 2px solid var(--accent);
+  color: var(--ink);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.rightsize-option--chosen > h3 { color: var(--accent-ink); }
+.rightsize-option > :last-child { margin-bottom: 0; }
+
+/* --------------------------------------------------------------------------
+   8. Inline-SVG evidence
+   -------------------------------------------------------------------------- */
+.evidence svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto 1em;
+}
+.evidence svg text {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  fill: var(--ink-secondary);
+}
+
+/* --------------------------------------------------------------------------
+   9. SVG color utilities — the token-palette escape valve.
+      CSS var() does not resolve inside SVG presentation attributes, so
+      colors are applied via these classes; raw color literals in a deck
+      are a chrome-drift finding.
+   -------------------------------------------------------------------------- */
+.fill-data-1 { fill: var(--data-1); }  .stroke-data-1 { stroke: var(--data-1); }
+.fill-data-2 { fill: var(--data-2); }  .stroke-data-2 { stroke: var(--data-2); }
+.fill-data-3 { fill: var(--data-3); }  .stroke-data-3 { stroke: var(--data-3); }
+.fill-data-4 { fill: var(--data-4); }  .stroke-data-4 { stroke: var(--data-4); }
+.fill-data-5 { fill: var(--data-5); }  .stroke-data-5 { stroke: var(--data-5); }
+.fill-data-6 { fill: var(--data-6); }  .stroke-data-6 { stroke: var(--data-6); }
+.fill-good   { fill: var(--good); }    .stroke-good   { stroke: var(--good); }
+.fill-warn   { fill: var(--warn); }    .stroke-warn   { stroke: var(--warn); }
+.fill-bad    { fill: var(--bad); }     .stroke-bad    { stroke: var(--bad); }
+.fill-accent { fill: var(--accent); }  .stroke-accent { stroke: var(--accent); }
+.fill-ink    { fill: var(--ink); }     .stroke-ink    { stroke: var(--ink); }
+.fill-muted  { fill: var(--ink-muted); } .stroke-muted { stroke: var(--ink-muted); }
+.stroke-rule { stroke: var(--rule-strong); }
+.fill-surface { fill: var(--surface); }
+.fill-surface-tint { fill: var(--surface-tint); }  /* light labeled-box ground: makes the
+                                                       light band SVG-reachable so a rule-
+                                                       following author gets a filled rect,
+                                                       not the SVG default (black). */
+.fill-inverse { fill: var(--ink-inverse); }  /* light label ink for text ON a dark fill */
+.fill-none   { fill: none; }
+
+/* --------------------------------------------------------------------------
+   10. Position indicator (created by deck-nav.js; absent without JS)
+   -------------------------------------------------------------------------- */
+.deck-pos {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 10;
+  padding: 0.25rem 0.7rem;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  box-shadow: 0 1px 3px rgba(31, 36, 46, 0.08);
+  font-size: var(--text-s);
+  color: var(--ink-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------------------------
+   11. Narrow viewports (phone reading is a first-class path)
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .grid-2 { grid-template-columns: 1fr; }
+  /* The right-size spectrum stacks; simpler → chosen → bigger reads top-to-bottom
+     on a phone. .components auto-fits and .sequence is already vertical. */
+  .rightsize { grid-template-columns: 1fr; }
+  /* Wide tables scroll within their slide instead of overflowing the page —
+     a ≥4-column table's min-content width beats a phone viewport (observed
+     at 375px in Chromium and Firefox); same containment pattern as
+     `.evidence pre`. */
+  .evidence table { font-size: 0.85em; display: block; overflow-x: auto; max-width: 100%; }
+  .evidence th, .evidence td { padding-right: 0.5em; }
+}
+
+/* --------------------------------------------------------------------------
+   12. Print — one slide per page, nothing clipped, no screen chrome
+   -------------------------------------------------------------------------- */
+@media print {
+  html { scroll-snap-type: none; scroll-behavior: auto; }
+  body { background: #fff; }
+
+  .slide {
+    min-height: 0;           /* natural height on paper; no vh games */
+    padding: 0.35in 0.25in;
+    break-after: page;
+    page-break-after: always; /* legacy engines */
+    border-top: none;
+  }
+  .slide:last-of-type { break-after: auto; page-break-after: auto; }
+
+  .deck-pos { display: none; }
+
+  .callout, .vs-option, .stat, .evidence figure { break-inside: avoid; }
+  .component, .rightsize-option, .sequence-step { break-inside: avoid; }
+  .evidence tr { break-inside: avoid; }
+
+  .slide--ask { border-left-width: 10px; } /* survives background stripping */
+
+  a { color: inherit; }
+}
+</style>
+</head>
+<body>
+<main class="deck deck--design">
+
+<section class="slide slide--title" id="s1">
+  <p class="artifact-type">Design Document</p>
+  <p class="kicker">CWD-Pin Git Operations · ADR-051</p>
+  <h1 class="headline">Stop silent wrong-branch git writes: pin every scaffold git command to the parent repo, and enforce it with a hook.</h1>
+  <div class="evidence">
+    <p>A defensive fix for a harness bug — the dispatcher's shell silently drifts into a worktree between commands. Three small parts: pinned SKILL prose, one new hook, and a single settings entry.</p>
+  </div>
+  <footer class="slide-foot">cwd-pin-git-operations · d56a0419</footer>
+</section>
+
+<section class="slide" id="s2">
+  <p class="kicker">The problem</p>
+  <h2 class="headline">Between two commands, the agent's shell silently moves into a worktree — so the next merge or push hits the wrong branch.</h2>
+  <div class="evidence">
+    <p>The Claude Code Bash tool occasionally changes working directory between calls. A <code>git merge</code>, <code>push</code>, or <code>checkout</code> then operates on an executor's worktree branch instead of the parent sprint branch. What makes it dangerous is <em>how</em> it fails:</p>
+    <ul>
+      <li><strong>Silent</strong> — no error; the wrong-target write just succeeds and looks fine.</li>
+      <li><strong>In the harness</strong> — it originates below gitban, so it can't be fixed from inside; the durable answer is to make our own commands drift-proof.</li>
+      <li><strong>Every session, on the riskiest operations</strong> — merge, push, branch delete — are exactly the commands exposed.</li>
+    </ul>
+  </div>
+  <footer class="slide-foot">cwd-pin-git-operations · d56a0419 · 2/10</footer>
+</section>
+
+<section class="slide" id="s3">
+  <p class="kicker">The approach</p>
+  <h2 class="headline">Pin every write-class git command to the parent repo, and reject unpinned ones with a default-on hook.</h2>
+  <div class="evidence">
+    <p>One expression resolves the parent repo root from anywhere — even inside a drifted worktree subdirectory — and every git command is anchored to it with <code>-C</code>:</p>
+    <pre><code>PARENT="$(dirname "$(git rev-parse --path-format=absolute --git-common-dir)")"
+git -C "$PARENT" merge worktree-agent-foo --no-edit</code></pre>
+    <p>A <code>PreToolUse: Bash</code> hook then scans every command and rejects unpinned <em>write-class</em> git (exit 2, with a teaching message); read-class git is allowed. The key tradeoff: every git block gets slightly more verbose — accepted, because the alternative is a class of silent corruption.</p>
+  </div>
+  <footer class="slide-foot">cwd-pin-git-operations · d56a0419 · 3/10</footer>
+</section>
+
+<section class="slide" id="s4">
+  <p class="kicker">Architecture</p>
+  <h2 class="headline">Three parts, only one of them new code: pinned SKILL prose, the hook, and a single settings entry that ships it.</h2>
+  <div class="evidence">
+    <div class="components">
+      <div class="component">
+        <h3>Scaffold SKILL prose</h3>
+        <p>Every write-class git block rewritten to the pinned form. Pure text edits, no logic — the template renderer is untouched.</p>
+      </div>
+      <div class="component">
+        <h3>The hook · new code</h3>
+        <p><code>cwd-pin-check.sh</code> reads the Bash payload, scans for <code>git &lt;subcmd&gt;</code>, allows read-class and pinned writes, rejects the rest.</p>
+      </div>
+      <div class="component">
+        <h3>Settings wiring</h3>
+        <p>One <code>hooks.PreToolUse</code> entry so <code>gitban init</code> deploys the hook to every workspace, merged idempotently.</p>
+      </div>
+    </div>
+    <p>The hook is the only new surface; everything else reuses the existing hook pattern already proven by the direct-state-edit guard.</p>
+  </div>
+  <footer class="slide-foot">cwd-pin-git-operations · d56a0419 · 4/10</footer>
+</section>
+
+<section class="slide" id="s5">
+  <p class="kicker">Alternatives — how the hook reads a command</p>
+  <h2 class="headline">Scan the whole command with one regex, because splitting it into segments silently lets <code>xargs git branch -D</code> through.</h2>
+  <div class="evidence">
+    <div class="vs">
+      <div class="vs-option">
+        <h3>Per-segment first-token check</h3>
+        <p>Split on <code>&amp;&amp;</code> / <code>;</code> / <code>|</code> and check each segment's first word. Silently exempts <code>xargs -r git branch -D</code> — the write hides inside xargs's arguments. Rejected.</p>
+      </div>
+      <div class="vs-option">
+        <h3>Full shell tokeniser</h3>
+        <p>Spin up a shell to parse the command properly. Too heavy for a hook that must finish in milliseconds, before the command runs. Rejected.</p>
+      </div>
+      <div class="vs-option vs-option--chosen">
+        <h3>Whole-command regex scan</h3>
+        <p>Walk every <code>git &lt;subcmd&gt;</code> substring; allow read-class and <code>-C</code>/<code>cd</code>-pinned writes, reject the rest. Closes the xargs leak; the SKILLs also restructure those pipelines into explicit loops.</p>
+      </div>
+    </div>
+  </div>
+  <footer class="slide-foot">cwd-pin-git-operations · d56a0419 · 5/10</footer>
+</section>
+
+<section class="slide" id="s6">
+  <p class="kicker">Right-sizing — enforcement rollout</p>
+  <h2 class="headline">Default-on, with a one-release advisory mode — the middle path between a backstop nobody installs and a cliff nobody survives.</h2>
+  <div class="evidence">
+    <div class="rightsize">
+      <div class="rightsize-option">
+        <h3>Simpler</h3>
+        <p>Default-off, opt-in. A backstop nobody turns on is effectively absent. Rejected.</p>
+      </div>
+      <div class="rightsize-option rightsize-option--chosen">
+        <h3>This design</h3>
+        <p>Default-on <code>enforce</code>, plus <code>GITBAN_CWD_PIN_HOOK_MODE=advisory</code> for one release (logs, doesn't reject) and an audited per-invocation bypass — then advisory is removed.</p>
+      </div>
+      <div class="rightsize-option">
+        <h3>Bigger</h3>
+        <p>Default-on with no migration mode. Too aggressive for downstream forks — the dispatcher just refuses to operate, with only bypass-spam as escape. Rejected.</p>
+      </div>
+    </div>
+    <p>The same "minimum that works" logic keeps the resolver inline (no helper script to keep on PATH) and enforces write-class only — read-class failures are loud, though the SKILLs still pin reads to protect read-into-write chains.</p>
+  </div>
+  <footer class="slide-foot">cwd-pin-git-operations · d56a0419 · 6/10</footer>
+</section>
+
+<section class="slide" id="s7">
+  <p class="kicker">Risks &amp; failure modes</p>
+  <h2 class="headline">The load-bearing risk is the hook rejecting a legitimate dispatch command — answered by a corpus test and an audited escape hatch.</h2>
+  <div class="evidence">
+    <table>
+      <thead><tr><th>Risk</th><th>Mitigation</th></tr></thead>
+      <tbody>
+        <tr><td>Regex false-positive rejects legitimate dispatch flow</td><td>Corpus-regression test replays the past three sprints' dispatcher transcripts; v1 deferrals documented; <code>GITBAN_ALLOW_CWD_PIN_BYPASS=1</code> for emergencies</td></tr>
+        <tr><td>Resolver needs a modern git (<code>--path-format</code>)</td><td>Floor is git 2.31 (2021), documented in the changelog; CI covers Linux and macOS, Windows verified manually</td></tr>
+        <tr><td>Hook becomes ceremony if upstream fixes the drift</td><td>An upstream issue is filed as the observable referent; downgrade to advisory only after two clean releases post-fix, tracked by a backlog card</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <footer class="slide-foot">cwd-pin-git-operations · d56a0419 · 7/10</footer>
+</section>
+
+<section class="slide" id="s8">
+  <p class="kicker">Implementation sequence</p>
+  <h2 class="headline">Gate first, then build, pin, and only then wire in — Phases 2 and 3 land together so gitban never rejects itself.</h2>
+  <div class="evidence">
+    <ol class="sequence">
+      <li class="sequence-step">
+        <h3>Phase 0 · Gate</h3>
+        <p>File the upstream Claude Code issue and record its number, so the rollback trigger has a real referent; flip ADR-051 to Accepted.</p>
+      </li>
+      <li class="sequence-step">
+        <h3>Phase 1 · Build the hook</h3>
+        <p><code>cwd-pin-check.sh</code> with full subprocess-driven tests — every accept/reject case plus a corpus-regression pass over real dispatcher transcripts. Not yet wired in.</p>
+      </li>
+      <li class="sequence-step">
+        <h3>Phase 2 · Pin the SKILLs</h3>
+        <p>Rewrite all 17 write-class git invocations to the pinned form; a render-and-grep test keeps them pinned as SKILLs evolve.</p>
+      </li>
+      <li class="sequence-step">
+        <h3>Phase 3 · Wire it in</h3>
+        <p>One settings entry ships the hook via <code>gitban init</code>. Lands lockstep with Phase 2 for this repo — otherwise the dispatcher would reject its own still-unpinned commands.</p>
+      </li>
+      <li class="sequence-step">
+        <h3>Phase 4 · Document</h3>
+        <p>Changelog (breaking change, migration flag, deprecation timing), a CLAUDE.md pointer, and backlog cards for removing advisory mode and revisiting after an upstream fix.</p>
+      </li>
+    </ol>
+  </div>
+  <footer class="slide-foot">cwd-pin-git-operations · d56a0419 · 8/10</footer>
+</section>
+
+<section class="slide" id="s9">
+  <p class="kicker">Open questions</p>
+  <h2 class="headline">A few classification edges left to iterate — none block the build.</h2>
+  <div class="evidence">
+    <ul>
+      <li><strong>Non-git commands:</strong> should the hook also pin CWD-sensitive commands like <code>pytest</code> or <code>make</code>? v1 is git-only; an open extension point.</li>
+      <li><strong>Where the regression corpus lives:</strong> committed real transcripts (path-leak risk) versus generating them from rendered SKILLs. <em>Leans generated.</em></li>
+      <li><strong>Classifying <code>git stash</code>:</strong> treat it as write-class by the safe default, even though a drifted stash is benign per-worktree.</li>
+    </ul>
+  </div>
+  <footer class="slide-foot">cwd-pin-git-operations · d56a0419 · 9/10</footer>
+</section>
+
+<section class="slide slide--colophon" id="s10">
+  <h2 class="headline">Colophon</h2>
+  <div class="evidence">
+    <p><strong>Source:</strong> docs/designs/DD-021-cwd-pin-git-operations.md</p>
+    <p><strong>Source commit:</strong> d56a0419 (clean)</p>
+    <p><strong>Generated:</strong> 2026-07-09 · standalone mode</p>
+    <p><strong>Review:</strong> APPROVED · 1 round · 2026-07-09</p>
+    <p><strong>Steering:</strong> none</p>
+    <p>This deck is a view; the source document is authoritative.</p>
+  </div>
+  <footer class="slide-foot">cwd-pin-git-operations · d56a0419 · 10/10</footer>
+</section>
+
+</main>
+<script>
+/* deck-nav.js — gitban deck navigation. Embedded verbatim in every deck.
+ * Zero dependencies. Progressive enhancement only: with JS off the deck is a
+ * complete scrolling document — this script adds keyboard slide-jumps and a
+ * live n/N position indicator, nothing else. Normative behaviors:
+ * references/visual-system.md §4. */
+(function () {
+  "use strict";
+
+  var slides = Array.prototype.slice.call(
+    document.querySelectorAll("main.deck > section.slide")
+  );
+  if (slides.length === 0) { return; }
+
+  /* Live position indicator — exists only when JS runs. */
+  var pos = document.createElement("div");
+  pos.className = "deck-pos";
+  pos.setAttribute("role", "status");
+  pos.setAttribute("aria-live", "polite");
+  document.body.appendChild(pos);
+
+  var current = 0;
+  function render() {
+    pos.textContent = (current + 1) + "/" + slides.length;
+  }
+
+  /* A slide is "current" when it crosses the vertical middle of the
+   * viewport. The -50% root margins collapse the intersection zone to that
+   * midline, so the definition keeps working for slides taller than the
+   * viewport, where any ratio threshold would never fire. */
+  if (typeof IntersectionObserver === "function") {
+    var observer = new IntersectionObserver(function (entries) {
+      for (var i = 0; i < entries.length; i++) {
+        if (entries[i].isIntersecting) {
+          current = slides.indexOf(entries[i].target);
+          render();
+        }
+      }
+    }, { rootMargin: "-50% 0px -50% 0px", threshold: 0 });
+    for (var j = 0; j < slides.length; j++) { observer.observe(slides[j]); }
+  }
+  render();
+
+  function goTo(index) {
+    current = Math.max(0, Math.min(slides.length - 1, index));
+    slides[current].scrollIntoView({ block: "start" });
+    render();
+  }
+
+  /* Unmodified navigation keys only; preventDefault() stops native scrolling
+   * from double-firing on the same keystroke. Modified combinations and
+   * editable-element focus are left to the browser untouched. */
+  document.addEventListener("keydown", function (ev) {
+    if (ev.altKey || ev.ctrlKey || ev.metaKey || ev.shiftKey) { return; }
+    if (ev.defaultPrevented) { return; }
+    var el = ev.target;
+    if (el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "SELECT" || el.isContentEditable)) { return; }
+    switch (ev.key) {
+      case "ArrowDown": case "ArrowRight": case "PageDown": goTo(current + 1); break;
+      case "ArrowUp": case "ArrowLeft": case "PageUp": goTo(current - 1); break;
+      case "Home": goTo(0); break;
+      case "End": goTo(slides.length - 1); break;
+      default: return;
+    }
+    ev.preventDefault();
+  });
+})();
+</script>
+</body>
+</html>

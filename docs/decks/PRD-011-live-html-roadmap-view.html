@@ -1,0 +1,864 @@
+<!-- gitban-deck
+{
+  "source": "docs/prds/PRD-011-live-html-roadmap-view.md",
+  "source_commit": "d56a0419",
+  "source_dirty": false,
+  "generated": "2026-07-09",
+  "mode": "standalone",
+  "review": {
+    "verdict": "APPROVED",
+    "date": "2026-07-09",
+    "rounds": 1,
+    "strongest_finding": "slide 6 says 'three ways' where the source prose opens 'two ways' then lists three options — a defensible reconciliation to the three options actually weighed, not a fabrication; reviewer would ship as-is"
+  },
+  "steering": []
+}
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PRD-011 · Live HTML Roadmap View</title>
+  <style>
+/* ==========================================================================
+   deck.css — the one deck stylesheet (gitban lifecycle artifact decks)
+
+   Embedded verbatim in every generated deck; never edited per-deck. All
+   chrome lives here — the writer composes semantic HTML within the grammar
+   documented in references/visual-system.md and authors no CSS of its own.
+   Light-first, print-safe, executive-document aesthetic. Zero external
+   references: system fonts only, no imports, no images.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Tokens — the complete palette and scale. Every color in a deck
+      (including inline-SVG evidence, via the fill- and stroke- utility
+      classes in §9) resolves from these custom properties; nothing else is
+      sanctioned. NOTE: never write a literal star-slash sequence inside a
+      comment — it terminates the comment early and the stray prose becomes
+      an invalid selector that eats the entire next rule block.
+   -------------------------------------------------------------------------- */
+:root {
+  /* Surfaces */
+  --paper: #faf9f6;          /* page + slide ground: warm near-white */
+  --surface: #ffffff;        /* raised panels (vs-options, code) */
+  --surface-tint: #eef2f7;   /* accent-tinted panels (ask slide, callout) */
+
+  /* Ink */
+  --ink: #1f242e;            /* primary text */
+  --ink-secondary: #4a5160;  /* supporting text, captions */
+  --ink-muted: #878d9a;      /* footers, colophon, labels */
+  --ink-inverse: #ffffff;    /* SVG label text placed ON a dark fill (see §8/§9) */
+
+  /* Accent — defaults to PRD blue; the deck root's type modifier
+     (.deck--prd/.deck--adr/.deck--design, §1b) remaps this per artifact type */
+  --accent: #14508c;
+  --accent-ink: #103e6d;     /* accent used AS text on light ground */
+
+  /* Rules & borders */
+  --rule: #e0e3e9;
+  --rule-strong: #b7bdc9;
+
+  /* Semantic */
+  --good: #1e7d43;
+  --warn: #9a6a00;
+  --bad: #b3372e;
+
+  /* Data palette (inline-SVG evidence) */
+  --data-1: #14508c;
+  --data-2: #1e7d43;
+  --data-3: #9a6a00;
+  --data-4: #7a4a9e;
+  --data-5: #b3372e;
+  --data-6: #3d7a8a;
+
+  /* Type */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+               "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Code", Consolas,
+               "Liberation Mono", Menlo, monospace;
+  --text-s: 0.85rem;
+  --text-0: 1.125rem;                               /* body */
+  --text-1: 1.4rem;
+  --text-2: clamp(1.5rem, 1.1rem + 1.6vw, 2.1rem);  /* slide headline */
+  --text-3: clamp(2rem, 1.4rem + 2.6vw, 3rem);      /* title headline */
+  --text-stat: clamp(2.2rem, 1.6rem + 2.8vw, 3.4rem);
+
+  /* Layout */
+  --slide-max: 62rem;        /* content column ceiling */
+  --pad-x: clamp(1.25rem, 5vw, 4rem);
+  --pad-y: clamp(2.5rem, 7vh, 5rem);
+  --gap: 1.5rem;
+  --radius: 6px;
+}
+
+/* --------------------------------------------------------------------------
+   1b. Per-artifact-type accent theming.
+       The deck root <main> carries exactly ONE type modifier
+       (deck--prd | deck--adr | deck--design) that remaps the accent so the
+       WHOLE deck — title badge, kicker rule, links, list markers, the ask
+       slide, callouts, .fill-accent SVG — reads in its artifact type's color:
+       PRD blue, ADR/NOM amber, design-doc teal. Each type's --accent-ink
+       (used AS text) clears WCAG AA (>=4.5:1) on paper; the brighter --accent
+       is used only for rules/fills/markers (>=3:1). The data palette
+       (--data-*) is deliberately NOT retinted — it stays stable across types
+       so a chart means the same thing in any deck.
+   -------------------------------------------------------------------------- */
+.deck--prd    { --accent: #14508c; --accent-ink: #103e6d; }
+.deck--adr    { --accent: #b5730a; --accent-ink: #7a4900; }
+.deck--design { --accent: #2f7d90; --accent-ink: #1b5563; }
+
+/* --------------------------------------------------------------------------
+   2. Base
+   -------------------------------------------------------------------------- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  /* This deck is a light-only document. Declaring color-scheme: light opts it
+     out of browser force-dark (Chrome Auto Dark Mode, dark-mode extensions, OS
+     "invert" settings): without it a forcing browser auto-inverts the page and
+     mangles the token-fill SVG evidence into unreadable dark-on-dark. The
+     within-deck contrast rules can only guarantee legibility when the browser
+     honors the declared scheme — this is the declaration that makes them hold. */
+  color-scheme: light;
+  /* The document scroller IS the deck surface: gentle snap at slide starts,
+     never mandatory — a tall slide must scroll freely (design D4). */
+  scroll-snap-type: y proximity;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: var(--text-0);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection { background: var(--surface-tint); color: var(--accent-ink); }
+
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+a { color: var(--accent-ink); text-decoration-thickness: 1px; text-underline-offset: 0.15em; }
+
+strong { color: var(--ink); font-weight: 650; }
+
+/* --------------------------------------------------------------------------
+   3. The slide frame
+      Viewport-height minimum, NO fixed height: content taller than the
+      viewport grows the slide and scrolls freely. Flex column centers
+      content vertically and pins the footer to the bottom edge.
+   -------------------------------------------------------------------------- */
+.deck { display: block; }
+
+.slide {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
+  min-height: 100svh;
+  padding: var(--pad-y) var(--pad-x);
+  scroll-snap-align: start;
+}
+
+.slide + .slide { border-top: 1px solid var(--rule); }
+
+/* Centered content column */
+.slide > * {
+  width: 100%;
+  max-width: var(--slide-max);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* --------------------------------------------------------------------------
+   4. Text roles
+   -------------------------------------------------------------------------- */
+.kicker {
+  margin: 0 auto 0.75rem;   /* keep the .slide > * horizontal centering — a
+                               0-margin shorthand here would reset it and push
+                               the kicker off the content column on wide viewports */
+  font-size: var(--text-s);
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-ink);
+}
+
+.headline {
+  margin: 0 auto;           /* same: preserve the centered content column */
+  font-size: var(--text-2);
+  font-weight: 700;
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.evidence { margin-top: var(--gap); color: var(--ink); }
+.evidence > :first-child { margin-top: 0; }
+.evidence > :last-child { margin-bottom: 0; }
+
+.slide-foot {
+  margin-top: auto;          /* pin to the slide's bottom edge */
+  padding-top: var(--gap);
+  font-size: var(--text-s);
+  color: var(--ink-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------------------------
+   5. Slide variants
+   -------------------------------------------------------------------------- */
+.slide--title .headline { font-size: var(--text-3); letter-spacing: -0.02em; }
+
+/* The artifact-type badge — the one consistent, prominent signal of WHICH kind
+   of source this deck presents (Product Requirements / Architecture Decision /
+   Design Document). A pill in the type's accent, always the first element on
+   the title slide. Reads instantly and prints in color. */
+.slide--title .artifact-type {
+  display: inline-block;
+  margin-bottom: 1.1rem;
+  /* pin to the centered content column's left edge, like the kicker */
+  margin-left: max(calc((100% - var(--slide-max)) / 2), 0rem);
+  padding: 0.3rem 0.85rem;
+  border: 1.5px solid var(--accent);
+  border-radius: 999px;
+  font-size: var(--text-s);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent-ink);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.slide--title .kicker {
+  border-top: 4px solid var(--accent);
+  padding-top: 1rem;
+  width: fit-content; /* the accent bar hugs the kicker text */
+  /* fit-content + auto margins would center it; pin its left edge to the
+     centered content column instead (offset = half the space the column
+     leaves over, never negative) */
+  margin-left: max(calc((100% - var(--slide-max)) / 2), 0rem);
+}
+
+.slide--title .evidence { color: var(--ink-secondary); font-size: var(--text-1); }
+
+.slide--ask {
+  background: var(--surface-tint);
+  border-left: 6px solid var(--accent);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.slide--ask .headline { color: var(--accent-ink); }
+
+.slide--colophon { font-size: var(--text-s); color: var(--ink-secondary); }
+.slide--colophon .headline { font-size: var(--text-1); color: var(--ink-secondary); }
+.slide--colophon .evidence { color: var(--ink-secondary); }
+.slide--colophon a { color: var(--ink-secondary); }
+
+/* --------------------------------------------------------------------------
+   6. Evidence content — standard HTML, no classes needed
+   -------------------------------------------------------------------------- */
+.evidence p, .evidence ul, .evidence ol { margin: 0 0 0.9em; }
+
+.evidence ul, .evidence ol { padding-left: 1.4em; }
+.evidence li { margin-bottom: 0.35em; }
+.evidence li::marker { color: var(--accent); }
+
+.evidence table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0 0 1em;
+  font-size: 0.95em;
+}
+.evidence th {
+  text-align: left;
+  font-weight: 650;
+  border-bottom: 2px solid var(--rule-strong);
+  padding: 0.45em 0.9em 0.45em 0;
+}
+.evidence td {
+  border-bottom: 1px solid var(--rule);
+  padding: 0.45em 0.9em 0.45em 0;
+  vertical-align: top;
+}
+
+.evidence blockquote {
+  margin: 0 0 1em;
+  padding: 0.1em 0 0.1em 1.1em;
+  border-left: 3px solid var(--rule-strong);
+  color: var(--ink-secondary);
+}
+
+.evidence figure { margin: 0 0 1em; }
+.evidence figcaption {
+  margin-top: 0.5em;
+  font-size: var(--text-s);
+  color: var(--ink-muted);
+}
+
+.evidence code {
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  background: var(--surface-tint);
+  padding: 0.1em 0.35em;
+  border-radius: 3px;
+}
+.evidence pre {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: 1em 1.25em;
+  overflow-x: auto;
+  margin: 0 0 1em;
+}
+.evidence pre code { background: none; padding: 0; font-size: 0.85em; }
+
+.evidence hr {
+  border: 0;
+  border-top: 1px solid var(--rule);
+  margin: 1.5em 0;
+}
+
+/* --------------------------------------------------------------------------
+   7. Evidence utilities
+   -------------------------------------------------------------------------- */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gap) calc(var(--gap) * 1.5);
+  margin: 0 0 1em;
+}
+
+.stat { display: flex; flex-direction: column; gap: 0.25rem; }
+.stat-value {
+  font-size: var(--text-stat);
+  font-weight: 750;
+  line-height: 1;
+  color: var(--accent-ink);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+.stat-label { font-size: var(--text-s); color: var(--ink-muted); }
+
+.callout {
+  background: var(--surface-tint);
+  border-left: 4px solid var(--accent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 0.9rem 1.25rem;
+  margin: 0 0 1em;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.callout > :first-child { margin-top: 0; }
+.callout > :last-child { margin-bottom: 0; }
+
+.vs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: var(--gap);
+  margin: 0 0 1em;
+}
+.vs-option {
+  background: var(--surface);
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+}
+.vs-option > h3 {
+  margin: 0 0 0.5rem;
+  font-size: var(--text-s);
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-secondary);
+}
+.vs-option > :last-child { margin-bottom: 0; }
+.vs-option--chosen {
+  border: 2px solid var(--accent);
+  background: var(--surface);
+}
+.vs-option--chosen > h3 { color: var(--accent-ink); }
+
+/* Design-doc grammar: build-sequence / phases — the sequencing movement as an
+   ordered, numbered vertical timeline; the build order legible at a skim. Each
+   step is an <li> (an <ol class="sequence"> gives the ordering for free); the
+   number node and connecting rail are drawn from the counter, so reordering
+   steps renumbers them automatically. */
+.sequence {
+  list-style: none;
+  margin: 0 0 1em;
+  padding: 0;
+  counter-reset: seq;
+}
+.sequence-step {
+  position: relative;
+  counter-increment: seq;
+  padding: 0 0 1.15rem 3rem;
+}
+.sequence-step:last-child { padding-bottom: 0; }
+.sequence-step::before {          /* the numbered node */
+  content: counter(seq);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1.9rem;
+  height: 1.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--surface);
+  font-size: var(--text-s);
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.sequence-step::after {           /* the connecting rail to the next node */
+  content: "";
+  position: absolute;
+  left: 0.9rem;
+  top: 1.9rem;
+  bottom: 0;
+  width: 2px;
+  background: var(--rule-strong);
+}
+.sequence-step:last-child::after { display: none; }
+.sequence-step > h3 {
+  margin: 0 0 0.35rem;
+  font-size: var(--text-1);
+  font-weight: 650;
+  line-height: 1.25;
+  color: var(--ink);
+}
+.sequence-step > :last-child { margin-bottom: 0; }
+
+/* Design-doc grammar: architecture / component map — peer building blocks and
+   their roles as a labeled block diagram. Distinct from .vs (which compares
+   alternatives and marks one chosen): these are co-existing parts of the one
+   design. Genuine wiring/topology (arrows between parts) still uses the
+   inline-SVG valve; this is the labeled-parts layout. */
+.components {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: var(--gap);
+  margin: 0 0 1em;
+}
+.component {
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-top: 3px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 0.9rem 1.1rem;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.component > h3 {
+  margin: 0 0 0.4rem;
+  font-size: var(--text-0);
+  font-weight: 650;
+  color: var(--ink);
+}
+.component > :last-child { margin-bottom: 0; }
+
+/* Design-doc grammar: right-sizing comparison — this design against a simpler
+   and a bigger option on one scope axis, making "every element earns its keep"
+   visual. The flanking options (roads not taken) recede in dashed/muted tone;
+   the chosen middle is solid and accented. Order the three columns
+   simpler → chosen → bigger so the axis reads left-to-right. */
+.rightsize {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--gap);
+  margin: 0 0 1em;
+  align-items: stretch;
+}
+.rightsize-option {
+  background: var(--paper);
+  border: 1px dashed var(--rule-strong);
+  border-radius: var(--radius);
+  padding: 0.9rem 1.1rem;
+  color: var(--ink-secondary);
+}
+.rightsize-option > h3 {
+  margin: 0 0 0.4rem;
+  font-size: var(--text-s);
+  font-weight: 650;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+.rightsize-option--chosen {
+  background: var(--surface);
+  border: 2px solid var(--accent);
+  color: var(--ink);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.rightsize-option--chosen > h3 { color: var(--accent-ink); }
+.rightsize-option > :last-child { margin-bottom: 0; }
+
+/* --------------------------------------------------------------------------
+   8. Inline-SVG evidence
+   -------------------------------------------------------------------------- */
+.evidence svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto 1em;
+}
+.evidence svg text {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  fill: var(--ink-secondary);
+}
+
+/* --------------------------------------------------------------------------
+   9. SVG color utilities — the token-palette escape valve.
+      CSS var() does not resolve inside SVG presentation attributes, so
+      colors are applied via these classes; raw color literals in a deck
+      are a chrome-drift finding.
+   -------------------------------------------------------------------------- */
+.fill-data-1 { fill: var(--data-1); }  .stroke-data-1 { stroke: var(--data-1); }
+.fill-data-2 { fill: var(--data-2); }  .stroke-data-2 { stroke: var(--data-2); }
+.fill-data-3 { fill: var(--data-3); }  .stroke-data-3 { stroke: var(--data-3); }
+.fill-data-4 { fill: var(--data-4); }  .stroke-data-4 { stroke: var(--data-4); }
+.fill-data-5 { fill: var(--data-5); }  .stroke-data-5 { stroke: var(--data-5); }
+.fill-data-6 { fill: var(--data-6); }  .stroke-data-6 { stroke: var(--data-6); }
+.fill-good   { fill: var(--good); }    .stroke-good   { stroke: var(--good); }
+.fill-warn   { fill: var(--warn); }    .stroke-warn   { stroke: var(--warn); }
+.fill-bad    { fill: var(--bad); }     .stroke-bad    { stroke: var(--bad); }
+.fill-accent { fill: var(--accent); }  .stroke-accent { stroke: var(--accent); }
+.fill-ink    { fill: var(--ink); }     .stroke-ink    { stroke: var(--ink); }
+.fill-muted  { fill: var(--ink-muted); } .stroke-muted { stroke: var(--ink-muted); }
+.stroke-rule { stroke: var(--rule-strong); }
+.fill-surface { fill: var(--surface); }
+.fill-surface-tint { fill: var(--surface-tint); }  /* light labeled-box ground: makes the
+                                                       light band SVG-reachable so a rule-
+                                                       following author gets a filled rect,
+                                                       not the SVG default (black). */
+.fill-inverse { fill: var(--ink-inverse); }  /* light label ink for text ON a dark fill */
+.fill-none   { fill: none; }
+
+/* --------------------------------------------------------------------------
+   10. Position indicator (created by deck-nav.js; absent without JS)
+   -------------------------------------------------------------------------- */
+.deck-pos {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 10;
+  padding: 0.25rem 0.7rem;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  box-shadow: 0 1px 3px rgba(31, 36, 46, 0.08);
+  font-size: var(--text-s);
+  color: var(--ink-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --------------------------------------------------------------------------
+   11. Narrow viewports (phone reading is a first-class path)
+   -------------------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .grid-2 { grid-template-columns: 1fr; }
+  /* The right-size spectrum stacks; simpler → chosen → bigger reads top-to-bottom
+     on a phone. .components auto-fits and .sequence is already vertical. */
+  .rightsize { grid-template-columns: 1fr; }
+  /* Wide tables scroll within their slide instead of overflowing the page —
+     a ≥4-column table's min-content width beats a phone viewport (observed
+     at 375px in Chromium and Firefox); same containment pattern as
+     `.evidence pre`. */
+  .evidence table { font-size: 0.85em; display: block; overflow-x: auto; max-width: 100%; }
+  .evidence th, .evidence td { padding-right: 0.5em; }
+}
+
+/* --------------------------------------------------------------------------
+   12. Print — one slide per page, nothing clipped, no screen chrome
+   -------------------------------------------------------------------------- */
+@media print {
+  html { scroll-snap-type: none; scroll-behavior: auto; }
+  body { background: #fff; }
+
+  .slide {
+    min-height: 0;           /* natural height on paper; no vh games */
+    padding: 0.35in 0.25in;
+    break-after: page;
+    page-break-after: always; /* legacy engines */
+    border-top: none;
+  }
+  .slide:last-of-type { break-after: auto; page-break-after: auto; }
+
+  .deck-pos { display: none; }
+
+  .callout, .vs-option, .stat, .evidence figure { break-inside: avoid; }
+  .component, .rightsize-option, .sequence-step { break-inside: avoid; }
+  .evidence tr { break-inside: avoid; }
+
+  .slide--ask { border-left-width: 10px; } /* survives background stripping */
+
+  a { color: inherit; }
+}
+  </style>
+</head>
+<body>
+  <main class="deck deck--prd">
+
+    <section class="slide slide--title" id="s1">
+      <p class="artifact-type">Product Requirements</p>
+      <p class="kicker">PRD-011 · gitban · v1.2/m2/html-explorer · Draft</p>
+      <h1 class="headline">The HTML roadmap should be a live dashboard, not a snapshot you regenerate by hand</h1>
+      <div class="evidence">
+        <p>PRD-006 delivered the interactive HTML roadmap view. This PRD fixes the workflow around it: a stable URL you can bookmark, kept current automatically as you edit.</p>
+      </div>
+      <footer class="slide-foot">PRD-011 · d56a0419 · 1/9</footer>
+    </section>
+
+    <section class="slide" id="s2">
+      <p class="kicker">The problem</p>
+      <h2 class="headline">Every roadmap edit strands the browser tab — the file is renamed and never re-rendered</h2>
+      <div class="evidence">
+        <ul>
+          <li>Each <code>render_roadmap(format="html")</code> writes a <em>date-stamped</em> file (<code>roadmap-2026-03-28.html</code>), so a bookmarked tab points at yesterday's file — you have to find and open the new one every time.</li>
+          <li><code>upsert_roadmap</code> and <code>delete_from_roadmap</code> edit the YAML and return success, but have <strong>no awareness of the HTML view</strong> — you must remember to re-render, by hand, after every edit.</li>
+          <li>So the view becomes a point-in-time snapshot you generate once and forget, rather than a live dashboard you keep open while working.</li>
+        </ul>
+        <div class="callout">
+          <p>The gap isn't the view — PRD-006 delivered that. It's the <strong>workflow around it</strong>: the view needs a stable URL and a render pipeline that stays current without manual intervention.</p>
+        </div>
+      </div>
+      <footer class="slide-foot">PRD-011 · d56a0419 · 2/9</footer>
+    </section>
+
+    <section class="slide" id="s3">
+      <p class="kicker">Why now</p>
+      <h2 class="headline">The render pipeline already works — only the last-mile workflow is missing</h2>
+      <div class="evidence">
+        <p>PRD-006 and v1.2/m2 delivered the explorer, and the rendering pipeline is solid: Jinja2 templates produce self-contained HTML with inlined CSS/JS, snapshot extraction computes progress from leaf statuses, and the interactive tree with localStorage persistence works well.</p>
+        <p>What's missing is the last-mile developer experience — keeping the view alive during active editing sessions.</p>
+        <div class="callout">
+          <p>This is low-hanging fruit. The core rendering infrastructure exists; the changes are <strong>small in scope but high in daily-use impact</strong>.</p>
+        </div>
+      </div>
+      <footer class="slide-foot">PRD-011 · d56a0419 · 3/9</footer>
+    </section>
+
+    <section class="slide" id="s4">
+      <p class="kicker">Who's blocked</p>
+      <h2 class="headline">Two users hit the same wall — the view is never current when they look at it</h2>
+      <div class="evidence">
+        <div class="grid-2">
+          <div>
+            <h3>Agent operators editing via MCP — <em>primary</em></h3>
+            <p>Developers and team leads managing their roadmap through <code>upsert_roadmap</code> / <code>delete_from_roadmap</code>.</p>
+            <p><strong>Pain:</strong> must manually re-render after edits, then find and open the newly-named file; the tab goes stale immediately.</p>
+            <p><strong>Want:</strong> keep a tab open and see changes after a refresh — or know it's already re-rendered.</p>
+          </div>
+          <div>
+            <h3>Developers reviewing state — <em>secondary</em></h3>
+            <p>Contributors who open the HTML roadmap to understand project status and progress.</p>
+            <p><strong>Pain:</strong> must ask an agent to render, or hunt for the latest date-stamped file in <code>.gitban/views/</code>.</p>
+            <p><strong>Want:</strong> bookmark a stable <code>roadmap.html</code> and always see current state.</p>
+          </div>
+        </div>
+      </div>
+      <footer class="slide-foot">PRD-011 · d56a0419 · 4/9</footer>
+    </section>
+
+    <section class="slide" id="s5">
+      <p class="kicker">Definition of success</p>
+      <h2 class="headline">Solved means one bookmarkable file that keeps itself current on every edit</h2>
+      <div class="evidence">
+        <table>
+          <thead>
+            <tr><th>Criterion</th><th>Target</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Stable filename</td><td>Render output is always <code>.gitban/views/roadmap.html</code></td></tr>
+            <tr><td>Auto-render on upsert</td><td>HTML file mtime updates on each <code>upsert_roadmap</code> call</td></tr>
+            <tr><td>Auto-render on delete</td><td>HTML file mtime updates on each <code>delete_from_roadmap</code> call</td></tr>
+            <tr><td>Opt-out works</td><td><code>render_html=false</code> skips the HTML write entirely</td></tr>
+            <tr><td>Render latency</td><td>&lt;100ms added per edit for a 100-node roadmap</td></tr>
+            <tr><td>No regression</td><td>All existing interactive HTML-view features preserved</td></tr>
+          </tbody>
+        </table>
+        <p>Auto-render is <strong>opt-out, not opt-in</strong> — it works by default and can be disabled for bulk edits.</p>
+      </div>
+      <footer class="slide-foot">PRD-011 · d56a0419 · 5/9</footer>
+    </section>
+
+    <section class="slide" id="s6">
+      <p class="kicker">Why it's cheap</p>
+      <h2 class="headline">Re-rendering the whole view on each edit is invisibly cheap — the simple path wins</h2>
+      <div class="evidence">
+        <div class="grid-2">
+          <div class="stat">
+            <span class="stat-value">&lt;50ms</span>
+            <span class="stat-label">Full re-render after an edit (100-node roadmap): extract + Jinja2 + write</span>
+          </div>
+          <div>
+            <p>The PRD weighs three ways to keep a browser view current without a running server. The simplest is also the fastest to reason about and carries zero architectural risk.</p>
+          </div>
+        </div>
+        <div class="vs">
+          <div class="vs-option vs-option--chosen">
+            <h3>Option A — re-render Jinja2 each edit</h3>
+            <p><strong>Chosen.</strong> Proven pipeline, ~single-digit ms render, imperceptible cost. Simplest, zero risk.</p>
+          </div>
+          <div class="vs-option">
+            <h3>Option B — static shell + separate JSON</h3>
+            <p>Blocked: <code>file://</code> bans <code>fetch()</code> in all modern browsers. Needs a server or inline JSON anyway — negating the benefit.</p>
+          </div>
+          <div class="vs-option">
+            <h3>Option C — inline JSON, surgical replace</h3>
+            <p>Over-engineering: string-surgery complexity to save milliseconds on an operation already under 50ms.</p>
+          </div>
+        </div>
+      </div>
+      <footer class="slide-foot">PRD-011 · d56a0419 · 6/9</footer>
+    </section>
+
+    <section class="slide" id="s7">
+      <p class="kicker">Scope boundary</p>
+      <h2 class="headline">Stable filename plus opt-out auto-render — nothing that needs a running server</h2>
+      <div class="evidence">
+        <div class="grid-2">
+          <div>
+            <h3>In scope</h3>
+            <ul>
+              <li><code>write_html_view()</code> writes a stable <code>roadmap.html</code> instead of a date-stamped name</li>
+              <li><code>render_html: bool = True</code> parameter on <code>upsert_roadmap</code> and <code>delete_from_roadmap</code></li>
+              <li>Auto-render logic: extract snapshot → render HTML → write to the stable path</li>
+              <li><code>html_view</code> and non-fatal <code>html_view_warning</code> fields in tool responses</li>
+            </ul>
+          </div>
+          <div>
+            <h3>Out of scope — deliberate non-goals</h3>
+            <ul>
+              <li>Live reload / WebSocket push — requires a running server; users refresh manually</li>
+              <li>Client-side rendering migration — the server-render path is fast enough</li>
+              <li>Board HTML view auto-render — same pattern, separate scope, later</li>
+              <li>Watching / polling the YAML for changes — over-engineering; tool-triggered render suffices</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <footer class="slide-foot">PRD-011 · d56a0419 · 7/9</footer>
+    </section>
+
+    <section class="slide" id="s8">
+      <p class="kicker">What's settled</p>
+      <h2 class="headline">No decisions are open — one phase, with ADR-039's date-stamped convention superseded</h2>
+      <div class="evidence">
+        <ul>
+          <li><strong>One delivery phase, no decisions needed</strong> — a straightforward extension of existing patterns, with no new dependencies.</li>
+          <li><strong>One design call recorded:</strong> move <code>_write_html_view</code> into <code>gitban/views/html.py</code> as a public function, so roadmap tools import the full render pipeline without a circular import — and the board view can reuse it later.</li>
+          <li><strong>Convenience, not a transaction:</strong> if auto-render fails, the YAML edit still succeeds and the response carries a non-fatal <code>html_view_warning</code>. Old date-stamped files are left in place, harmless.</li>
+          <li><strong>Deferred by design:</strong> board-view adoption, scoped auto-renders, and a <code>--watch</code> mode — each a follow-up if demand materializes.</li>
+        </ul>
+        <div class="callout">
+          <p>This PRD <strong>supersedes ADR-039's</strong> date-stamped filename convention (<code>{subject}-{date}.html</code> → <code>{subject}.html</code>); ADR-039 is amended as part of delivery.</p>
+        </div>
+      </div>
+      <footer class="slide-foot">PRD-011 · d56a0419 · 8/9</footer>
+    </section>
+
+    <section class="slide slide--colophon" id="s9">
+      <h2 class="headline">This deck is a view; the source PRD is authoritative</h2>
+      <div class="evidence">
+        <p>
+          <strong>Source:</strong> docs/prds/PRD-011-live-html-roadmap-view.md<br>
+          <strong>Source commit:</strong> d56a0419 (clean working tree)<br>
+          <strong>Generated:</strong> 2026-07-09 · standalone mode<br>
+          <strong>Steering:</strong> none<br>
+          <strong>Review:</strong> APPROVED · 1 round · adversarial fresh-context review
+        </p>
+        <p>The deck renders what PRD-011 says at commit d56a0419. Deliberation lives in the source document, which remains authoritative; this deck is a view onto it.</p>
+      </div>
+      <footer class="slide-foot">PRD-011 · d56a0419 · 9/9</footer>
+    </section>
+
+  </main>
+  <script>
+/* deck-nav.js — gitban deck navigation. Embedded verbatim in every deck.
+ * Zero dependencies. Progressive enhancement only: with JS off the deck is a
+ * complete scrolling document — this script adds keyboard slide-jumps and a
+ * live n/N position indicator, nothing else. Normative behaviors:
+ * references/visual-system.md §4. */
+(function () {
+  "use strict";
+
+  var slides = Array.prototype.slice.call(
+    document.querySelectorAll("main.deck > section.slide")
+  );
+  if (slides.length === 0) { return; }
+
+  /* Live position indicator — exists only when JS runs. */
+  var pos = document.createElement("div");
+  pos.className = "deck-pos";
+  pos.setAttribute("role", "status");
+  pos.setAttribute("aria-live", "polite");
+  document.body.appendChild(pos);
+
+  var current = 0;
+  function render() {
+    pos.textContent = (current + 1) + "/" + slides.length;
+  }
+
+  /* A slide is "current" when it crosses the vertical middle of the
+   * viewport. The -50% root margins collapse the intersection zone to that
+   * midline, so the definition keeps working for slides taller than the
+   * viewport, where any ratio threshold would never fire. */
+  if (typeof IntersectionObserver === "function") {
+    var observer = new IntersectionObserver(function (entries) {
+      for (var i = 0; i < entries.length; i++) {
+        if (entries[i].isIntersecting) {
+          current = slides.indexOf(entries[i].target);
+          render();
+        }
+      }
+    }, { rootMargin: "-50% 0px -50% 0px", threshold: 0 });
+    for (var j = 0; j < slides.length; j++) { observer.observe(slides[j]); }
+  }
+  render();
+
+  function goTo(index) {
+    current = Math.max(0, Math.min(slides.length - 1, index));
+    slides[current].scrollIntoView({ block: "start" });
+    render();
+  }
+
+  /* Unmodified navigation keys only; preventDefault() stops native scrolling
+   * from double-firing on the same keystroke. Modified combinations and
+   * editable-element focus are left to the browser untouched. */
+  document.addEventListener("keydown", function (ev) {
+    if (ev.altKey || ev.ctrlKey || ev.metaKey || ev.shiftKey) { return; }
+    if (ev.defaultPrevented) { return; }
+    var el = ev.target;
+    if (el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "SELECT" || el.isContentEditable)) { return; }
+    switch (ev.key) {
+      case "ArrowDown": case "ArrowRight": case "PageDown": goTo(current + 1); break;
+      case "ArrowUp": case "ArrowLeft": case "PageUp": goTo(current - 1); break;
+      case "Home": goTo(0); break;
+      case "End": goTo(slides.length - 1); break;
+      default: return;
+    }
+    ev.preventDefault();
+  });
+})();
+  </script>
+</body>
+</html>
