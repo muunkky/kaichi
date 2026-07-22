@@ -1,4 +1,4 @@
-<!-- gitban-deck
+<!-- kaichi-deck
 {
   "source": "docs/prds/PRD-011-live-html-roadmap-view.md",
   "source_commit": "d56a0419",
@@ -22,7 +22,7 @@
   <title>PRD-011 · Live HTML Roadmap View</title>
   <style>
 /* ==========================================================================
-   deck.css — the one deck stylesheet (gitban lifecycle artifact decks)
+   deck.css — the one deck stylesheet (kaichi lifecycle artifact decks)
 
    Embedded verbatim in every generated deck; never edited per-deck. All
    chrome lives here — the writer composes semantic HTML within the grammar
@@ -619,7 +619,7 @@ strong { color: var(--ink); font-weight: 650; }
 
     <section class="slide slide--title" id="s1">
       <p class="artifact-type">Product Requirements</p>
-      <p class="kicker">PRD-011 · gitban · v1.2/m2/html-explorer · Draft</p>
+      <p class="kicker">PRD-011 · kaichi · v1.2/m2/html-explorer · Draft</p>
       <h1 class="headline">The HTML roadmap should be a live dashboard, not a snapshot you regenerate by hand</h1>
       <div class="evidence">
         <p>PRD-006 delivered the interactive HTML roadmap view. This PRD fixes the workflow around it: a stable URL you can bookmark, kept current automatically as you edit.</p>
@@ -670,7 +670,7 @@ strong { color: var(--ink); font-weight: 650; }
           <div>
             <h3>Developers reviewing state — <em>secondary</em></h3>
             <p>Contributors who open the HTML roadmap to understand project status and progress.</p>
-            <p><strong>Pain:</strong> must ask an agent to render, or hunt for the latest date-stamped file in <code>.gitban/views/</code>.</p>
+            <p><strong>Pain:</strong> must ask an agent to render, or hunt for the latest date-stamped file in <code>.kaichi/views/</code>.</p>
             <p><strong>Want:</strong> bookmark a stable <code>roadmap.html</code> and always see current state.</p>
           </div>
         </div>
@@ -687,7 +687,7 @@ strong { color: var(--ink); font-weight: 650; }
             <tr><th>Criterion</th><th>Target</th></tr>
           </thead>
           <tbody>
-            <tr><td>Stable filename</td><td>Render output is always <code>.gitban/views/roadmap.html</code></td></tr>
+            <tr><td>Stable filename</td><td>Render output is always <code>.kaichi/views/roadmap.html</code></td></tr>
             <tr><td>Auto-render on upsert</td><td>HTML file mtime updates on each <code>upsert_roadmap</code> call</td></tr>
             <tr><td>Auto-render on delete</td><td>HTML file mtime updates on each <code>delete_from_roadmap</code> call</td></tr>
             <tr><td>Opt-out works</td><td><code>render_html=false</code> skips the HTML write entirely</td></tr>
@@ -765,7 +765,7 @@ strong { color: var(--ink); font-weight: 650; }
       <div class="evidence">
         <ul>
           <li><strong>One delivery phase, no decisions needed</strong> — a straightforward extension of existing patterns, with no new dependencies.</li>
-          <li><strong>One design call recorded:</strong> move <code>_write_html_view</code> into <code>gitban/views/html.py</code> as a public function, so roadmap tools import the full render pipeline without a circular import — and the board view can reuse it later.</li>
+          <li><strong>One design call recorded:</strong> move <code>_write_html_view</code> into <code>kaichi/views/html.py</code> as a public function, so roadmap tools import the full render pipeline without a circular import — and the board view can reuse it later.</li>
           <li><strong>Convenience, not a transaction:</strong> if auto-render fails, the YAML edit still succeeds and the response carries a non-fatal <code>html_view_warning</code>. Old date-stamped files are left in place, harmless.</li>
           <li><strong>Deferred by design:</strong> board-view adoption, scoped auto-renders, and a <code>--watch</code> mode — each a follow-up if demand materializes.</li>
         </ul>
@@ -793,7 +793,7 @@ strong { color: var(--ink); font-weight: 650; }
 
   </main>
   <script>
-/* deck-nav.js — gitban deck navigation. Embedded verbatim in every deck.
+/* deck-nav.js — kaichi deck navigation. Embedded verbatim in every deck.
  * Zero dependencies. Progressive enhancement only: with JS off the deck is a
  * complete scrolling document — this script adds keyboard slide-jumps and a
  * live n/N position indicator, nothing else. Normative behaviors:

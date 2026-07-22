@@ -1,4 +1,4 @@
-<!-- gitban-deck
+<!-- kaichi-deck
 {
   "source": "docs/designs/DD-021-cwd-pin-git-operations.md",
   "source_commit": "d56a0419",
@@ -22,7 +22,7 @@
 <title>CWD-Pin Git Operations (ADR-051) · design deck</title>
 <style>
 /* ==========================================================================
-   deck.css — the one deck stylesheet (gitban lifecycle artifact decks)
+   deck.css — the one deck stylesheet (kaichi lifecycle artifact decks)
 
    Embedded verbatim in every generated deck; never edited per-deck. All
    chrome lives here — the writer composes semantic HTML within the grammar
@@ -634,7 +634,7 @@ strong { color: var(--ink); font-weight: 650; }
     <p>The Claude Code Bash tool occasionally changes working directory between calls. A <code>git merge</code>, <code>push</code>, or <code>checkout</code> then operates on an executor's worktree branch instead of the parent sprint branch. What makes it dangerous is <em>how</em> it fails:</p>
     <ul>
       <li><strong>Silent</strong> — no error; the wrong-target write just succeeds and looks fine.</li>
-      <li><strong>In the harness</strong> — it originates below gitban, so it can't be fixed from inside; the durable answer is to make our own commands drift-proof.</li>
+      <li><strong>In the harness</strong> — it originates below kaichi, so it can't be fixed from inside; the durable answer is to make our own commands drift-proof.</li>
       <li><strong>Every session, on the riskiest operations</strong> — merge, push, branch delete — are exactly the commands exposed.</li>
     </ul>
   </div>
@@ -668,7 +668,7 @@ git -C "$PARENT" merge worktree-agent-foo --no-edit</code></pre>
       </div>
       <div class="component">
         <h3>Settings wiring</h3>
-        <p>One <code>hooks.PreToolUse</code> entry so <code>gitban init</code> deploys the hook to every workspace, merged idempotently.</p>
+        <p>One <code>hooks.PreToolUse</code> entry so <code>kaichi init</code> deploys the hook to every workspace, merged idempotently.</p>
       </div>
     </div>
     <p>The hook is the only new surface; everything else reuses the existing hook pattern already proven by the direct-state-edit guard.</p>
@@ -709,7 +709,7 @@ git -C "$PARENT" merge worktree-agent-foo --no-edit</code></pre>
       </div>
       <div class="rightsize-option rightsize-option--chosen">
         <h3>This design</h3>
-        <p>Default-on <code>enforce</code>, plus <code>GITBAN_CWD_PIN_HOOK_MODE=advisory</code> for one release (logs, doesn't reject) and an audited per-invocation bypass — then advisory is removed.</p>
+        <p>Default-on <code>enforce</code>, plus <code>KAICHI_CWD_PIN_HOOK_MODE=advisory</code> for one release (logs, doesn't reject) and an audited per-invocation bypass — then advisory is removed.</p>
       </div>
       <div class="rightsize-option">
         <h3>Bigger</h3>
@@ -728,7 +728,7 @@ git -C "$PARENT" merge worktree-agent-foo --no-edit</code></pre>
     <table>
       <thead><tr><th>Risk</th><th>Mitigation</th></tr></thead>
       <tbody>
-        <tr><td>Regex false-positive rejects legitimate dispatch flow</td><td>Corpus-regression test replays the past three sprints' dispatcher transcripts; v1 deferrals documented; <code>GITBAN_ALLOW_CWD_PIN_BYPASS=1</code> for emergencies</td></tr>
+        <tr><td>Regex false-positive rejects legitimate dispatch flow</td><td>Corpus-regression test replays the past three sprints' dispatcher transcripts; v1 deferrals documented; <code>KAICHI_ALLOW_CWD_PIN_BYPASS=1</code> for emergencies</td></tr>
         <tr><td>Resolver needs a modern git (<code>--path-format</code>)</td><td>Floor is git 2.31 (2021), documented in the changelog; CI covers Linux and macOS, Windows verified manually</td></tr>
         <tr><td>Hook becomes ceremony if upstream fixes the drift</td><td>An upstream issue is filed as the observable referent; downgrade to advisory only after two clean releases post-fix, tracked by a backlog card</td></tr>
       </tbody>
@@ -739,7 +739,7 @@ git -C "$PARENT" merge worktree-agent-foo --no-edit</code></pre>
 
 <section class="slide" id="s8">
   <p class="kicker">Implementation sequence</p>
-  <h2 class="headline">Gate first, then build, pin, and only then wire in — Phases 2 and 3 land together so gitban never rejects itself.</h2>
+  <h2 class="headline">Gate first, then build, pin, and only then wire in — Phases 2 and 3 land together so kaichi never rejects itself.</h2>
   <div class="evidence">
     <ol class="sequence">
       <li class="sequence-step">
@@ -756,7 +756,7 @@ git -C "$PARENT" merge worktree-agent-foo --no-edit</code></pre>
       </li>
       <li class="sequence-step">
         <h3>Phase 3 · Wire it in</h3>
-        <p>One settings entry ships the hook via <code>gitban init</code>. Lands lockstep with Phase 2 for this repo — otherwise the dispatcher would reject its own still-unpinned commands.</p>
+        <p>One settings entry ships the hook via <code>kaichi init</code>. Lands lockstep with Phase 2 for this repo — otherwise the dispatcher would reject its own still-unpinned commands.</p>
       </li>
       <li class="sequence-step">
         <h3>Phase 4 · Document</h3>
@@ -795,7 +795,7 @@ git -C "$PARENT" merge worktree-agent-foo --no-edit</code></pre>
 
 </main>
 <script>
-/* deck-nav.js — gitban deck navigation. Embedded verbatim in every deck.
+/* deck-nav.js — kaichi deck navigation. Embedded verbatim in every deck.
  * Zero dependencies. Progressive enhancement only: with JS off the deck is a
  * complete scrolling document — this script adds keyboard slide-jumps and a
  * live n/N position indicator, nothing else. Normative behaviors:

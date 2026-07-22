@@ -1,4 +1,4 @@
-<!-- gitban-deck
+<!-- kaichi-deck
 {
   "source": "docs/adr/ADR-078-lifecycle-deck-generation-as-skill-pair.md",
   "source_commit": "d56a0419",
@@ -22,7 +22,7 @@
   <title>ADR-078 — Lifecycle Artifact Decks via a Repo-Local Writer ⇄ Reviewer Skill Pair</title>
   <style>
 /* ==========================================================================
-   deck.css — the one deck stylesheet (gitban lifecycle artifact decks)
+   deck.css — the one deck stylesheet (kaichi lifecycle artifact decks)
 
    Embedded verbatim in every generated deck; never edited per-deck. All
    chrome lives here — the writer composes semantic HTML within the grammar
@@ -644,7 +644,7 @@ strong { color: var(--ink); font-weight: 650; }
 
     <section class="slide" id="s3">
       <p class="kicker">The decision</p>
-      <h2 class="headline">A repo-local skill pair — gitban-deck-writer ⇄ gitban-deck-reviewer — with no MCP tools, no Python pipeline, no hooks, and no gate framework</h2>
+      <h2 class="headline">A repo-local skill pair — kaichi-deck-writer ⇄ kaichi-deck-reviewer — with no MCP tools, no Python pipeline, no hooks, and no gate framework</h2>
       <div class="evidence">
         <p>The resident LLM agent <strong>writes each deck editorially</strong>: structure, slide count, emphasis, headlines, and on-slide evidence are per-artifact judgments within per-type narrative arcs that are defaults, never slide skeletons. A <strong>fresh-context reviewer sub-agent</strong> applies PRD SC3–SC6 as judgments on every deck before it can be called done.</p>
         <div class="callout">
@@ -709,7 +709,7 @@ strong { color: var(--ink); font-weight: 650; }
             <p>A deterministic renderer is the template ceiling PRD C2 rejects; it also adds manifest/release coupling and an adopter-visible surface out of scope.</p>
           </div>
           <div class="vs-option">
-            <h3>Extending the gitban/views/ Jinja pipeline</h3>
+            <h3>Extending the kaichi/views/ Jinja pipeline</h3>
             <p>The same objection in existing-code form: it projects structured state into fixed layouts, and deck content has no data model to project.</p>
           </div>
           <div class="vs-option vs-option--chosen">
@@ -809,7 +809,7 @@ strong { color: var(--ink); font-weight: 650; }
 
   </main>
   <script>
-/* deck-nav.js — gitban deck navigation. Embedded verbatim in every deck.
+/* deck-nav.js — kaichi deck navigation. Embedded verbatim in every deck.
  * Zero dependencies. Progressive enhancement only: with JS off the deck is a
  * complete scrolling document — this script adds keyboard slide-jumps and a
  * live n/N position indicator, nothing else. Normative behaviors:
