@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{width:1200px;height:630px}
+  body{
+    font-family:'Manrope',system-ui,sans-serif;
+    background:#faf9f6;
+    color:#14161a;
+    -webkit-font-smoothing:antialiased;
+    position:relative;
+    overflow:hidden;
+  }
+  /* faint brand swoosh band across the whole card */
+  .band{position:absolute;inset:0;width:1200px;height:630px;pointer-events:none}
+  .card{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;padding:64px 72px}
+
+  .top{display:flex;align-items:flex-start;justify-content:space-between}
+  .wordmark{display:inline-flex;flex-direction:column;align-items:flex-start;gap:4px}
+  .wordmark span{font-family:'Space Grotesk';font-weight:700;font-size:46px;letter-spacing:-.035em;line-height:1}
+  .pill{
+    display:inline-flex;align-items:center;gap:12px;
+    font-family:'JetBrains Mono';font-size:17px;letter-spacing:.14em;text-transform:uppercase;
+    color:#0f6d54;border:1px solid #cfe9de;background:#f2faf6;padding:10px 18px;border-radius:999px;
+  }
+  .dot{width:9px;height:9px;border-radius:50%;background:#0f6d54}
+
+  h1{
+    font-family:'Space Grotesk';font-weight:700;
+    font-size:104px;line-height:1.0;letter-spacing:-.03em;
+    max-width:16ch;
+  }
+  h1 .g{color:#0f6d54}
+  .sub{
+    font-size:27px;line-height:1.5;color:#4b5262;max-width:44ch;margin-top:26px;
+  }
+
+  .chips{display:flex;gap:12px;flex-wrap:wrap}
+  .chip{
+    font-family:'JetBrains Mono';font-size:17px;color:#5a616e;
+    border:1px solid #e7e5e0;border-radius:10px;padding:11px 16px;background:#fff;
+  }
+  .url{font-family:'JetBrains Mono';font-size:19px;color:#0f6d54;font-weight:500}
+  .foot{display:flex;align-items:flex-end;justify-content:space-between}
+</style>
+</head>
+<body>
+<svg class="band" viewBox="0 0 1200 630" preserveAspectRatio="none">
+  <defs>
+    <linearGradient id="sw" x1="0" y1="0" x2="1200" y2="0" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0f6d54" stop-opacity="0"></stop>
+      <stop offset="0.2" stop-color="#0f6d54" stop-opacity="0.20"></stop>
+      <stop offset="0.5" stop-color="#0f6d54" stop-opacity="0.32"></stop>
+      <stop offset="0.8" stop-color="#0f6d54" stop-opacity="0.20"></stop>
+      <stop offset="1" stop-color="#0f6d54" stop-opacity="0"></stop>
+    </linearGradient>
+  </defs>
+  <!-- large soft swoosh sweeping through the card -->
+  <path d="M-60,150 C300,20 560,250 820,150 C1010,78 1160,210 1320,120"
+        fill="none" stroke="url(#sw)" stroke-width="3" stroke-linecap="round"></path>
+  <!-- bright mint highlight segment -->
+  <path d="M760,168 C900,120 1010,205 1180,120"
+        fill="none" stroke="#4fe0a3" stroke-width="3.2" stroke-linecap="round" opacity="0.75"></path>
+</svg>
+
+<div class="card">
+  <div class="top">
+    <div class="wordmark">
+      <span>Kaichi</span>
+      <svg width="150" height="16" viewBox="0 0 94 10" style="display:block;overflow:visible">
+        <path d="M1,7 C20,1.5 34,9 53,5 C69,1.5 82,6.5 99,1.5" fill="none" stroke="#0f6d54" stroke-width="2.4" stroke-linecap="round"></path>
+      </svg>
+    </div>
+    <div class="pill"><span class="dot"></span>The Autonomous SDLC Harness</div>
+  </div>
+
+  <div>
+    <h1>AI code you can <span class="g">ship.</span></h1>
+    <p class="sub">A context manager and state-governance MCP that builds production-grade software — architected, tested, reviewed, and fully documented. Merge-ready PRs, not prototypes.</p>
+  </div>
+
+  <div class="foot">
+    <div class="chips">
+      <span class="chip">air-gapped &amp; hermetic</span>
+      <span class="chip">zero telemetry</span>
+      <span class="chip">git-native</span>
+      <span class="chip">stage-gated</span>
+    </div>
+    <div class="url">muunkky.github.io/kaichi</div>
+  </div>
+</div>
+</body>
+</html>
