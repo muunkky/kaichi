@@ -9,11 +9,12 @@ cramped, especially full-width on mobile). Re-run this after editing a deck:
 
 Writes docs/decks/previews/{prd,design,adr}.png (1000x640 @2x). Commit the PNGs.
 
-The fourth preview, docs/decks/previews/roadmap.png, is NOT generated here: it is
-a screenshot of the product's own roadmap viewer (.gitban/views/roadmap.html in
-the product repo), captured at 1200x768 @2x with the top nav hidden and the brand
-text swapped gitban->kaichi. Regenerate it from the product repo if the roadmap
-view changes; the aspect ratio (1.5625) matches these deck previews.
+Two more previews, docs/decks/previews/roadmap.png and board.png, are NOT
+generated here: they are screenshots of the product's own viewer
+(.gitban/views/{roadmap,board}.html in the product repo), captured at 1200x768 /
+1400x896 @2x with the top nav (.viewer-nav) hidden and the brand text swapped
+gitban->kaichi. Regenerate them from the product repo if those views change; the
+aspect ratio (1.5625) matches these deck previews.
 """
 import pathlib
 
