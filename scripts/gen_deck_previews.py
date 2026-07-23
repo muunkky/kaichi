@@ -8,6 +8,12 @@ cramped, especially full-width on mobile). Re-run this after editing a deck:
     python3 scripts/gen_deck_previews.py     # needs: pip install playwright && playwright install chromium
 
 Writes docs/decks/previews/{prd,design,adr}.png (1000x640 @2x). Commit the PNGs.
+
+The fourth preview, docs/decks/previews/roadmap.png, is NOT generated here: it is
+a screenshot of the product's own roadmap viewer (.gitban/views/roadmap.html in
+the product repo), captured at 1200x768 @2x with the top nav hidden and the brand
+text swapped gitban->kaichi. Regenerate it from the product repo if the roadmap
+view changes; the aspect ratio (1.5625) matches these deck previews.
 """
 import pathlib
 

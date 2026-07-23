@@ -215,14 +215,19 @@
     <p style="font-size:17px;line-height:1.6;color:#4b5262;margin:0">Point it at a goal and it runs the whole process like a disciplined team — every stage produces a real artifact and passes a gate before the next begins.</p>
   </div>
   <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:48px;align-items:start">
-    <div style="border:1px solid #e7e5e0;border-radius:16px;padding:24px;background:#fff;box-shadow:0 6px 18px -14px rgba(20,22,26,.3)">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
-        <span style="font-family:'JetBrains Mono';font-size:12px;color:#b7bdc9">01</span>
-        <span style="width:14px;height:1px;background:#d7dbdf"></span>
-        <span style="font-family:'JetBrains Mono';font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#0f6d54">Plan</span>
+    <div style="border:1px solid #e7e5e0;border-radius:16px;overflow:hidden;background:#fff;box-shadow:0 6px 18px -14px rgba(20,22,26,.3);display:flex;flex-direction:column">
+      <div style="border-bottom:1px solid #eceae5;background:#faf9f6">
+        <img src="docs/decks/previews/roadmap.png" alt="Kaichi roadmap preview" loading="lazy" style="display:block;width:100%;height:auto">
       </div>
-      <div style="font-family:'Space Grotesk';font-weight:700;font-size:25px;letter-spacing:-.01em;margin-bottom:8px;color:#14161a">Roadmap</div>
-      <p style="font-size:14.5px;line-height:1.55;color:#5a616e;margin:0">The single plan of record a whole org works off of — every milestone, story, and feature in one place. Kaichi operates at that altitude: roadmap-level autonomous development, not one-off prompts.</p>
+      <div style="padding:24px;display:flex;flex-direction:column;flex:1">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+          <span style="font-family:'JetBrains Mono';font-size:12px;color:#b7bdc9">01</span>
+          <span style="width:14px;height:1px;background:#d7dbdf"></span>
+          <span style="font-family:'JetBrains Mono';font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#0f6d54">Plan</span>
+        </div>
+        <div style="font-family:'Space Grotesk';font-weight:700;font-size:25px;letter-spacing:-.01em;margin-bottom:8px;color:#14161a">Roadmap</div>
+        <p style="font-size:14.5px;line-height:1.55;color:#5a616e;margin:0">The single plan of record a whole org works off of — every milestone, story, and feature in one place. Kaichi operates at that altitude: roadmap-level autonomous development, not one-off prompts.</p>
+      </div>
     </div>
     <div onClick="{{ openPrd }}" role="button" tabindex="0" style="border:1px solid #e7e5e0;border-radius:16px;overflow:hidden;background:#fff;box-shadow:0 6px 18px -14px rgba(20,22,26,.3);cursor:pointer;display:flex;flex-direction:column;transition:transform .2s,box-shadow .2s,border-color .2s" style-hover="border-color:#14508c;transform:translateY(-3px);box-shadow:0 20px 46px -24px rgba(20,80,140,.55)">
       <div style="position:relative;border-bottom:1px solid #eceae5;background:#faf9f6">
