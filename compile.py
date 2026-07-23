@@ -190,10 +190,6 @@ img,svg,iframe{max-width:100%}
   section[style*="padding:64px 24px"]{padding:44px 20px !important}
   [style*="padding:100px 24px"]{padding:64px 20px !important}
   header [style*="padding:14px 24px"]{padding:12px 18px !important}
-  /* deck cards open the deck full-screen on tap (see runtime JS); the scaled
-     desktop-width preview renders cramped on a phone, so drop it for a clean
-     text card that reads clearly */
-  [style*="height:230px"]{display:none !important}
 }
 """)
 gen_css_str = "\n".join(gen_css)

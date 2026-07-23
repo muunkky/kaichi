@@ -94,10 +94,6 @@ img,svg,iframe{max-width:100%}
   section[style*="padding:64px 24px"]{padding:44px 20px !important}
   [style*="padding:100px 24px"]{padding:64px 20px !important}
   header [style*="padding:14px 24px"]{padding:12px 18px !important}
-  /* deck cards open the deck full-screen on tap (see runtime JS); the scaled
-     desktop-width preview renders cramped on a phone, so drop it for a clean
-     text card that reads clearly */
-  [style*="height:230px"]{display:none !important}
 }
 
 </style>
@@ -292,7 +288,7 @@ img,svg,iframe{max-width:100%}
     <h2 style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(28px,4vw,46px);line-height:1.05;letter-spacing:-.02em;margin:14px 0 16px">Autonomous development that fits how your team already works.</h2>
     <p style="font-size:17px;line-height:1.6;color:#4b5262;margin:0">Point it at a goal and it runs the whole process like a disciplined team — every stage produces a real artifact and passes a gate before the next begins.</p>
   </div>
-  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:48px">
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:48px;align-items:start">
     <div style="border:1px solid #e7e5e0;border-radius:16px;padding:24px;background:#fff;box-shadow:0 6px 18px -14px rgba(20,22,26,.3)">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
         <span style="font-family:'JetBrains Mono';font-size:12px;color:#b7bdc9">01</span>
@@ -302,32 +298,53 @@ img,svg,iframe{max-width:100%}
       <div style="font-family:'Space Grotesk';font-weight:700;font-size:25px;letter-spacing:-.01em;margin-bottom:8px;color:#14161a">Roadmap</div>
       <p style="font-size:14.5px;line-height:1.55;color:#5a616e;margin:0">The single plan of record a whole org works off of — every milestone, story, and feature in one place. Kaichi operates at that altitude: roadmap-level autonomous development, not one-off prompts.</p>
     </div>
-    <div style="border:1px solid #e7e5e0;border-radius:16px;padding:24px;background:#fff;box-shadow:0 6px 18px -14px rgba(20,22,26,.3)">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
-        <span style="font-family:'JetBrains Mono';font-size:12px;color:#b7bdc9">02</span>
-        <span style="width:14px;height:1px;background:#d7dbdf"></span>
-        <span style="font-family:'JetBrains Mono';font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#0f6d54">Define</span>
+    <div data-deck="prd" role="button" tabindex="0" style="border:1px solid #e7e5e0;border-radius:16px;overflow:hidden;background:#fff;box-shadow:0 6px 18px -14px rgba(20,22,26,.3);cursor:pointer;display:flex;flex-direction:column;transition:transform .2s,box-shadow .2s,border-color .2s"data-hv="4">
+      <div style="position:relative;border-bottom:1px solid #eceae5;background:#faf9f6">
+        <img src="docs/decks/previews/prd.png" alt="PRD-011 deck preview" loading="lazy" style="display:block;width:100%;height:auto">
+        <span style="position:absolute;top:12px;left:12px;font-family:'JetBrains Mono';font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#fff;background:#14508c;padding:4px 9px;border-radius:6px">PRD</span>
       </div>
-      <div style="font-family:'Space Grotesk';font-weight:700;font-size:25px;letter-spacing:-.01em;margin-bottom:8px;color:#14161a">PRD</div>
-      <p style="font-size:14.5px;line-height:1.55;color:#5a616e;margin:0">What we're building and why — pinned down and reviewed before a line of code exists.</p>
+      <div style="padding:24px;display:flex;flex-direction:column;flex:1">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+          <span style="font-family:'JetBrains Mono';font-size:12px;color:#b7bdc9">02</span>
+          <span style="width:14px;height:1px;background:#d7dbdf"></span>
+          <span style="font-family:'JetBrains Mono';font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#0f6d54">Define</span>
+        </div>
+        <div style="font-family:'Space Grotesk';font-weight:700;font-size:25px;letter-spacing:-.01em;margin-bottom:8px;color:#14161a">PRD</div>
+        <p style="font-size:14.5px;line-height:1.55;color:#5a616e;margin:0">What we're building and why — pinned down and reviewed before a line of code exists.</p>
+        <div style="margin-top:auto;padding-top:14px;font-size:13.5px;font-weight:600;color:#0f6d54">Read the deck →</div>
+      </div>
     </div>
-    <div style="border:1px solid #e7e5e0;border-radius:16px;padding:24px;background:#fff;box-shadow:0 6px 18px -14px rgba(20,22,26,.3)">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
-        <span style="font-family:'JetBrains Mono';font-size:12px;color:#b7bdc9">03</span>
-        <span style="width:14px;height:1px;background:#d7dbdf"></span>
-        <span style="font-family:'JetBrains Mono';font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#0f6d54">Design</span>
+    <div data-deck="design" role="button" tabindex="0" style="border:1px solid #e7e5e0;border-radius:16px;overflow:hidden;background:#fff;box-shadow:0 6px 18px -14px rgba(20,22,26,.3);cursor:pointer;display:flex;flex-direction:column;transition:transform .2s,box-shadow .2s,border-color .2s"data-hv="5">
+      <div style="position:relative;border-bottom:1px solid #eceae5;background:#faf9f6">
+        <img src="docs/decks/previews/design.png" alt="DD-021 deck preview" loading="lazy" style="display:block;width:100%;height:auto">
+        <span style="position:absolute;top:12px;left:12px;font-family:'JetBrains Mono';font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#fff;background:#2f7d90;padding:4px 9px;border-radius:6px">Design</span>
       </div>
-      <div style="font-family:'Space Grotesk';font-weight:700;font-size:25px;letter-spacing:-.01em;margin-bottom:8px;color:#14161a">Design Doc</div>
-      <p style="font-size:14.5px;line-height:1.55;color:#5a616e;margin:0">How it actually works — argued out and written down before the build, not improvised.</p>
+      <div style="padding:24px;display:flex;flex-direction:column;flex:1">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+          <span style="font-family:'JetBrains Mono';font-size:12px;color:#b7bdc9">03</span>
+          <span style="width:14px;height:1px;background:#d7dbdf"></span>
+          <span style="font-family:'JetBrains Mono';font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#0f6d54">Design</span>
+        </div>
+        <div style="font-family:'Space Grotesk';font-weight:700;font-size:25px;letter-spacing:-.01em;margin-bottom:8px;color:#14161a">Design Doc</div>
+        <p style="font-size:14.5px;line-height:1.55;color:#5a616e;margin:0">How it actually works — argued out and written down before the build, not improvised.</p>
+        <div style="margin-top:auto;padding-top:14px;font-size:13.5px;font-weight:600;color:#0f6d54">Read the deck →</div>
+      </div>
     </div>
-    <div style="border:1px solid #e7e5e0;border-radius:16px;padding:24px;background:#fff;box-shadow:0 6px 18px -14px rgba(20,22,26,.3)">
-      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
-        <span style="font-family:'JetBrains Mono';font-size:12px;color:#b7bdc9">04</span>
-        <span style="width:14px;height:1px;background:#d7dbdf"></span>
-        <span style="font-family:'JetBrains Mono';font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#0f6d54">Decide</span>
+    <div data-deck="adr" role="button" tabindex="0" style="border:1px solid #e7e5e0;border-radius:16px;overflow:hidden;background:#fff;box-shadow:0 6px 18px -14px rgba(20,22,26,.3);cursor:pointer;display:flex;flex-direction:column;transition:transform .2s,box-shadow .2s,border-color .2s"data-hv="6">
+      <div style="position:relative;border-bottom:1px solid #eceae5;background:#faf9f6">
+        <img src="docs/decks/previews/adr.png" alt="ADR-078 deck preview" loading="lazy" style="display:block;width:100%;height:auto">
+        <span style="position:absolute;top:12px;left:12px;font-family:'JetBrains Mono';font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#fff;background:#b5730a;padding:4px 9px;border-radius:6px">ADR</span>
       </div>
-      <div style="font-family:'Space Grotesk';font-weight:700;font-size:25px;letter-spacing:-.01em;margin-bottom:8px;color:#14161a">ADR</div>
-      <p style="font-size:14.5px;line-height:1.55;color:#5a616e;margin:0">The trade-offs that shaped it, recorded — so no decision is an unexplained black box.</p>
+      <div style="padding:24px;display:flex;flex-direction:column;flex:1">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+          <span style="font-family:'JetBrains Mono';font-size:12px;color:#b7bdc9">04</span>
+          <span style="width:14px;height:1px;background:#d7dbdf"></span>
+          <span style="font-family:'JetBrains Mono';font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#0f6d54">Decide</span>
+        </div>
+        <div style="font-family:'Space Grotesk';font-weight:700;font-size:25px;letter-spacing:-.01em;margin-bottom:8px;color:#14161a">ADR</div>
+        <p style="font-size:14.5px;line-height:1.55;color:#5a616e;margin:0">The trade-offs that shaped it, recorded — so no decision is an unexplained black box.</p>
+        <div style="margin-top:auto;padding-top:14px;font-size:13.5px;font-weight:600;color:#0f6d54">Read the deck →</div>
+      </div>
     </div>
     <div style="border:1px solid #e7e5e0;border-radius:16px;padding:24px;background:#fff;box-shadow:0 6px 18px -14px rgba(20,22,26,.3)">
       <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
@@ -369,42 +386,6 @@ img,svg,iframe{max-width:100%}
       <div style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#0f6d54;margin-bottom:16px">For engineers</div>
       <h3 style="font-family:'Space Grotesk';font-weight:700;font-size:25px;letter-spacing:-.01em;margin:0 0 12px;color:#14161a">Hand it to your engineers</h3>
       <p style="font-size:15.5px;line-height:1.6;color:#4b5262;margin:0">It reads like a teammate wrote it, so it survives code review — nobody's rewriting AI slop. And it drops into the SDLC you already run: branch, PR, review, merge. No new process to adopt, no second tool to babysit.</p>
-    </div>
-  </div>
-  <p style="font-size:15px;line-height:1.6;color:#7c8390;margin:64px 0 0;max-width:70ch">And here's the proof — real decks Kaichi generated from its own lifecycle. Click any one to read it end to end.</p>
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:24px">
-    <div data-deck="prd" role="button" tabindex="0" style="cursor:pointer;border:1px solid #e7e5e0;border-radius:16px;overflow:hidden;background:#fff;display:flex;flex-direction:column;transition:transform .2s,box-shadow .2s,border-color .2s"data-hv="4">
-      <div style="position:relative;height:230px;overflow:hidden;border-bottom:1px solid #eceae5;background:#faf9f6">
-        <iframe src="docs/decks/PRD-011-live-html-roadmap-view.html" scrolling="no" loading="lazy" tabindex="-1" title="PRD-011 preview" style="position:absolute;top:0;left:0;width:1120px;height:700px;border:none;transform:scale(.335);transform-origin:top left;pointer-events:none"></iframe>
-        <span style="position:absolute;top:12px;left:12px;font-family:'JetBrains Mono';font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#fff;background:#14508c;padding:4px 9px;border-radius:6px">PRD</span>
-      </div>
-      <div style="padding:20px 22px;display:flex;flex-direction:column;gap:8px;flex:1">
-        <div style="font-family:'JetBrains Mono';font-size:12px;color:#14508c">Product Requirements</div>
-        <div style="font-family:'Space Grotesk';font-weight:700;font-size:16.5px;line-height:1.3;color:#14161a">A live roadmap dashboard — not a snapshot you regenerate by hand</div>
-        <div style="margin-top:auto;padding-top:12px;font-size:13.5px;font-weight:600;color:#0f6d54">Read the deck →</div>
-      </div>
-    </div>
-    <div data-deck="design" role="button" tabindex="0" style="cursor:pointer;border:1px solid #e7e5e0;border-radius:16px;overflow:hidden;background:#fff;display:flex;flex-direction:column;transition:transform .2s,box-shadow .2s,border-color .2s"data-hv="5">
-      <div style="position:relative;height:230px;overflow:hidden;border-bottom:1px solid #eceae5;background:#faf9f6">
-        <iframe src="docs/decks/DD-021-cwd-pin-git-operations.html" scrolling="no" loading="lazy" tabindex="-1" title="DD-021 preview" style="position:absolute;top:0;left:0;width:1120px;height:700px;border:none;transform:scale(.335);transform-origin:top left;pointer-events:none"></iframe>
-        <span style="position:absolute;top:12px;left:12px;font-family:'JetBrains Mono';font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#fff;background:#2f7d90;padding:4px 9px;border-radius:6px">Design</span>
-      </div>
-      <div style="padding:20px 22px;display:flex;flex-direction:column;gap:8px;flex:1">
-        <div style="font-family:'JetBrains Mono';font-size:12px;color:#2f7d90">Design Document</div>
-        <div style="font-family:'Space Grotesk';font-weight:700;font-size:16.5px;line-height:1.3;color:#14161a">Pin every git command to the parent repo — enforced by a hook</div>
-        <div style="margin-top:auto;padding-top:12px;font-size:13.5px;font-weight:600;color:#0f6d54">Read the deck →</div>
-      </div>
-    </div>
-    <div data-deck="adr" role="button" tabindex="0" style="cursor:pointer;border:1px solid #e7e5e0;border-radius:16px;overflow:hidden;background:#fff;display:flex;flex-direction:column;transition:transform .2s,box-shadow .2s,border-color .2s"data-hv="6">
-      <div style="position:relative;height:230px;overflow:hidden;border-bottom:1px solid #eceae5;background:#faf9f6">
-        <iframe src="docs/decks/ADR-078-lifecycle-deck-generation-as-skill-pair.html" scrolling="no" loading="lazy" tabindex="-1" title="ADR-078 preview" style="position:absolute;top:0;left:0;width:1120px;height:700px;border:none;transform:scale(.335);transform-origin:top left;pointer-events:none"></iframe>
-        <span style="position:absolute;top:12px;left:12px;font-family:'JetBrains Mono';font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#fff;background:#b5730a;padding:4px 9px;border-radius:6px">ADR</span>
-      </div>
-      <div style="padding:20px 22px;display:flex;flex-direction:column;gap:8px;flex:1">
-        <div style="font-family:'JetBrains Mono';font-size:12px;color:#b5730a">Architecture Decision</div>
-        <div style="font-family:'Space Grotesk';font-weight:700;font-size:16.5px;line-height:1.3;color:#14161a">Deck generation ships as a writer ⇄ reviewer skill pair</div>
-        <div style="margin-top:auto;padding-top:12px;font-size:13.5px;font-weight:600;color:#0f6d54">Read the deck →</div>
-      </div>
     </div>
   </div>
   <p style="font-family:'JetBrains Mono';font-size:13px;color:#7c8390;margin:26px 0 0">PRD → Design → ADR · the same paper trail lands with every feature</p>
