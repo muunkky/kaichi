@@ -73,6 +73,10 @@
 /* never scroll sideways; media never exceeds its column */
 html,body{max-width:100%;overflow-x:hidden}
 img,svg,iframe{max-width:100%}
+/* deck lightbox iframe is a flex child that otherwise collapses to its intrinsic
+   150px height (the modal was mostly blank on every screen); height:100% + a
+   zeroed min-height let it fill the modal */
+[data-lb="frame"]{height:100% !important;min-height:0 !important}
 /* tablets: 3-up card grids become 2-up */
 @media (max-width:1000px){
   [style*="grid-template-columns:repeat(3,1fr)"]{grid-template-columns:repeat(2,1fr) !important}
@@ -90,6 +94,10 @@ img,svg,iframe{max-width:100%}
   section[style*="padding:64px 24px"]{padding:44px 20px !important}
   [style*="padding:100px 24px"]{padding:64px 20px !important}
   header [style*="padding:14px 24px"]{padding:12px 18px !important}
+  /* deck cards open the deck full-screen on tap (see runtime JS); the scaled
+     desktop-width preview renders cramped on a phone, so drop it for a clean
+     text card that reads clearly */
+  [style*="height:230px"]{display:none !important}
 }
 
 </style>
@@ -781,11 +789,25 @@ chmod +x "$asset"
     document.body.style.overflow = '';
   }
 
+  /* On phones the embedded iframe is a poor scroll-deck experience (and touch
+     scrolling inside an iframe is unreliable), so a tap opens the deck full-screen
+     in a new tab, where its own responsive layout works natively. Desktop keeps
+     the in-page lightbox. */
+  function activateDeck(key) {
+    var d = DECKS[key];
+    if (!d) return;
+    if (window.matchMedia('(max-width: 760px)').matches) {
+      window.open(d.src, '_blank', 'noopener');
+      return;
+    }
+    openDeck(key);
+  }
+
   Array.prototype.slice.call(document.querySelectorAll('[data-deck]')).forEach(function (card) {
     var key = card.getAttribute('data-deck');
-    card.addEventListener('click', function () { openDeck(key); });
+    card.addEventListener('click', function () { activateDeck(key); });
     card.addEventListener('keydown', function (ev) {
-      if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); openDeck(key); }
+      if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); activateDeck(key); }
     });
   });
   if (lb) {
