@@ -169,6 +169,11 @@ gen_css.append("""
 /* never scroll sideways; media never exceeds its column */
 html,body{max-width:100%;overflow-x:hidden}
 img,svg,iframe{max-width:100%}
+/* Reserve the deck-preview images' box before they lazy-load, so the page
+   doesn't grow underneath an in-page anchor jump (clicking "Get merge-ready
+   PRs" was landing at a stale position because these loaded after the scroll).
+   Ratio matches the 2000x1280 screenshots. */
+img[src^="docs/decks/previews/"]{aspect-ratio:1000/640;height:auto}
 /* deck lightbox iframe is a flex child that otherwise collapses to its intrinsic
    150px height (the modal was mostly blank on every screen); height:100% + a
    zeroed min-height let it fill the modal */
