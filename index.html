@@ -619,8 +619,8 @@ chmod +x "$asset"
       <div data-if="submitted" style="display:none">
         <div style="text-align:center;padding:32px 8px">
           <div style="width:54px;height:54px;border-radius:14px;background:#0f6d54;display:grid;place-items:center;margin:0 auto 18px;font-size:26px;color:#eafff5">✓</div>
-          <div style="font-family:'Space Grotesk';font-weight:700;font-size:22px;color:#fff">Thanks<span data-firstname></span> — we're on it.</div>
-          <p style="font-size:15px;line-height:1.6;color:#93a89e;margin:12px 0 0">Your note is in. We'll reply from a real inbox within a couple of days to scope next steps.</p>
+          <div style="font-family:'Space Grotesk';font-weight:700;font-size:22px;color:#fff">Thanks<span data-firstname></span> — pick a time.</div>
+          <p style="font-size:15px;line-height:1.6;color:#93a89e;margin:12px 0 0">We've opened our booking calendar in a new tab — grab whatever slot works and we'll see you there. Popup blocked? <a href="https://calendar.app.google/nma5u7ioDyXh6R426" target="_blank" rel="noopener" style="color:#7ee0b0;font-weight:600">Open the calendar →</a></p>
           <a href="https://discord.gg/JmphFWUvBw" target="_blank" rel="noopener" style="display:inline-block;margin-top:20px;border:1px solid #2a3f38;color:#b8c7bf;padding:11px 18px;border-radius:10px;font-weight:600;font-size:14px"data-hv="20">Meet us in the Discord →</a>
         </div>
       </div>
@@ -816,12 +816,32 @@ chmod +x "$asset"
     chip.addEventListener('click', function () { chip.classList.toggle('is-active'); });
   });
 
-  /* ---- lead form submit ---- */
+  /* ---- lead form: capture the lead, then open the booking calendar ---- */
+  var BOOKING_URL = "https://calendar.app.google/nma5u7ioDyXh6R426";
+  // Paste the Google Apps Script web-app /exec URL between the quotes to log every
+  // submission to a Google Sheet. Empty = booking still works, nothing is logged.
+  var LEAD_ENDPOINT = "";
   var form = document.querySelector('[data-lead-form]');
   if (form) {
     form.addEventListener('submit', function (ev) {
       ev.preventDefault();
-      var name = (new FormData(form).get('name') || '').toString().trim();
+      var data = new FormData(form);
+      // 1) open the booking page first, while still inside the click gesture
+      window.open(BOOKING_URL, '_blank', 'noopener');
+      // 2) best-effort lead capture to a Google Sheet (never blocks the booking)
+      if (LEAD_ENDPOINT) {
+        var chips = Array.prototype.slice.call(document.querySelectorAll('.kai-chip.is-active'))
+          .map(function (c) { return c.textContent.trim(); }).join(', ');
+        var payload = new URLSearchParams();
+        ['name', 'email', 'company', 'message'].forEach(function (k) {
+          payload.append(k, (data.get(k) || '').toString());
+        });
+        payload.append('interests', chips);
+        payload.append('page', 'kaichi-landing');
+        fetch(LEAD_ENDPOINT, { method: 'POST', mode: 'no-cors', body: payload }).catch(function () {});
+      }
+      // 3) swap the form for the confirmation state
+      var name = (data.get('name') || '').toString().trim();
       var first = name ? ' ' + name.split(/\s+/)[0] : '';
       var fn = document.querySelector('[data-firstname]');
       if (fn) fn.textContent = first;

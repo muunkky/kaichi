@@ -297,12 +297,32 @@ runtime = r"""
     chip.addEventListener('click', function () { chip.classList.toggle('is-active'); });
   });
 
-  /* ---- lead form submit ---- */
+  /* ---- lead form: capture the lead, then open the booking calendar ---- */
+  var BOOKING_URL = "https://calendar.app.google/nma5u7ioDyXh6R426";
+  // Paste the Google Apps Script web-app /exec URL between the quotes to log every
+  // submission to a Google Sheet. Empty = booking still works, nothing is logged.
+  var LEAD_ENDPOINT = "";
   var form = document.querySelector('[data-lead-form]');
   if (form) {
     form.addEventListener('submit', function (ev) {
       ev.preventDefault();
-      var name = (new FormData(form).get('name') || '').toString().trim();
+      var data = new FormData(form);
+      // 1) open the booking page first, while still inside the click gesture
+      window.open(BOOKING_URL, '_blank', 'noopener');
+      // 2) best-effort lead capture to a Google Sheet (never blocks the booking)
+      if (LEAD_ENDPOINT) {
+        var chips = Array.prototype.slice.call(document.querySelectorAll('.kai-chip.is-active'))
+          .map(function (c) { return c.textContent.trim(); }).join(', ');
+        var payload = new URLSearchParams();
+        ['name', 'email', 'company', 'message'].forEach(function (k) {
+          payload.append(k, (data.get(k) || '').toString());
+        });
+        payload.append('interests', chips);
+        payload.append('page', 'kaichi-landing');
+        fetch(LEAD_ENDPOINT, { method: 'POST', mode: 'no-cors', body: payload }).catch(function () {});
+      }
+      // 3) swap the form for the confirmation state
+      var name = (data.get('name') || '').toString().trim();
       var first = name ? ' ' + name.split(/\s+/)[0] : '';
       var fn = document.querySelector('[data-firstname]');
       if (fn) fn.textContent = first;
