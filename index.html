@@ -68,6 +68,30 @@
 .kai-chip.is-active{background:#0f6d54;color:#fff;border-color:#0f6d54}
 .kai-chip:hover{border-color:#3f8f76}
 
+
+/* responsive (mobile + tablet) */
+/* never scroll sideways; media never exceeds its column */
+html,body{max-width:100%;overflow-x:hidden}
+img,svg,iframe{max-width:100%}
+/* tablets: 3-up card grids become 2-up */
+@media (max-width:1000px){
+  [style*="grid-template-columns:repeat(3,1fr)"]{grid-template-columns:repeat(2,1fr) !important}
+}
+/* phones: every multi-column grid stacks to one column */
+@media (max-width:760px){
+  [style*="grid-template-columns"]{grid-template-columns:1fr !important}
+  [style*="gap:56px"]{gap:28px !important}
+  /* header: let the nav wrap instead of overflowing, and drop the section anchors
+     (still reachable by scrolling) so the logo + Discord + CTA stay tidy */
+  nav[style*="flex-wrap:nowrap"]{flex-wrap:wrap !important;gap:14px 18px !important}
+  nav a[href="#product"],nav a[href="#how"],nav a[href="#features"]{display:none !important}
+  /* trim the desktop vertical rhythm so a phone isn't a mile of whitespace */
+  section[style*="padding:88px 24px 40px"]{padding:52px 20px 28px !important}
+  section[style*="padding:64px 24px"]{padding:44px 20px !important}
+  [style*="padding:100px 24px"]{padding:64px 20px !important}
+  header [style*="padding:14px 24px"]{padding:12px 18px !important}
+}
+
 </style>
 </head>
 <body>
