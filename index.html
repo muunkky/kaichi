@@ -818,9 +818,10 @@ chmod +x "$asset"
 
   /* ---- lead form: capture the lead, then open the booking calendar ---- */
   var BOOKING_URL = "https://calendar.app.google/nma5u7ioDyXh6R426";
-  // Paste the Google Apps Script web-app /exec URL between the quotes to log every
-  // submission to a Google Sheet. Empty = booking still works, nothing is logged.
-  var LEAD_ENDPOINT = "";
+  // Google Apps Script web-app /exec URL — logs every submission to a Google Sheet.
+  // Requires the web-app deployment's "Who has access" set to "Anyone".
+  // Empty = booking still works, nothing is logged.
+  var LEAD_ENDPOINT = "https://script.google.com/macros/s/AKfycbxJe7nH8efe2k00_080afCmGONcGFE8O5c4giAfmCg50Kq2u0swK35S5gk9eiPkkJxKtg/exec";
   var form = document.querySelector('[data-lead-form]');
   if (form) {
     form.addEventListener('submit', function (ev) {
