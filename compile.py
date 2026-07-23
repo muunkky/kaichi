@@ -35,6 +35,17 @@ OUT = pathlib.Path(__file__).parent / "index.html"
 # "https://muunkky.github.io/gitban-site/" and recompile.
 BASE_URL = "https://muunkky.github.io/kaichi/"
 
+# Cloudflare Web Analytics — cookieless and privacy-first, so it needs no consent
+# banner and doesn't undercut the product's zero-telemetry positioning. Kept as a
+# plain constant (not inlined) because its {"token": ...} braces would collide with
+# the f-string page template below.
+ANALYTICS = (
+    "<!-- Cloudflare Web Analytics -->"
+    "<script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' "
+    "data-cf-beacon='{\"token\": \"279ef5211db8443c931c62dade939329\"}'></script>"
+    "<!-- End Cloudflare Web Analytics -->"
+)
+
 PAGE_TITLE = "Kaichi — AI code you can ship"
 PAGE_DESC = (
     "Kaichi is a context manager and state-governance MCP that uses AI to build "
@@ -369,6 +380,7 @@ html = f"""<!DOCTYPE html>
 <body>
 {body.strip()}
 {runtime}
+{ANALYTICS}
 </body>
 </html>
 """
