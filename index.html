@@ -542,10 +542,10 @@ img[src^="docs/decks/previews/"]{aspect-ratio:1000/640;height:auto}
       <h2 style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(26px,3.4vw,38px);line-height:1.08;letter-spacing:-.02em;margin:14px 0 16px">Run free in 30 seconds.</h2>
       <p style="font-size:16px;line-height:1.6;color:#4b5262;margin:0 0 24px">Kaichi boots free in Community with no license — grab the binary, point Claude Code at it, and you're running. A Commercial license unlocks commercial use later: same binary, no reinstall.</p>
       <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:22px">
-        <a href="https://github.com/muunkky/gitban-releases/releases/latest/download/gitban-linux-x86_64" style="background:#0f6d54;color:#fff;padding:13px 20px;border-radius:11px;font-weight:600;font-size:14.5px;font-family:'JetBrains Mono'"data-hv="18">↓ Linux x86_64</a>
-        <a href="https://github.com/muunkky/gitban-releases/releases/latest/download/gitban-linux-arm64" style="border:1px solid #d9d6cf;color:#14161a;padding:13px 20px;border-radius:11px;font-weight:600;font-size:14.5px;font-family:'JetBrains Mono'"data-hv="19">↓ Linux arm64</a>
+        <a href="https://github.com/muunkky/kaichi-releases/releases/latest/download/kaichi-linux-x86_64" style="background:#0f6d54;color:#fff;padding:13px 20px;border-radius:11px;font-weight:600;font-size:14.5px;font-family:'JetBrains Mono'"data-hv="18">↓ Linux x86_64</a>
+        <a href="https://github.com/muunkky/kaichi-releases/releases/latest/download/kaichi-linux-arm64" style="border:1px solid #d9d6cf;color:#14161a;padding:13px 20px;border-radius:11px;font-weight:600;font-size:14.5px;font-family:'JetBrains Mono'"data-hv="19">↓ Linux arm64</a>
       </div>
-      <p style="font-size:13.5px;color:#7c8390;margin:0 0 22px">Not sure which? Run <code style="font-family:'JetBrains Mono';background:#ecebe6;padding:2px 6px;border-radius:5px">uname -m</code> — x86_64 or aarch64 (arm64). macOS &amp; Windows builds coming soon · <a href="https://github.com/muunkky/gitban-releases/releases">all releases &amp; checksums →</a></p>
+      <p style="font-size:13.5px;color:#7c8390;margin:0 0 22px">Not sure which? Run <code style="font-family:'JetBrains Mono';background:#ecebe6;padding:2px 6px;border-radius:5px">uname -m</code> — x86_64 or aarch64 (arm64). macOS &amp; Windows builds coming soon · <a href="https://github.com/muunkky/kaichi-releases/releases">all releases &amp; checksums →</a></p>
       <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px">
         <li style="display:flex;gap:10px;font-size:15px;color:#3a414d"><span style="color:#0f6d54">✓</span> <span><strong style="color:#14161a">Runs free</strong> — the Community tier needs no license; download and go.</span></li>
         <li style="display:flex;gap:10px;font-size:15px;color:#3a414d"><span style="color:#0f6d54">✓</span> <span><strong style="color:#14161a">One file</strong> — a single self-contained binary, no runtime to install.</span></li>
@@ -565,17 +565,17 @@ img[src^="docs/decks/previews/"]{aspect-ratio:1000/640;height:auto}
       </div>
       <div style="font-family:'JetBrains Mono';font-size:12px;line-height:1.7;color:#a9bcb2;margin-top:14px;white-space:pre-wrap">
 <span style="color:#6f8078"># 1 · pick the binary for your CPU (run uname -m)</span>
-<span style="color:#cdd9d2">asset=gitban-linux-x86_64</span>  <span style="color:#6f8078"># arm64: gitban-linux-arm64</span>
+<span style="color:#cdd9d2">asset=kaichi-linux-x86_64</span>  <span style="color:#6f8078"># arm64: kaichi-linux-arm64</span>
 
 <span style="color:#6f8078"># 2 · download</span>
 <span style="color:#7ee0b0">curl</span> -fSL -o "$asset" \
-  "https://github.com/muunkky/gitban-releases/releases/latest/download/$asset"
+  "https://github.com/muunkky/kaichi-releases/releases/latest/download/$asset"
 
 <span style="color:#6f8078"># 3 · verify your asset's checksum</span>
 <span style="color:#7ee0b0">curl</span> -fSL -o SHA256SUMS \
-  "https://github.com/muunkky/gitban-releases/releases/latest/download/SHA256SUMS"
+  "https://github.com/muunkky/kaichi-releases/releases/latest/download/SHA256SUMS"
 grep "$asset" SHA256SUMS | sha256sum -c -
-<span style="color:#7ee0b0">gitban-linux-x86_64: OK</span>
+<span style="color:#7ee0b0">kaichi-linux-x86_64: OK</span>
 
 <span style="color:#6f8078"># 4 · make executable + wire into Claude Code</span>
 chmod +x "$asset"
@@ -689,8 +689,8 @@ chmod +x "$asset"
     </svg>
   </div>
   <nav style="display:flex;flex-wrap:wrap;gap:24px;font-size:14px;font-weight:500">
-    <a href="https://github.com/muunkky/gitban-releases" style="color:#5a616e">GitHub</a>
-    <a href="https://github.com/muunkky/gitban-releases/releases" style="color:#5a616e">Releases</a>
+    <a href="https://github.com/muunkky/kaichi-releases" style="color:#5a616e">GitHub</a>
+    <a href="https://github.com/muunkky/kaichi-releases/releases" style="color:#5a616e">Releases</a>
     <a href="https://discord.gg/JmphFWUvBw" target="_blank" rel="noopener" style="color:#5a616e">Discord</a>
     <a href="#download" style="color:#5a616e">Get started</a>
     <a href="#work" style="color:#5a616e">Talk to us</a>
