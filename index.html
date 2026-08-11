@@ -54,12 +54,15 @@
 [data-hv="17"]:hover{background:#0c5a45 !important;color:#fff !important;}
 [data-hv="18"]:hover{background:#0c5a45 !important;color:#fff !important;}
 [data-hv="19"]:hover{border-color:#0f6d54 !important;color:#0f6d54 !important;}
-[data-hv="20"]:hover{border-color:#0f6d54 !important;color:#7ee0b0 !important;}
-[data-hv="21"]:hover{background:#12805f !important;}
-[data-hv="22"]:hover{background:#0c5a45 !important;color:#fff !important;}
-[data-hv="23"]:hover{border-color:#0f6d54 !important;color:#0f6d54 !important;}
-[data-hv="24"]:hover{color:#0f6d54 !important;}
-[data-hv="25"]:hover{border-color:#0f6d54 !important;color:#0f6d54 !important;}
+[data-hv="20"]:hover{border-color:#0f6d54 !important;color:#0f6d54 !important;}
+[data-hv="21"]:hover{border-color:#0f6d54 !important;color:#0f6d54 !important;}
+[data-hv="22"]:hover{color:#0f6d54 !important;}
+[data-hv="23"]:hover{border-color:#0f6d54 !important;color:#7ee0b0 !important;}
+[data-hv="24"]:hover{background:#12805f !important;}
+[data-hv="25"]:hover{background:#0c5a45 !important;color:#fff !important;}
+[data-hv="26"]:hover{border-color:#0f6d54 !important;color:#0f6d54 !important;}
+[data-hv="27"]:hover{color:#0f6d54 !important;}
+[data-hv="28"]:hover{border-color:#0f6d54 !important;color:#0f6d54 !important;}
 [data-fc="1"]:focus{border-color:#0f6d54 !important;outline:none !important;}
 [data-fc="2"]:focus{border-color:#0f6d54 !important;outline:none !important;}
 [data-fc="3"]:focus{border-color:#0f6d54 !important;outline:none !important;}
@@ -545,7 +548,15 @@ img[src^="docs/decks/previews/"]{aspect-ratio:1000/640;height:auto}
         <a href="https://github.com/muunkky/kaichi-releases/releases/latest/download/kaichi-linux-x86_64" style="background:#0f6d54;color:#fff;padding:13px 20px;border-radius:11px;font-weight:600;font-size:14.5px;font-family:'JetBrains Mono'"data-hv="18">↓ Linux x86_64</a>
         <a href="https://github.com/muunkky/kaichi-releases/releases/latest/download/kaichi-linux-arm64" style="border:1px solid #d9d6cf;color:#14161a;padding:13px 20px;border-radius:11px;font-weight:600;font-size:14.5px;font-family:'JetBrains Mono'"data-hv="19">↓ Linux arm64</a>
       </div>
-      <p style="font-size:13.5px;color:#7c8390;margin:0 0 22px">Not sure which? Run <code style="font-family:'JetBrains Mono';background:#ecebe6;padding:2px 6px;border-radius:5px">uname -m</code> — x86_64 or aarch64 (arm64). macOS &amp; Windows builds coming soon · <a href="https://github.com/muunkky/kaichi-releases/releases">all releases &amp; checksums →</a></p>
+      <p style="font-size:13.5px;color:#7c8390;margin:0 0 14px">Not sure which? Run <code style="font-family:'JetBrains Mono';background:#ecebe6;padding:2px 6px;border-radius:5px">uname -m</code> — x86_64 or aarch64 (arm64). macOS &amp; Windows builds coming soon · <a href="https://github.com/muunkky/kaichi-releases/releases">all releases &amp; checksums →</a></p>
+      <div style="border-top:1px solid #e6e3dc;padding-top:16px;margin:0 0 22px">
+        <p style="font-size:13.5px;color:#7c8390;margin:0 0 10px"><strong style="color:#4b5262;font-weight:600">Nightly</strong> — the latest development build. It clears the same build and license-gating smoke as a release, but it is unversioned, rolls forward without notice, and is not what you want in production.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+          <a href="https://github.com/muunkky/kaichi-releases/releases/download/nightly/kaichi-linux-x86_64" style="border:1px dashed #cfccc4;color:#5a616e;padding:8px 14px;border-radius:9px;font-weight:600;font-size:13px;font-family:'JetBrains Mono'"data-hv="20">↓ nightly x86_64</a>
+          <a href="https://github.com/muunkky/kaichi-releases/releases/download/nightly/kaichi-linux-arm64" style="border:1px dashed #cfccc4;color:#5a616e;padding:8px 14px;border-radius:9px;font-weight:600;font-size:13px;font-family:'JetBrains Mono'"data-hv="21">↓ nightly arm64</a>
+          <a href="https://github.com/muunkky/kaichi-releases/releases/download/nightly/SHA256SUMS" style="font-size:13px;color:#7c8390"data-hv="22">checksums →</a>
+        </div>
+      </div>
       <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px">
         <li style="display:flex;gap:10px;font-size:15px;color:#3a414d"><span style="color:#0f6d54">✓</span> <span><strong style="color:#14161a">Runs free</strong> — the Community tier needs no license; download and go.</span></li>
         <li style="display:flex;gap:10px;font-size:15px;color:#3a414d"><span style="color:#0f6d54">✓</span> <span><strong style="color:#14161a">One file</strong> — a single self-contained binary, no runtime to install.</span></li>
@@ -621,7 +632,7 @@ chmod +x "$asset"
           <div style="width:54px;height:54px;border-radius:14px;background:#0f6d54;display:grid;place-items:center;margin:0 auto 18px;font-size:26px;color:#eafff5">✓</div>
           <div style="font-family:'Space Grotesk';font-weight:700;font-size:22px;color:#fff">Thanks<span data-firstname></span> — pick a time.</div>
           <p style="font-size:15px;line-height:1.6;color:#93a89e;margin:12px 0 0">We've opened our booking calendar in a new tab — grab whatever slot works and we'll see you there. Popup blocked? <a href="https://calendar.app.google/nma5u7ioDyXh6R426" target="_blank" rel="noopener" style="color:#7ee0b0;font-weight:600">Open the calendar →</a></p>
-          <a href="https://discord.gg/JmphFWUvBw" target="_blank" rel="noopener" style="display:inline-block;margin-top:20px;border:1px solid #2a3f38;color:#b8c7bf;padding:11px 18px;border-radius:10px;font-weight:600;font-size:14px"data-hv="20">Meet us in the Discord →</a>
+          <a href="https://discord.gg/JmphFWUvBw" target="_blank" rel="noopener" style="display:inline-block;margin-top:20px;border:1px solid #2a3f38;color:#b8c7bf;padding:11px 18px;border-radius:10px;font-weight:600;font-size:14px"data-hv="23">Meet us in the Discord →</a>
         </div>
       </div>
       <div data-if="notSubmitted">
@@ -659,7 +670,7 @@ chmod +x "$asset"
         <label style="display:flex;flex-direction:column;gap:6px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#7d918a">What are you building?
           <textarea name="message" rows="3" placeholder="A sentence on your codebase and what you want shipped." style="background:#0b120f;border:1px solid #223730;border-radius:10px;padding:11px 12px;color:#e7efea;font-family:'Manrope';font-size:15px;resize:vertical"data-fc="4"></textarea>
         </label>
-        <button type="submit" style="background:#0f6d54;color:#fff;padding:14px;border:none;border-radius:11px;font-weight:600;font-size:15px;font-family:'Manrope';cursor:pointer"data-hv="21">Book an intro call →</button>
+        <button type="submit" style="background:#0f6d54;color:#fff;padding:14px;border:none;border-radius:11px;font-weight:600;font-size:15px;font-family:'Manrope';cursor:pointer"data-hv="24">Book an intro call →</button>
         <p style="font-size:12px;color:#6f8078;margin:2px 0 0;text-align:center">No spam. We reply from a real inbox, usually within two days.</p>
       </form>
       </div>
@@ -673,8 +684,8 @@ chmod +x "$asset"
   <h2 style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(30px,4.6vw,56px);line-height:1.04;letter-spacing:-.03em;margin:0 auto;max-width:20ch">See Kaichi ship on your codebase.</h2>
   <p style="font-size:17px;line-height:1.6;color:#4b5262;margin:18px auto 0;max-width:52ch">Book a 30-minute call. We'll run Kaichi on a repo you pick and have a merge-ready PR in front of your team in a few hours — you only pay for what you merge.</p>
   <div style="display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-top:34px">
-    <a href="#work" style="background:#0f6d54;color:#fff;padding:15px 28px;border-radius:11px;font-weight:600;font-size:16px;box-shadow:0 6px 20px rgba(15,109,84,.28)"data-hv="22">Book a call →</a>
-    <a href="#get-started" style="border:1px solid #d9d6cf;color:#14161a;padding:15px 28px;border-radius:11px;font-weight:600;font-size:16px"data-hv="23">Install free</a>
+    <a href="#work" style="background:#0f6d54;color:#fff;padding:15px 28px;border-radius:11px;font-weight:600;font-size:16px;box-shadow:0 6px 20px rgba(15,109,84,.28)"data-hv="25">Book a call →</a>
+    <a href="#get-started" style="border:1px solid #d9d6cf;color:#14161a;padding:15px 28px;border-radius:11px;font-weight:600;font-size:16px"data-hv="26">Install free</a>
   </div>
   <p style="font-size:14.5px;color:#7c8390;margin-top:22px">Not ready to talk? <a href="https://discord.gg/JmphFWUvBw" target="_blank" rel="noopener" style="font-weight:600">Join the Discord</a> and lurk, ask questions, or watch what ships.</p>
 </section>
@@ -709,8 +720,8 @@ chmod +x "$asset"
           <span style="font-family:'Space Grotesk';font-weight:600;font-size:15px;color:#14161a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><span data-lb="title"></span></span>
         </div>
         <div style="display:flex;align-items:center;gap:10px;flex:none">
-          <a href="#" data-lb="open" target="_blank" rel="noopener" style="font-size:13px;font-weight:600;color:#5a616e"data-hv="24">Open ↗</a>
-          <button data-close aria-label="Close" style="width:34px;height:34px;border:1px solid #e7e5e0;background:#fff;border-radius:9px;cursor:pointer;font-size:15px;color:#4b5262;line-height:1"data-hv="25">✕</button>
+          <a href="#" data-lb="open" target="_blank" rel="noopener" style="font-size:13px;font-weight:600;color:#5a616e"data-hv="27">Open ↗</a>
+          <button data-close aria-label="Close" style="width:34px;height:34px;border:1px solid #e7e5e0;background:#fff;border-radius:9px;cursor:pointer;font-size:15px;color:#4b5262;line-height:1"data-hv="28">✕</button>
         </div>
       </div>
       <iframe data-lb="frame" title="<span data-lb="title"></span>" style="flex:1;width:100%;border:none;background:#faf9f6"></iframe>
