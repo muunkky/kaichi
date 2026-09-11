@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#e9e4dc}
+a{color:#9a4a2a}a:hover{color:#6e3319}
+</style>
+</helmet>
+<div style="position:relative;width:1920px;height:4340px;background:#f8f5f0;font-family:'Work Sans',sans-serif;color:#1f1b18;overflow:hidden">
+
+  <div style="position:absolute;left:40px;top:22px;right:40px;height:72px;display:flex;justify-content:space-between;align-items:flex-start;gap:24px">
+    <div>
+      <div style="font-size:22px;font-weight:600;letter-spacing:-0.01em">The Dispatch Loop — UML activity diagram</div>
+      <div style="font-size:12px;color:#5b544c;margin-top:4px">kaichi-dispatcher · Phase 0 → Phase 5 · swimlanes by role · solid = control flow · dashed = object (information) flow to and from stores</div>
+    </div>
+    <div style="display:flex;gap:18px;align-items:center;font-size:10.5px;color:#3a342e;flex-wrap:wrap;justify-content:flex-end;max-width:900px">
+      <div style="display:flex;align-items:center;gap:6px"><div style="width:26px;border-top:1.5px solid #1f1b18"></div>control flow</div>
+      <div style="display:flex;align-items:center;gap:6px"><div style="width:26px;border-top:1.5px dashed #7a6f66"></div>object flow</div>
+      <div style="display:flex;align-items:center;gap:6px"><div style="width:22px;height:12px;border:1.5px solid #1f1b18;border-radius:5px"></div>action</div>
+      <div style="display:flex;align-items:center;gap:6px"><div style="width:12px;height:12px;border:1.5px solid #1f1b18;transform:rotate(45deg);margin:0 4px"></div>decision [guard]</div>
+      <div style="display:flex;align-items:center;gap:6px"><div style="width:22px;height:12px;border:1.5px solid #7a6f66;background:#f1ece3"></div>«datastore»</div>
+      <div style="display:flex;align-items:center;gap:6px"><div style="width:12px;height:12px;border-radius:50%;background:#1f1b18"></div>initial</div>
+      <div style="display:flex;align-items:center;gap:6px"><div style="width:12px;height:12px;border-radius:50%;border:2px solid #1f1b18;box-shadow:inset 0 0 0 2px #fff, inset 0 0 0 6px #1f1b18"></div>final</div>
+      <div style="display:flex;align-items:center;gap:6px"><div style="width:12px;height:12px;border-radius:50%;border:2px solid #9a4a2a;box-shadow:inset 0 0 0 2px #fff, inset 0 0 0 6px #9a4a2a"></div>halt / stop condition</div>
+      <div style="display:flex;align-items:center;gap:6px"><div style="width:22px;height:12px;border:1px solid #c9b98a;background:#fbf6e6"></div>note</div>
+    </div>
+  </div>
+
+  <sc-for list="{{ lanes }}" as="ln" hint-placeholder-count="6">
+    <div style="position:absolute;top:110px;height:4220px;left:{{ ln.x0 }}px;width:{{ ln.w }}px;background:{{ ln.bg }};border-left:1px solid #d9d2c7"></div>
+    <div style="position:absolute;top:110px;height:42px;left:{{ ln.x0 }}px;width:{{ ln.w }}px;border-bottom:1.5px solid #1f1b18;border-left:1px solid #d9d2c7;padding:6px 10px;box-sizing:border-box">
+      <div style="font-size:12px;font-weight:600">{{ ln.name }}</div>
+      <div style="font-size:9.5px;color:#5b544c;font-family:'Fira Code',monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ ln.sub }}</div>
+    </div>
+  </sc-for>
+
+  <sc-for list="{{ phases }}" as="ph" hint-placeholder-count="3">
+    <div style="position:absolute;left:0;width:36px;top:{{ ph.y0 }}px;height:{{ ph.h }}px;background:{{ ph.bg }};border-right:1px solid #d9d2c7;display:flex;align-items:flex-start;justify-content:center;padding-top:14px;box-sizing:border-box">
+      <div style="writing-mode:vertical-rl;transform:rotate(180deg);font-size:11px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:#5b544c;white-space:nowrap">{{ ph.label }}</div>
+    </div>
+    <div style="position:absolute;left:40px;width:1840px;top:{{ ph.y0 }}px;border-top:1px dashed #b9b0a3"></div>
+  </sc-for>
+
+  <svg style="position:absolute;left:0;top:0;pointer-events:none" width="1920" height="4340" viewBox="0 0 1920 4340">
+    <defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#1f1b18"></path></marker>
+      <marker id="oarrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10" fill="none" stroke="#7a6f66" stroke-width="1.4"></path></marker>
+    </defs>
+    <sc-for list="{{ edges }}" as="e" hint-placeholder-count="0">
+      <path d="{{ e.d }}" fill="none" style="stroke:{{ e.stroke }};stroke-width:{{ e.sw }};stroke-dasharray:{{ e.dash }};marker-end:{{ e.marker }}"></path>
+    </sc-for>
+    <sc-for list="{{ inits }}" as="n" hint-placeholder-count="0">
+      <circle cx="{{ n.x }}" cy="{{ n.y }}" r="10" fill="#1f1b18"></circle>
+    </sc-for>
+    <sc-for list="{{ finals }}" as="n" hint-placeholder-count="0">
+      <circle cx="{{ n.x }}" cy="{{ n.y }}" r="12" fill="#fff" stroke="#1f1b18" stroke-width="1.5"></circle>
+      <circle cx="{{ n.x }}" cy="{{ n.y }}" r="7" fill="#1f1b18"></circle>
+    </sc-for>
+    <sc-for list="{{ flowfinals }}" as="n" hint-placeholder-count="0">
+      <circle cx="{{ n.x }}" cy="{{ n.y }}" r="12" fill="#fff" stroke="#1f1b18" stroke-width="1.5"></circle>
+      <path d="{{ n.xd }}" stroke="#1f1b18" stroke-width="1.5"></path>
+    </sc-for>
+    <sc-for list="{{ halts }}" as="n" hint-placeholder-count="0">
+      <circle cx="{{ n.x }}" cy="{{ n.y }}" r="12" fill="#fff" stroke="#9a4a2a" stroke-width="1.8"></circle>
+      <circle cx="{{ n.x }}" cy="{{ n.y }}" r="7" fill="#9a4a2a"></circle>
+    </sc-for>
+  </svg>
+
+  <sc-for list="{{ labels }}" as="lb" hint-placeholder-count="0">
+    <div style="position:absolute;z-index:1;left:{{ lb.x }}px;top:{{ lb.y }}px;transform:{{ lb.tf }};font-family:'Fira Code',monospace;font-size:10px;line-height:1;white-space:nowrap;color:{{ lb.fill }};background:#f8f5f0;padding:1px 3px;border-radius:2px">{{ lb.t }}</div>
+  </sc-for>
+  <sc-for list="{{ flowfinals }}" as="n" hint-placeholder-count="0">
+    <div style="position:absolute;left:{{ n.x }}px;top:{{ n.ly }}px;transform:translateX(-50%);font-family:'Fira Code',monospace;font-size:9.5px;line-height:1.2;white-space:nowrap;color:#3a342e;text-align:center">{{ n.l }}</div>
+  </sc-for>
+  <sc-for list="{{ halts }}" as="n" hint-placeholder-count="0">
+    <div style="position:absolute;left:{{ n.x }}px;top:{{ n.ly }}px;transform:translateX(-50%);font-family:'Fira Code',monospace;line-height:1.25;white-space:nowrap;text-align:center">
+      <div style="font-size:9.5px;font-weight:500;color:#9a4a2a">{{ n.l }}</div>
+      <div style="font-size:9px;color:#6e3319">{{ n.l2 }}</div>
+    </div>
+  </sc-for>
+
+  <sc-for list="{{ actions }}" as="n" hint-placeholder-count="0">
+    <div style="position:absolute;z-index:2;box-sizing:border-box;left:{{ n.left }}px;top:{{ n.top }}px;width:{{ n.w }}px;height:{{ n.h }}px;border:1.5px solid #1f1b18;border-radius:8px;background:#fff;padding:7px 10px;display:flex;flex-direction:column;justify-content:center;gap:2px;overflow:hidden">
+      <div style="font-size:12px;font-weight:600;line-height:1.2;text-wrap:pretty">{{ n.l }}</div>
+      <div style="font-size:9.5px;line-height:1.3;color:#4d463f;font-family:'Fira Code',monospace;text-wrap:pretty">{{ n.s }}</div>
+    </div>
+  </sc-for>
+
+  <sc-for list="{{ decisions }}" as="n" hint-placeholder-count="0">
+    <div style="position:absolute;z-index:2;left:{{ n.left }}px;top:{{ n.top }}px;width:{{ n.w }}px;height:{{ n.h }}px">
+      <div style="position:absolute;inset:0;background:#1f1b18;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)"></div>
+      <div style="position:absolute;inset:1.5px;background:#fff;clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)"></div>
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:0 40px;font-size:10.5px;font-weight:500;line-height:1.25;font-family:'Fira Code',monospace">{{ n.l }}</div>
+    </div>
+  </sc-for>
+
+  <sc-for list="{{ stores }}" as="n" hint-placeholder-count="0">
+    <div style="position:absolute;z-index:2;box-sizing:border-box;left:{{ n.left }}px;top:{{ n.top }}px;width:{{ n.w }}px;height:{{ n.h }}px;border:1.5px solid #7a6f66;background:#f1ece3;padding:5px 9px;overflow:hidden">
+      <div style="display:flex;justify-content:space-between;align-items:baseline;gap:6px">
+        <div style="font-size:9px;color:#7a6f66">{{ n.kw }}</div>
+        <div style="font-size:8.5px;font-family:'Fira Code',monospace;color:{{ n.tagColor }};white-space:nowrap">{{ n.tag }}</div>
+      </div>
+      <div style="font-size:11.5px;font-weight:600;line-height:1.2">{{ n.l }}</div>
+      <div style="font-size:8.5px;font-family:'Fira Code',monospace;color:#4d463f;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ n.s }}</div>
+    </div>
+  </sc-for>
+
+  <sc-for list="{{ notes }}" as="n" hint-placeholder-count="0">
+    <div style="position:absolute;z-index:2;box-sizing:border-box;left:{{ n.left }}px;top:{{ n.top }}px;width:{{ n.w }}px;height:{{ n.h }}px;border:1px solid #c9b98a;background:linear-gradient(225deg, #f1ece3 0 9px, #c9b98a 9px 10px, #fbf6e6 10px);padding:7px 10px;overflow:hidden">
+      <div style="font-size:10.5px;font-weight:600;margin-bottom:3px">{{ n.l }}</div>
+      <sc-for list="{{ n.lines }}" as="li" hint-placeholder-count="0">
+        <div style="font-size:9.5px;line-height:1.35;color:#3a342e;text-wrap:pretty">{{ li }}</div>
+      </sc-for>
+    </div>
+  </sc-for>
+
+  <div style="position:absolute;box-sizing:border-box;left:60px;top:4015px;width:250px;height:300px;border:1px solid #c9b98a;background:linear-gradient(225deg, #f1ece3 0 9px, #c9b98a 9px 10px, #fbf6e6 10px);padding:8px 10px">
+    <div style="font-size:10.5px;font-weight:600;margin-bottom:4px">Stop conditions — exhaustive</div>
+    <div style="font-size:9px;color:#5b544c;margin-bottom:6px">Anything not listed is a normal autonomous action.</div>
+    <ol style="margin:0;padding-left:16px;display:flex;flex-direction:column;gap:2px;font-size:9.3px;line-height:1.3;color:#3a342e">
+      <li>kaichi MCP unavailable or erroring</li>
+      <li>Gate 0 FAIL / INPUT_ERROR / EXTERNAL_PROBE_ERROR / uncaught exception</li>
+      <li>Missing sprint closeout card</li>
+      <li>Missing WorktreeCreate hook</li>
+      <li>Sprint-branch push rejection (retry, never force)</li>
+      <li>Architectural-bridge card with no design doc</li>
+      <li>Hung agent still stale after exactly one re-dispatch</li>
+      <li>Pending rewrite-class migration at startup</li>
+      <li>Card blocked on an act only a person can perform — a termination, not a sequencing input</li>
+      <li>Sprint adding cards faster than it closes them</li>
+    </ol>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;objectFlows&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Diagram&quot;},&quot;edgeLabels&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;default&quot;:&quot;all&quot;,&quot;options&quot;:[&quot;all&quot;,&quot;control only&quot;],&quot;tsType&quot;:&quot;'all' | 'control only'&quot;,&quot;section&quot;:&quot;Diagram&quot;},&quot;notes&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Diagram&quot;},&quot;phaseBands&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Diagram&quot;}}">
+class Component extends DCLogic {
+  constructor(p) { super(p); this.m = this.build(); }
+
+  build() {
+    const LX = { st: 185, dp: 570, rv: 930, rt: 1190, wt: 1465, pl: 1745 };
+    const LW = { st: 250, dp: 380, rv: 220, rt: 240, wt: 250, pl: 250 };
+    const lanes = [
+      { id: 'st', name: 'Stores', sub: 'information · files · refs · inboxes', x0: 40, x1: 330 },
+      { id: 'dp', name: 'Dispatcher', sub: 'main thread · orchestrates · merges · commits', x0: 340, x1: 800 },
+      { id: 'rv', name: 'Reviewer', sub: 'main thread · stale 180s · report only', x0: 810, x1: 1050 },
+      { id: 'rt', name: 'Router', sub: 'main thread · stale 120s · verdict + instructions', x0: 1060, x1: 1320 },
+      { id: 'wt', name: 'Worktree agents', sub: 'Executor 300s · Remediator 240s · code only', x0: 1330, x1: 1600 },
+      { id: 'pl', name: 'Planning agents', sub: 'Sprintmaster · Planner 180s · Sprint-architect', x0: 1610, x1: 1880 },
+    ].map((l, i) => ({ ...l, w: l.x1 - l.x0, bg: i % 2 ? '#f3efe8' : '#f8f5f0' }));
+
+    const N = {};
+    const add = n => { N[n.id] = n; return n; };
+    const A = (id, ln, y, l, s, h = 64, x, w) => add({ id, t: 'a', x: x ?? LX[ln], y, w: w ?? LW[ln], h, l, s });
+    const D = (id, ln, y, l, w = 220, h = 84) => add({ id, t: 'd', x: LX[ln], y, w, h, l });
+    const S = (id, y, l, s, tag, kw = '«datastore»') => add({ id, t: 's', x: 185, y, w: 250, h: 60, l, s, tag, kw });
+    const T = (id, t, x, y, l, l2) => add({ id, t, x, y, w: 24, h: 24, l, l2 });
+    const NT = (id, ln, y, h, l, lines) => add({ id, t: 'n', x: LX[ln], y, w: LW[ln], h, l, lines });
+
+    T('i0', 'i', 570, 200);
+    A('a0', 'dp', 262, 'Invoke dispatcher', 'mode is named at invocation, never detected · sprint (default) · single-card · card scope · sprint scope');
+    A('a1', 'dp', 350, '1 · Orphan sweep', 'prune-orphan-worktrees.sh --quiet · skips live worktrees · tolerates OS locks · always exits 0');
+    A('a2', 'dp', 430, '2 · Create working branch, carry WIP', 'sprint/{TAG} · feature/{cardid} · card/{cardid}');
+    A('a3', 'dp', 510, '3 · Claim sprint', 'take_sprint(tag, handle) · backlog→todo + assign · skipped in single-card mode');
+    A('a4', 'dp', 590, '4 · Migration preflight', 'health_check() → pending_migrations · never auto-applies');
+    D('d1', 'dp', 680, '[rewrite migration pending?]');
+    T('h8', 'h', 400, 680, 'HALT · stop 8', 'rewrites committed history');
+    A('a5', 'dp', 770, '5 · Locate closeout card by sprint tag', 'record its id + the full card list → injected into every planner prompt of the run');
+    D('d2', 'dp', 860, '[closeout card exists?]');
+    T('h3', 'h', 400, 860, 'STOP · stop 3', 'no closeout card');
+    A('a6', 'pl', 970, '6 · Sprintmaster agent', 'cards → todo · step numbers: 2A/2B = parallel batch, next integer = barrier · resolve deps · assign owners', 76);
+    A('a7', 'dp', 1060, '7 · Plan review', 'dispatcher verifies batch independence: shared source files · shared fixtures · P0 before P1 · re-sequence');
+    A('a8', 'dp', 1160, '0a · Advance status', 'move_to_in_progress per card, before any Agent call · closes the duplicate-executor race');
+    A('a9', 'dp', 1240, '0b · Push sprint branch', 'git push origin sprint/{TAG} → reconcile_sprint_issue() · conflict / denied noted, not halting');
+    D('d3', 'dp', 1330, '[push rejected?]');
+    T('h5', 'h', 400, 1330, 'HALT · stop 5', 'fix, re-run phase');
+    D('d4', 'dp', 1420, '[bridge card w/o design doc?]');
+    T('h6', 'h', 400, 1420, 'PAUSE · stop 6', 'needs end-to-end data path');
+    D('d5', 'dp', 1510, '[WorktreeCreate hook ok?]');
+    T('h4', 'h', 400, 1510, 'ABORT · stop 4', 'default forks origin/main');
+    A('a10', 'dp', 1600, 'Dispatch executor · start watchdog', 'one worktree Agent call per message (a shared message cancels WorktreeCreate) · watchdog(agent id)');
+    A('e1', 'wt', 1600, 'Executor', 'merge origin/sprint/{TAG} on startup · implement · commit code only, never .kaichi/ · card state via MCP tools', 76);
+    A('a11', 'dp', 1710, 'Poll every 30 s', 'task result · .stale marker · -ERROR.md file');
+    D('d6', 'dp', 1780, '[stale marker?]');
+    T('h7', 'h', 400, 1780, 'HALT · stop 7', 'stale after one re-dispatch');
+    D('d7', 'dp', 1870, '[hung? 0 commits ∧ no card state]');
+    A('a12', 'dp', 1960, 'Base check — fork point, not tip', 'FORK=$(git merge-base worktree-agent-{id} sprint/{TAG}) · is-ancestor origin/main ⇒ WRONG BASE');
+    A('a13', 'dp', 2040, 'Merge worktree branch', 'git merge --no-edit worktree-agent-{id} · merge first, reconcile second — the order is a gate');
+    A('a14', 'dp', 2120, 'Reconcile card state', 'stage .kaichi/ whole, excluding **/audit/** · partial staging orphans renames');
+    A('a15', 'dp', 2200, 'Post-merge checks', 'tests on merged branch · project validation · regenerate views · "Already up to date" ⇒ wrong branch');
+    A('r1', 'rv', 2200, 'Reviewer', 'reviews every executor cycle · report → own inbox · never the card\'s state', 76);
+    A('ro1', 'rt', 2200, 'Router', 'reduces adversarial prose to a bounded instruction set: blocker · evidence · fences');
+    D('d8', 'rt', 2310, '[router verdict]', 230, 100);
+    A('rem1', 'wt', 2310, 'Remediator', 'bounded corrections only · never card status · never the executor', 76);
+    A('rem2', 'wt', 2600, 'Remediator · TERMINAL', 'router names the exact permitted change · declaration void if it did anything more', 76);
+    A('pl1', 'pl', 2470, 'Planner', 'follow-up cards · closeout-card appends · non-blocking · retry once on failure', 76);
+    A('arch1', 'pl', 2720, 'kaichi-sprint-architect', 'blocker unreducible to a bounded instruction ⇒ the card is the defect · re-scope', 76);
+    T('h9', 'h', 1190, 2650, 'HALT · stop 9', 'enumerate every outstanding human act');
+    A('a17', 'dp', 2420, 'complete_card() — MCP gate', 'only path to done · re-parses checkboxes · superseded / deferred dispositions resolve · unknown fails closed');
+    D('d9', 'dp', 2530, '[unchecked non-deferred box?]');
+    A('a19', 'dp', 2630, 'Auto-move card → blocked', 'rewrite ## BLOCKED (plain bullets, never - [ ]) · cascades: Gate 0 fails while any card is blocked');
+    A('a18', 'dp', 2840, 'Batch close', 're-read card list · sprint_profile(mode="phase") → dispatch log · batch-barrier checkpoint');
+    D('d10', 'dp', 2940, '[all cards done ∧ APPROVAL?]');
+    T('ff1', 'ff', 400, 2940, 'commit .kaichi/ · push one ref · stop');
+    A('a20', 'dp', 3040, '1 · Backlog verification', 'router-routed items vs cards actually on the board');
+    D('d11', 'dp', 3130, '[fewer cards than items?]');
+    A('pl2', 'pl', 3130, 'Planner · re-dispatch', 'dropped work: fewer cards than routed items');
+    A('a21', 'dp', 3220, '2 · Done-tag cleanup', 'git tag -d {TAG}-*-done');
+    A('a22', 'dp', 3300, '3 · Gate 0', 'gate0(card_id=closeout, sprint=TAG) · no strictness parameter exists');
+    D('d12', 'dp', 3400, '[Gate 0 verdict]');
+    T('h2', 'h', 400, 3400, 'HALT · stop 2', 'probe error ⇒ escalate');
+    A('pl3', 'pl', 3400, 'Planner · fix-ups', 'files a fix-up card per failure row');
+    A('r2', 'rv', 3510, 'Sprint-closeout reviewer', 'foreground · read-only · resolves each cite: commit · pr · ci · card · roadmap · retro · none', 76);
+    D('d13', 'rv', 3620, '[closeout review]');
+    T('hS', 'h', 930, 3720, 'HALT', 'reviewer spawn failure');
+    A('a23', 'dp', 3730, '5 · Metrics + report', 'sprint_profile(mode="summary") · sprint_report(sprint=TAG) · harvests agent reasoning');
+    A('a24', 'dp', 3810, '6 · Archive + commit', 'archive done cards · commit .kaichi/ (pre-commit hooks run)');
+    A('a25', 'dp', 3890, '7 · Pull request', 'push · /kaichi-pr drafts + merge-readiness · mark ready · /code-review at PR head in isolated worktree');
+    D('d14', 'dp', 3980, '[positive review artifact?]');
+    A('a26', 'dp', 4070, 'Merge PR', 'reversible only', 56, 680, 170);
+    A('a27', 'dp', 4070, 'Hand back', 'operator finds a report', 56, 460, 170);
+    A('a28', 'dp', 4160, '8 · Orphan sweep', 'prune-orphan-worktrees.sh --quiet');
+    T('fin', 'f', 570, 4240);
+
+    const TR = 'travels', LO = 'local', RF = 'refs only', TN = 'transient', GI = 'git-ignored', RG = 'regenerable', CM = 'committed';
+    S('wt1', 350, 'Worktrees', '.claude/worktrees/agent-{id}/', LO);
+    S('git1', 430, 'Git refs', 'sprint/{TAG} · feature/{cardid} · card/{cardid}', RF);
+    S('cards1', 510, 'Cards', '.kaichi/cards/', TR);
+    S('mcp', 590, 'kaichi MCP', 'health_check · take_sprint · move_to_in_progress · complete_card · gate0', 'server', '«component»');
+    S('cards2', 1160, 'Cards', '.kaichi/cards/ · status: in_progress', TR);
+    S('git2', 1240, 'Git refs', 'origin/sprint/{TAG}', RF);
+    S('traces', 1470, 'Traces', '.kaichi/agents/traces/agent-{id}-NNN.jsonl', GI);
+    S('reason', 1550, 'Reasoning trails', '.kaichi/agents/{role}/reasoning/{TAG}-{cardid}-{role}-{N}.jsonl', TR);
+    S('wd', 1630, 'Watchdog markers', '.kaichi/agents/traces/*.stale · *.alive', TN);
+    S('err', 1710, 'Agent error files', '.kaichi/agents/{role}/inbox/…-{N}-ERROR.md', TR);
+    S('cards3', 1870, 'Cards', '.kaichi/cards/ · uncommitted in parent until staged', TR);
+    S('wt2', 1950, 'Worktrees', '.claude/worktrees/agent-{id}/ · branch worktree-agent-{id}', LO);
+    S('git3', 2040, 'Git refs', 'sprint/{TAG} ← worktree-agent-{id}', RF);
+    S('views', 2200, 'Views', '.kaichi/views/{board,roadmap,docs}.html', RG);
+    S('inbox', 2280, 'Role inboxes', '.kaichi/agents/{role}/inbox/{TAG}-{cardid}-{role}-{N}.md', TR);
+    S('dlog1', 2360, 'Dispatch log', 'dispatcher/inbox/{TAG}-dispatch-log.md · dispatch_log_path(scope)', TR);
+    S('cards4', 2630, 'Cards', '.kaichi/cards/ · done · blocked (## BLOCKED) · new step-numbered', TR);
+    S('dlog2', 2840, 'Dispatch log', 'dispatcher/inbox/{TAG}-dispatch-log.md', TR);
+    S('git4', 3220, 'Git refs', 'tags {TAG}-{cardid}-done', RF);
+    S('g0', 3300, 'Gate 0 verdict', 'dispatcher/inbox/{TAG}-gate0-{stamp}.json · immutable', TR);
+    S('rep', 3730, 'Sprint report', 'docs/reports/{TAG}/{TAG}-report.md + index.html', CM);
+    S('arch', 3810, 'Cards archive', 'cards/archive/sprints/{stamp}-sprint-{tag}/', TR);
+    S('git5', 3890, 'Git refs', 'origin/sprint/{TAG} · PR', RF);
+
+    NT('n2', 'rv', 470, 196, 'Modes', [
+      'Sprint (default) — sprint/{TAG} → closeout → PR → merge-or-hand-back.',
+      'Single-card — feature/{cardid}; skips take_sprint, sprintmaster, barriers, Gate 0, closeout reviewer.',
+      'Card scope — card/{cardid}; commit .kaichi/, push one ref, stop. No archive, no PR.',
+      'Sprint scope — hands each card out; merges branches home.']);
+    NT('n1', 'wt', 1795, 100, 'Hermes harness', [
+      'No Agent tool, no worktree isolation. The hermes-dispatch driver adds a between-card integrity check: quarantine on unsanctioned protected-state mutation (fail-legible, not fail-closed).']);
+    NT('n4', 'rt', 3300, 70, 'Division of labour', ['Gate 0 checks that a cite is well-formed; the closeout reviewer checks that it is true.']);
+    NT('n3', 'rt', 3510, 84, 'Terminal node is a reader', ['No close-out writer role. A per-card agent that ticks boxes after review is forbidden — its writes are the ones no reviewer reads.']);
+
+    const C = [
+      ['i0', 'a0'], ['a0', 'a1'], ['a1', 'a2'], ['a2', 'a3'], ['a3', 'a4'], ['a4', 'd1'],
+      ['d1', 'h8', '[rewrite: available / interrupted]', { fp: 'l', tp: 'r' }],
+      ['d1', 'a5', '[additive only / none]'],
+      ['a5', 'd2'], ['d2', 'h3', '[absent]', { fp: 'l', tp: 'r' }], ['d2', 'a6', '[present]'],
+      ['a6', 'a7', '«execution plan»', { o: 1, lp: [1600, 1013], la: 'end' }],
+      ['a7', 'a8'], ['a8', 'a9'], ['a9', 'd3'],
+      ['d3', 'h5', '[rejected — never force]', { fp: 'l', tp: 'r' }], ['d3', 'd4', '[pushed]'],
+      ['d4', 'h6', '[no end-to-end design doc]', { fp: 'l', tp: 'r' }], ['d4', 'd5', '[ok]'],
+      ['d5', 'h4', '[missing / not executable]', { fp: 'l', tp: 'r' }], ['d5', 'a10', '[registered]'],
+      ['a10', 'e1', 'Agent call (worktree)', { fp: 'r', tp: 'l' }], ['a10', 'a11'],
+      ['e1', 'a11', '«task result»', { fp: 'b', tp: 'r', o: 1, lp: [1471, 1700] }],
+      ['a11', 'd6'], ['d6', 'h7', '[stale after one re-dispatch]', { fp: 'l', tp: 'r' }],
+      ['d6', 'a10', '[stale once] re-dispatch', { fp: 'r', w: [{ x: 770 }, { y: 1555 }], tp: 't' }],
+      ['d6', 'd7', '[alive]'],
+      ['d7', 'a10', '[hung] re-dispatch once', { fp: 'r', w: [{ x: 770 }, { y: 1555 }], tp: 't' }],
+      ['d7', 'a12', '[progress]'], ['a12', 'a13', 'base ok'], ['a13', 'a14'], ['a14', 'a15'],
+      ['a15', 'r1', 'merged branch', { fp: 'r', tp: 'l' }], ['r1', 'ro1', '«review report»', { fp: 'r', tp: 'l' }], ['ro1', 'd8'],
+      ['d8', 'r1', '[APPROVAL ∧ card ≠ done] re-review', { fp: 'l', w: [{ x: 1055 }], tp: 'r' }],
+      ['d8', 'rem1', '[BLOCKERS]', { fp: 'r', tp: 'l' }],
+      ['d8', 'a17', '[APPROVAL, reviewer-flipped] close-out-only pass', { fp: 'b', w: [{ y: 2380 }], tp: 't', lp: [1180, 2375], la: 'end' }],
+      ['d8', 'pl1', '[PLANNER WORK] non-blocking', { fp: 'b', w: [{ y: 2420 }], tp: 't', lp: [1200, 2415] }],
+      ['d8', 'arch1', '[blocker unreducible] re-scope', { fp: 'b', w: [{ y: 2460 }, { x: 1605 }], tp: 'l', lp: [1200, 2455] }],
+      ['d8', 'a18', '[APPROVAL ∧ done] closeout checkpoint', { fp: 'b', w: [{ y: 2500 }, { x: 775 }], tp: 'r', lp: [1180, 2495], la: 'end' }],
+      ['d8', 'rem2', '[TERMINAL remediation]', { fp: 'b', w: [{ y: 2540 }], tp: 't', lp: [1200, 2535] }],
+      ['d8', 'h9', '[BLOCKED ∧ needs_human_marked]', { lp: [1200, 2625] }],
+      ['rem1', 'r1', 'corrections → re-review', { fp: 't', w: [{ y: 2140 }], tp: 't', lp: [1450, 2135], la: 'end' }],
+      ['rem2', 'a17', 'completes without re-review', { fp: 'l', w: [{ x: 830 }], tp: 'r', lp: [1110, 2596], la: 'end' }],
+      ['a17', 'd9'], ['d9', 'a19', '[unchecked, non-deferred box]'],
+      ['d9', 'a18', '[all resolved] → done', { fp: 'r', w: [{ x: 775 }], tp: 'r' }],
+      ['a19', 'a18'],
+      ['pl1', 'a18', 'new step-numbered cards join the plan', { fp: 'r', w: [{ x: 1895 }, { y: 2780 }], tp: 't', tx: 640, lp: [1880, 2775], la: 'end' }],
+      ['arch1', 'a18', '', { fp: 'r', w: [{ x: 1895 }, { y: 2780 }], tp: 't', tx: 640 }],
+      ['a18', 'd10'], ['d10', 'a8', '[cards remain] next batch', { fp: 'r', w: [{ x: 790 }], tp: 'r' }],
+      ['d10', 'ff1', '[subset / card scope]', { fp: 'l', tp: 'r' }],
+      ['d10', 'a20', '[all done ∧ APPROVAL]'], ['a20', 'd11'],
+      ['d11', 'pl2', '[fewer cards] planner dropped work', { fp: 'r', tp: 'l' }],
+      ['pl2', 'a20', 're-dispatch, then re-verify', { fp: 't', w: [{ y: 2995 }, { x: 790 }], tp: 'r', lp: [1730, 2990], la: 'end' }],
+      ['d11', 'a21', '[count matches]'], ['a21', 'a22'], ['a22', 'd12'],
+      ['d12', 'h2', '[INPUT_ERROR ∨ EXTERNAL_PROBE_ERROR] refuse', { fp: 'l', tp: 'r' }],
+      ['d12', 'pl3', '[FAIL] refuse commit · surface each failure row', { fp: 'r', tp: 'l' }],
+      ['pl3', 'a22', 're-invoke gate0', { fp: 't', w: [{ y: 3345 }, { x: 790 }], tp: 'r', lp: [1730, 3340], la: 'end' }],
+      ['d12', 'r2', '[PASS]', { lp: [590, 3452] }],
+      ['r2', 'd13'], ['d13', 'hS', '[spawn failure] silence ≠ clean', { lp: [938, 3684] }],
+      ['d13', 'pl3', '[REVISE ∨ FAIL] refuse commit', { fp: 'r', w: [{ x: 1745 }], tp: 'b' }],
+      ['d13', 'a23', '[PASS]', { fp: 'l', w: [{ x: 790 }], tp: 'r' }],
+      ['a23', 'a24'], ['a24', 'a25'], ['a25', 'd14'],
+      ['d14', 'a26', '[names reviewed ∧ eligible ∧ findings count]', { fp: 'r', tp: 't' }],
+      ['d14', 'a27', '[artifact missing ∨ irreversible]', { fp: 'l', tp: 't', lp: [454, 3994], la: 'end' }],
+      ['a26', 'a28'], ['a27', 'a28'], ['a28', 'fin'],
+    ];
+    const O = [
+      ['a1', 'wt1', 'prune'], ['a2', 'git1', 'branch'], ['a3', 'cards1', 'claim'],
+      ['mcp', 'a4', 'migrations', { rd: 1 }], ['cards1', 'a5', 'card list', { rd: 1 }],
+      ['a8', 'cards2', 'status'], ['a9', 'git2', 'push'], ['a10', 'wd', 'start'],
+      ['wd', 'a11', '.stale / .alive', { rd: 1 }], ['err', 'a11', '-ERROR.md', { rd: 1 }],
+      ['e1', 'traces', 'trace', { cy: 1660 }], ['e1', 'reason', 'reasoning', { cy: 1660 }],
+      ['e1', 'cards3', 'card state (MCP)', { cy: 1660 }], ['e1', 'wt2', 'code commits', { cy: 1660 }],
+      ['git3', 'a12', 'merge-base', { rd: 1 }], ['a13', 'git3', 'merge'], ['a14', 'cards3', 'stage .kaichi/'],
+      ['a15', 'views', 'regen'],
+      ['r1', 'inbox', 'review report', { fp: 'b', fx: 860, cy: 2260 }],
+      ['ro1', 'inbox', 'instruction files', { fp: 'b', fx: 1100, cy: 2260 }],
+      ['ro1', 'dlog1', 'review-log append', { fp: 'b', fx: 1120, cy: 2272 }],
+      ['a17', 'cards4', 'done / blocked'], ['a19', 'cards4', 'BLOCKED'], ['pl1', 'cards4', 'follow-up cards'], ['arch1', 'cards4', 're-scoped card'],
+      ['a18', 'dlog2', 'profile'], ['dlog2', 'a20', 'routed items', { rd: 1 }],
+      ['a21', 'git4', 'rm tags'], ['a22', 'g0', 'verdict'], ['g0', 'r2', 'unresolved_attestations', { rd: 1 }],
+      ['a23', 'rep', 'report'], ['a24', 'arch', 'archive'], ['a25', 'git5', 'push · PR'],
+    ];
+
+    const port = (n, p, fx) => {
+      const hw = n.w / 2, hh = n.h / 2;
+      if (p === 't') return [fx ?? n.x, n.y - hh];
+      if (p === 'b') return [fx ?? n.x, n.y + hh];
+      if (p === 'l') return [n.x - hw, n.y];
+      return [n.x + hw, n.y];
+    };
+
+    // gutter lanes for object flows between the store lane and the rest
+    const glanes = [];
+    const objEdges = O.map(([f, t, l, o = {}]) => {
+      const s = N[f], tg = N[t];
+      const fp = o.fp ?? (o.rd ? 'r' : 'l'), tp = o.rd ? 'l' : 'r';
+      const p0 = port(s, fp, o.fx);
+      const sy = o.cy ?? p0[1], ty = tg.y;
+      const w = o.cy ? [{ y: o.cy }] : [];
+      let gutterX = null, gy0 = sy, gy1 = ty;
+      if (Math.abs(sy - ty) > 1) {
+        const lo = Math.min(sy, ty) - 14, hi = Math.max(sy, ty) + 14;
+        let k = 0;
+        while (glanes[k] && glanes[k].some(r => r[0] < hi && lo < r[1])) k++;
+        (glanes[k] = glanes[k] || []).push([lo, hi]);
+        gutterX = 345 + 7 * k;
+        w.push({ x: gutterX });
+      }
+      return { f, t, l, k: 'o', fp, tp, w, fx: o.fx, gutterX, gy0, gy1 };
+    });
+    const ctlEdges = C.map(([f, t, l = '', o = {}]) => ({ f, t, l, k: o.o ? 'o' : 'c', ...o }));
+
+    const obs = Object.values(N).map(n => {
+      if (n.t === 'h' || n.t === 'ff') return [n.x - 80, n.y - 12, n.x + 80, n.y + 42];
+      return [n.x - n.w / 2, n.y - n.h / 2, n.x + n.w / 2, n.y + n.h / 2];
+    });
+    obs.push([60, 4015, 310, 4315]);
+    const placed = [];
+    const direct = objEdges.filter(e => e.gutterX == null), gutter = objEdges.filter(e => e.gutterX != null);
+    const edges = [...direct, ...ctlEdges, ...gutter].map(e => {
+      const s = N[e.f], t = N[e.t];
+      let fp = e.fp, tp = e.tp, w = e.w ? [...e.w] : [];
+      if (!fp && !tp) {
+        if (t.y - t.h / 2 > s.y + s.h / 2) {
+          fp = 'b'; tp = 't';
+          if (Math.abs(t.x - s.x) > 1 && !w.length) w = [{ y: (s.y + s.h / 2 + t.y - t.h / 2) / 2 }];
+        } else {
+          fp = t.x > s.x ? 'r' : 'l'; tp = fp === 'r' ? 'l' : 'r';
+          if (Math.abs(t.y - s.y) > 1 && !w.length) w = [{ x: (port(s, fp)[0] + port(t, tp)[0]) / 2 }];
+        }
+      }
+      fp = fp || 'b'; tp = tp || 't';
+      const pts = [port(s, fp, e.fx)];
+      let cur = [...pts[0]];
+      for (const wp of w) { cur = wp.x != null ? [wp.x, cur[1]] : [cur[0], wp.y]; pts.push([...cur]); }
+      const tg = port(t, tp);
+      if (tp === 't' || tp === 'b') { const tx = e.tx ?? tg[0]; pts.push([tx, cur[1]]); pts.push([tx, tg[1]]); }
+      else { pts.push([cur[0], tg[1]]); pts.push([tg[0], tg[1]]); }
+      const clean = pts.filter((p, i) => i === 0 || p[0] !== pts[i - 1][0] || p[1] !== pts[i - 1][1]);
+      const d = clean.map((p, i) => (i ? 'L' : 'M') + p[0] + ',' + p[1]).join(' ');
+      let lb = null;
+      if (e.l) {
+        // collision-aware placement: try candidates in order, keep the first free of nodes and earlier labels
+        const tw = e.l.length * 6.1 + 6, th = 12;
+        const [p0, p1] = clean;
+        const mid = [(p0[0] + p1[0]) / 2, (p0[1] + p1[1]) / 2];
+        const c = [];
+        const push = (x, y, ax, ay, rot) => c.push({ x, y, ax, ay, rot: !!rot });
+        if (e.lp) push(e.lp[0], e.lp[1], e.la === 'end' ? 1 : 0, 1);
+        if (e.k === 'o' && e.gutterX != null) {
+          const gy = (e.gy0 + e.gy1) / 2;
+          push(e.gutterX, gy, 0.5, 0.5, 1); push(e.gutterX, gy - 30, 0.5, 0.5, 1); push(e.gutterX, gy + 30, 0.5, 0.5, 1); push(e.gutterX, gy - 60, 0.5, 0.5, 1); push(e.gutterX, gy + 60, 0.5, 0.5, 1);
+        }
+        const down = p1[1] > p0[1], up = p1[1] < p0[1], right = p1[0] > p0[0];
+        if (down || up) {
+          push(p0[0] + 6, mid[1], 0, 0.5); push(p0[0] - 6, mid[1], 1, 0.5);
+          push(p0[0] + 6, down ? p0[1] + 4 : p0[1] - 4, 0, down ? 0 : 1);
+          push(p0[0] - 6, down ? p0[1] + 4 : p0[1] - 4, 1, down ? 0 : 1);
+        } else if (right) {
+          push(p0[0] + 4, p0[1] - 4, 0, 1); push(p0[0] + 4, p0[1] + 4, 0, 0); push(mid[0], p0[1] - 4, 0.5, 1); push(mid[0], p0[1] + 4, 0.5, 0);
+        } else {
+          push(p0[0] - 4, p0[1] - 4, 1, 1); push(p0[0] - 4, p0[1] + 4, 1, 0); push(mid[0], p0[1] - 4, 0.5, 1); push(mid[0], p0[1] + 4, 0.5, 0);
+        }
+        if (!down && !up && clean.length === 2) {
+          // stub between two adjacent boxes: sit above (then below) both endpoint nodes
+          const topY = Math.min(s.y - s.h / 2, t.y - t.h / 2), botY = Math.max(s.y + s.h / 2, t.y + t.h / 2);
+          push(mid[0], topY - 4, 0.5, 1); push(mid[0], botY + 4, 0.5, 0);
+        }
+        // walk later segments too
+        for (let i = 1; i < clean.length - 1; i++) {
+          const a = clean[i], b = clean[i + 1], m = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+          if (a[1] === b[1]) { push(m[0], a[1] - 4, 0.5, 1); push(m[0], a[1] + 4, 0.5, 0); }
+          else { push(a[0] + 6, m[1], 0, 0.5); push(a[0] - 6, m[1], 1, 0.5); }
+        }
+        const boxOf = q => { const w = q.rot ? th : tw, h = q.rot ? tw : th; const l = q.x - q.ax * w, t = q.y - q.ay * h; return [l, t, l + w, t + h]; };
+        const hit = (b, o) => b[0] < o[2] + 2 && o[0] < b[2] + 2 && b[1] < o[3] + 2 && o[1] < b[3] + 2;
+        let pick = c[0], pb = boxOf(c[0]);
+        for (const q of c) { const b = boxOf(q); if (!obs.some(o => hit(b, o)) && !placed.some(o => hit(b, o))) { pick = q; pb = b; break; } }
+        placed.push(pb);
+        const tf = `translate(${-pick.ax * 100}%, ${-pick.ay * 100}%)` + (pick.rot ? ' rotate(-90deg)' : '');
+        lb = { x: pick.x, y: pick.y, tf, t: e.l, fill: e.k === 'o' ? '#6b5f55' : '#1f1b18', k: e.k };
+      }
+      const o = e.k === 'o';
+      return { d, k: e.k, stroke: o ? '#7a6f66' : '#1f1b18', sw: o ? 1.2 : 1.5, dash: o ? '5 4' : 'none', marker: o ? 'url(#oarrow)' : 'url(#arrow)', lb };
+    });
+
+    const all = Object.values(N);
+    const box = n => ({ ...n, left: n.x - n.w / 2, top: n.y - n.h / 2 });
+    const tagColor = { travels: '#3f6b3a', local: '#8a5a2b', 'refs only': '#5b544c', transient: '#8a5a2b', 'git-ignored': '#8a5a2b', regenerable: '#5b544c', committed: '#3f6b3a', server: '#5b544c' };
+    const halts = all.filter(n => n.t === 'h').map(n => ({ ...n, ly: n.y + 16 }));
+    const flowfinals = all.filter(n => n.t === 'ff').map(n => ({ ...n, ly: n.y + 16, xd: `M${n.x - 8},${n.y - 8} L${n.x + 8},${n.y + 8} M${n.x + 8},${n.y - 8} L${n.x - 8},${n.y + 8}` }));
+    const phases = [
+      { label: 'Phase 0 · Readiness', y0: 170, y1: 1110, bg: '#efe9df' },
+      { label: 'Phase 1–4 · Execution loop (per batch)', y0: 1110, y1: 3000, bg: '#e8e1d5' },
+      { label: 'Phase 5 · Closeout', y0: 3000, y1: 4330, bg: '#efe9df' },
+    ].map(p => ({ ...p, h: p.y1 - p.y0 }));
+    return {
+      lanes, phases, edges,
+      actions: all.filter(n => n.t === 'a').map(box),
+      decisions: all.filter(n => n.t === 'd').map(box),
+      stores: all.filter(n => n.t === 's').map(n => ({ ...box(n), tagColor: tagColor[n.tag] || '#5b544c' })),
+      notes: all.filter(n => n.t === 'n').map(box),
+      inits: all.filter(n => n.t === 'i'), finals: all.filter(n => n.t === 'f'), flowfinals, halts,
+    };
+  }
+
+  renderVals() {
+    const m = this.m;
+    const showO = this.props.objectFlows ?? true;
+    const edges = m.edges.filter(e => showO || e.k !== 'o');
+    return {
+      lanes: m.lanes,
+      phases: (this.props.phaseBands ?? true) ? m.phases : [],
+      edges,
+      labels: edges.filter(e => e.lb && ((this.props.edgeLabels ?? 'all') === 'all' || e.k === 'c')).map(e => e.lb),
+      actions: m.actions, decisions: m.decisions, stores: m.stores,
+      notes: (this.props.notes ?? true) ? m.notes : [],
+      inits: m.inits, finals: m.finals, flowfinals: m.flowfinals, halts: m.halts,
+    };
+  }
+}
+</script>
+</body>
+</html>
