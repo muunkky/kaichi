@@ -34,13 +34,17 @@ reveal) is preserved exactly.
 
 ## Working on it
 
-Edit `index.html` directly (plain HTML/CSS/JS), **or** keep designing in Claude Design
-and re-compile:
+Edit `Kaichi.dc.html` — the design source — then re-compile. **Do not edit
+`index.html`**: it is generated, and the next `compile.py` run silently destroys any
+change made to it directly.
 
 ```bash
 python3 compile.py     # regenerates index.html; fails loudly on any unresolved dc construct
-python3 verify.py      # optional — needs: pip install playwright && playwright install chromium
+python3 verify.py      # smoke test — needs: pip install playwright && playwright install chromium
 ```
+
+`verify.py` is not optional for a change to the download section: it asserts the nightly
+asset links, the unsigned label and the platform table against the rendered page.
 
 ## Deploy
 
