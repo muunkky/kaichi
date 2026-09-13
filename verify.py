@@ -62,6 +62,68 @@ with sync_playwright() as p:
     assert "Ada" in thanks, f"firstName not filled: {thanks!r}"
     print("form submit -> thank-you, firstName:", "Ada" in thanks)
 
+
+    # ---- UNSGNMW1 step 6: macOS/Windows nightlies + the unsigned label -------
+    NIGHTLY = "https://github.com/muunkky/kaichi-releases/releases/download/nightly/"
+
+    # 6. every asset the nightly release publishes is offered here, exactly once
+    for asset in ("kaichi-linux-x86_64", "kaichi-linux-arm64",
+                  "kaichi-macos-arm64", "kaichi-windows-x86_64.exe", "SHA256SUMS"):
+        link = pg.locator(f'a[href="{NIGHTLY}{asset}"]')
+        assert link.count() == 1, f"expected 1 nightly link for {asset}, got {link.count()}"
+        assert link.first.is_visible(), f"nightly link for {asset} is not visible"
+    print("nightly links (linux x2, macos, windows, checksums): OK")
+
+    # 7. the signing state is stated AT the download, not in a footnote, and it
+    #    names the concrete thing each OS actually does.
+    warn = pg.locator("[data-signing-warning]")
+    assert warn.count() == 1, f"expected 1 signing warning, got {warn.count()}"
+    assert warn.first.is_visible(), "signing warning is not visible"
+    wt = warn.first.inner_text()
+    for needle in ("unsigned", "xattr -d com.apple.quarantine", "Privacy & Security",
+                   "SmartScreen", "More info", "Run anyway"):
+        assert needle.lower() in wt.lower(), f"signing warning missing {needle!r} in {wt!r}"
+    # Control-click -> Open was REMOVED in macOS 15 (Sequoia); telling a visitor to
+    # do it reads as the download being broken. It must not come back.
+    assert "control-click" not in wt.lower() and "right-click" not in wt.lower(), \
+        f"signing warning reinstates the removed Control-click override: {wt!r}"
+    # readable BEFORE the click: at or above both links it warns about
+    wy = warn.first.bounding_box()["y"]
+    for asset in ("kaichi-macos-arm64", "kaichi-windows-x86_64.exe"):
+        ly = pg.locator(f'a[href="{NIGHTLY}{asset}"]').first.bounding_box()["y"]
+        assert wy <= ly, f"signing warning (y={wy}) sits below the {asset} link (y={ly})"
+    print("unsigned warning sits above the downloads it describes: OK")
+
+    # 8. macOS/Windows must not inherit the Linux nightly's freshness promise:
+    #    they are built on manual dispatch only, never on the cron.
+    ondemand = pg.locator("[data-ondemand-note]")
+    assert ondemand.count() == 1, "missing the on-demand (not-nightly) note for macOS/Windows"
+    assert ondemand.first.is_visible(), "on-demand note is not visible"
+
+    # 9. the page no longer promises these builds are coming
+    page_text = pg.inner_text("body")
+    assert "coming soon" not in page_text.lower(), "'coming soon' copy is still on the page"
+
+    # 10. the primary buttons still resolve `releases/latest`, which EXCLUDES
+    #     prereleases -- a macOS/Windows link there would be a 404.
+    latest = pg.eval_on_selector_all(
+        'a[href*="/releases/latest/download/"]',
+        "els => els.map(e => e.getAttribute('href'))",
+    )
+    assert sorted(latest) == sorted([
+        "https://github.com/muunkky/kaichi-releases/releases/latest/download/kaichi-linux-x86_64",
+        "https://github.com/muunkky/kaichi-releases/releases/latest/download/kaichi-linux-arm64",
+    ]), f"primary download buttons are no longer Linux-only: {latest}"
+    print("primary buttons still Linux-only (releases/latest excludes prereleases): OK")
+
+    # 11. the platform table states macOS and Windows honestly
+    plat = pg.locator("[data-platform-table]")
+    assert plat.count() == 1, "platform support table not found"
+    pt = plat.first.inner_text()
+    for needle in ("macOS", "Windows", "nightly", "unsigned"):
+        assert needle.lower() in pt.lower(), f"platform table missing {needle!r} in {pt!r}"
+    print("platform support table covers macOS + Windows: OK")
+
     b.close()
 
 if errors:
