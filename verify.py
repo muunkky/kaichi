@@ -63,42 +63,35 @@ with sync_playwright() as p:
     print("form submit -> thank-you, firstName:", "Ada" in thanks)
 
 
-    # ---- UNSGNMW1 step 6: macOS/Windows nightlies + the unsigned label -------
+    # ---- the nightly download point --------------------------------------
     NIGHTLY = "https://github.com/muunkky/kaichi-releases/releases/download/nightly/"
 
-    # 6. every asset the nightly release publishes is offered here, exactly once
-    for asset in ("kaichi-linux-x86_64", "kaichi-linux-arm64",
-                  "kaichi-macos-arm64", "kaichi-windows-x86_64.exe", "SHA256SUMS"):
+    # 6. every asset the nightly offers is linked here, exactly once. macOS and
+    #    Windows are deliberately absent: nothing rebuilds them on a cadence, so a
+    #    link here would age into a download nobody refreshed. The platform table
+    #    below is where their state is stated instead.
+    for asset in ("kaichi-linux-x86_64", "kaichi-linux-arm64", "SHA256SUMS"):
         link = pg.locator(f'a[href="{NIGHTLY}{asset}"]')
         assert link.count() == 1, f"expected 1 nightly link for {asset}, got {link.count()}"
         assert link.first.is_visible(), f"nightly link for {asset} is not visible"
-    print("nightly links (linux x2, macos, windows, checksums): OK")
+    print("nightly links (linux x2, checksums): OK")
 
-    # 7. the signing state is stated AT the download, not in a footnote, and it
-    #    names the concrete thing each OS actually does.
-    warn = pg.locator("[data-signing-warning]")
-    assert warn.count() == 1, f"expected 1 signing warning, got {warn.count()}"
-    assert warn.first.is_visible(), "signing warning is not visible"
-    wt = warn.first.inner_text()
-    for needle in ("unsigned", "xattr -d com.apple.quarantine", "Privacy & Security",
-                   "SmartScreen", "More info", "Run anyway"):
-        assert needle.lower() in wt.lower(), f"signing warning missing {needle!r} in {wt!r}"
-    # Control-click -> Open was REMOVED in macOS 15 (Sequoia); telling a visitor to
-    # do it reads as the download being broken. It must not come back.
-    assert "control-click" not in wt.lower() and "right-click" not in wt.lower(), \
-        f"signing warning reinstates the removed Control-click override: {wt!r}"
-    # readable BEFORE the click: at or above both links it warns about
-    wy = warn.first.bounding_box()["y"]
+    # 7. no macOS/Windows download is offered anywhere on the page. The page must
+    #    not advertise a binary no cadence keeps current.
     for asset in ("kaichi-macos-arm64", "kaichi-windows-x86_64.exe"):
-        ly = pg.locator(f'a[href="{NIGHTLY}{asset}"]').first.bounding_box()["y"]
-        assert wy <= ly, f"signing warning (y={wy}) sits below the {asset} link (y={ly})"
-    print("unsigned warning sits above the downloads it describes: OK")
+        stray = pg.locator(f'a[href*="{asset}"]')
+        assert stray.count() == 0, (
+            f"{asset} is linked {stray.count()}x -- nothing rebuilds it, so the page "
+            f"must not offer it"
+        )
+    print("no macOS/Windows download offered: OK")
 
-    # 8. macOS/Windows must not inherit the Linux nightly's freshness promise:
-    #    they are built on manual dispatch only, never on the cron.
-    ondemand = pg.locator("[data-ondemand-note]")
-    assert ondemand.count() == 1, "missing the on-demand (not-nightly) note for macOS/Windows"
-    assert ondemand.first.is_visible(), "on-demand note is not visible"
+    # 8. and the copy that described how to get past Gatekeeper/SmartScreen went
+    #    with the links it belonged to -- instructions for a download the page no
+    #    longer offers read as a broken page.
+    for gone in ("[data-signing-warning]", "[data-ondemand-note]"):
+        assert pg.locator(gone).count() == 0, f"{gone} outlived the downloads it described"
+    print("unsigned-download instructions removed with the downloads: OK")
 
     # 9. the page no longer promises these builds are coming
     page_text = pg.inner_text("body")
@@ -120,9 +113,9 @@ with sync_playwright() as p:
     plat = pg.locator("[data-platform-table]")
     assert plat.count() == 1, "platform support table not found"
     pt = plat.first.inner_text()
-    for needle in ("macOS", "Windows", "nightly", "unsigned"):
+    for needle in ("macOS", "Windows", "unsigned", "Not published"):
         assert needle.lower() in pt.lower(), f"platform table missing {needle!r} in {pt!r}"
-    print("platform support table covers macOS + Windows: OK")
+    print("platform support table states macOS + Windows as not published: OK")
 
     b.close()
 
