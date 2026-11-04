@@ -352,8 +352,10 @@ runtime = r"""
     chip.addEventListener('click', function () { chip.classList.toggle('is-active'); });
   });
 
-  /* ---- lead form: capture the lead, then open the booking calendar ---- */
-  var BOOKING_URL = "https://calendar.app.google/nma5u7ioDyXh6R426";
+  /* ---- lead form: capture the lead (and open the booking page, if one is set) ---- */
+  // Booking page opened on submit. Empty = no redirect: the form just thanks the
+  // visitor and someone replies by email. The old Google Calendar link is dead.
+  var BOOKING_URL = "";
   // Google Apps Script web-app /exec URL — logs every submission to a Google Sheet.
   // Requires the web-app deployment's "Who has access" set to "Anyone".
   // Empty = booking still works, nothing is logged.
@@ -364,7 +366,7 @@ runtime = r"""
       ev.preventDefault();
       var data = new FormData(form);
       // 1) open the booking page first, while still inside the click gesture
-      window.open(BOOKING_URL, '_blank', 'noopener');
+      if (BOOKING_URL) window.open(BOOKING_URL, '_blank', 'noopener');
       // 2) best-effort lead capture to a Google Sheet (never blocks the booking)
       if (LEAD_ENDPOINT) {
         var chips = Array.prototype.slice.call(document.querySelectorAll('.kai-chip.is-active'))

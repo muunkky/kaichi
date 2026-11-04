@@ -78,8 +78,8 @@
       <sc-if value="{{ submitted }}" hint-placeholder-val="{{ false }}">
         <div style="text-align:center;padding:32px 8px">
           <div style="width:54px;height:54px;border-radius:14px;background:#0f6d54;display:grid;place-items:center;margin:0 auto 18px;font-size:26px;color:#eafff5">✓</div>
-          <div style="font-family:'Space Grotesk';font-weight:700;font-size:22px;color:#fff">Thanks{{ firstName }} — pick a time.</div>
-          <p style="font-size:15px;line-height:1.6;color:#93a89e;margin:12px 0 0">We've opened our booking calendar in a new tab — grab whatever slot works and we'll see you there. Popup blocked? <a href="https://calendar.app.google/nma5u7ioDyXh6R426" target="_blank" rel="noopener" style="color:#7ee0b0;font-weight:600">Open the calendar →</a></p>
+          <div style="font-family:'Space Grotesk';font-weight:700;font-size:22px;color:#fff">Thanks{{ firstName }}. We'll be in touch.</div>
+          <p style="font-size:15px;line-height:1.6;color:#93a89e;margin:12px 0 0">We'll reply by email, usually within two business days, to set up a time to talk.</p>
           <a href="https://discord.gg/JmphFWUvBw" target="_blank" rel="noopener" style="display:inline-block;margin-top:20px;border:1px solid #2a3f38;color:#b8c7bf;padding:11px 18px;border-radius:10px;font-weight:600;font-size:14px" style-hover="border-color:#0f6d54;color:#7ee0b0">Meet us in the Discord →</a>
         </div>
       </sc-if>
@@ -100,25 +100,14 @@
           <span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#7d918a">Where can we help? <span style="color:#5f7169;text-transform:none;letter-spacing:0">(pick any)</span></span>
           <div style="display:flex;flex-wrap:wrap;gap:8px">
             <button type="button" onClick="{{ needProto }}" style="{{ needProtoStyle }}">Productionize a prototype</button>
-            <button type="button" onClick="{{ needRewrite }}" style="{{ needRewriteStyle }}">Make stuff that impresses the eng team</button>
-            <button type="button" onClick="{{ needBacklog }}" style="{{ needBacklogStyle }}">Burn down issues &amp; bugs</button>
-            <button type="button" onClick="{{ needTests }}" style="{{ needTestsStyle }}">Add tests &amp; docs to old code</button>
-            <button type="button" onClick="{{ needTrial }}" style="{{ needTrialStyle }}">Start with a pilot first</button>
-            <button type="button" onClick="{{ needMilestone }}" style="{{ needMilestoneStyle }}">Clear a roadmap milestone</button>
-          </div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#7d918a">Engagement</span>
-          <div style="display:flex;flex-wrap:wrap;gap:8px">
-            <button type="button" onClick="{{ toggleDelivery }}" style="{{ deliveryStyle }}">Embedded PR delivery</button>
-            <button type="button" onClick="{{ toggleEnable }}" style="{{ enableStyle }}">Team enablement</button>
-            <button type="button" onClick="{{ toggleLicense }}" style="{{ licenseStyle }}">Commercial license</button>
+            <button type="button" onClick="{{ needRewrite }}" style="{{ needRewriteStyle }}">Reverse engineer an old codebase</button>
+            <button type="button" onClick="{{ needBacklog }}" style="{{ needBacklogStyle }}">Reduce outsourced development costs</button>
           </div>
         </div>
         <label style="display:flex;flex-direction:column;gap:6px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#7d918a">What are you building?
           <textarea name="message" rows="2" placeholder="A sentence on your codebase and what you want shipped." style="background:#0b120f;border:1px solid #223730;border-radius:10px;padding:11px 12px;color:#e7efea;font-family:'Manrope';font-size:15px;resize:vertical" style-focus="border-color:#0f6d54;outline:none"></textarea>
         </label>
-        <button type="submit" style="background:#0f6d54;color:#fff;padding:14px;border:none;border-radius:11px;font-weight:600;font-size:15px;font-family:'Manrope';cursor:pointer" style-hover="background:#12805f">Book an intro call →</button>
+        <button type="submit" style="background:#0f6d54;color:#fff;padding:14px;border:none;border-radius:11px;font-weight:600;font-size:15px;font-family:'Manrope';cursor:pointer" style-hover="background:#12805f">Request an intro call →</button>
         <p style="font-size:12px;color:#6f8078;margin:2px 0 0;text-align:center">No spam. We reply from a real inbox, usually within two days.</p>
       </form>
       </sc-if>
@@ -358,7 +347,7 @@
     </div>
     <div style="background:#0f1a16;border:1px solid #1b2c24;border-radius:18px;padding:28px;text-align:center">
       <div style="font-family:'Space Grotesk';font-weight:700;font-size:22px;color:#fff">Ready to see it on your code?</div>
-      <p style="font-size:15px;line-height:1.6;color:#93a89e;margin:12px 0 20px">Tell us what you're building and pick a time.</p>
+      <p style="font-size:15px;line-height:1.6;color:#93a89e;margin:12px 0 20px">Tell us what you're building and we'll set up a time.</p>
       <a href="#lead" style="display:inline-block;background:#0f6d54;color:#fff;padding:14px 22px;border-radius:11px;font-weight:600;font-size:15px" style-hover="background:#12805f;color:#fff">Book an intro call →</a>
     </div>
   </div>

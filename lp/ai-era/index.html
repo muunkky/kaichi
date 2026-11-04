@@ -147,8 +147,8 @@ img[src^="docs/decks/previews/"]{aspect-ratio:1000/640;height:auto}
       <div data-if="submitted" style="display:none">
         <div style="text-align:center;padding:32px 8px">
           <div style="width:54px;height:54px;border-radius:14px;background:#0f6d54;display:grid;place-items:center;margin:0 auto 18px;font-size:26px;color:#eafff5">✓</div>
-          <div style="font-family:'Space Grotesk';font-weight:700;font-size:22px;color:#fff">Thanks<span data-firstname></span> — pick a time.</div>
-          <p style="font-size:15px;line-height:1.6;color:#93a89e;margin:12px 0 0">We've opened our booking calendar in a new tab — grab whatever slot works and we'll see you there. Popup blocked? <a href="https://calendar.app.google/nma5u7ioDyXh6R426" target="_blank" rel="noopener" style="color:#7ee0b0;font-weight:600">Open the calendar →</a></p>
+          <div style="font-family:'Space Grotesk';font-weight:700;font-size:22px;color:#fff">Thanks<span data-firstname></span>. We'll be in touch.</div>
+          <p style="font-size:15px;line-height:1.6;color:#93a89e;margin:12px 0 0">We'll reply by email, usually within two business days, to set up a time to talk.</p>
           <a href="https://discord.gg/JmphFWUvBw" target="_blank" rel="noopener" style="display:inline-block;margin-top:20px;border:1px solid #2a3f38;color:#b8c7bf;padding:11px 18px;border-radius:10px;font-weight:600;font-size:14px"data-hv="2">Meet us in the Discord →</a>
         </div>
       </div>
@@ -169,25 +169,14 @@ img[src^="docs/decks/previews/"]{aspect-ratio:1000/640;height:auto}
           <span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#7d918a">Where can we help? <span style="color:#5f7169;text-transform:none;letter-spacing:0">(pick any)</span></span>
           <div style="display:flex;flex-wrap:wrap;gap:8px">
             <button type="button" class="kai-chip" data-chip="proto">Productionize a prototype</button>
-            <button type="button" class="kai-chip" data-chip="rewrite">Make stuff that impresses the eng team</button>
-            <button type="button" class="kai-chip" data-chip="backlog">Burn down issues &amp; bugs</button>
-            <button type="button" class="kai-chip" data-chip="tests">Add tests &amp; docs to old code</button>
-            <button type="button" class="kai-chip" data-chip="trial">Start with a pilot first</button>
-            <button type="button" class="kai-chip" data-chip="milestone">Clear a roadmap milestone</button>
-          </div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:8px">
-          <span style="font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#7d918a">Engagement</span>
-          <div style="display:flex;flex-wrap:wrap;gap:8px">
-            <button type="button" class="kai-chip is-active" data-chip="delivery">Embedded PR delivery</button>
-            <button type="button" class="kai-chip" data-chip="enable">Team enablement</button>
-            <button type="button" class="kai-chip" data-chip="license">Commercial license</button>
+            <button type="button" class="kai-chip" data-chip="rewrite">Reverse engineer an old codebase</button>
+            <button type="button" class="kai-chip" data-chip="backlog">Reduce outsourced development costs</button>
           </div>
         </div>
         <label style="display:flex;flex-direction:column;gap:6px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#7d918a">What are you building?
           <textarea name="message" rows="2" placeholder="A sentence on your codebase and what you want shipped." style="background:#0b120f;border:1px solid #223730;border-radius:10px;padding:11px 12px;color:#e7efea;font-family:'Manrope';font-size:15px;resize:vertical"data-fc="4"></textarea>
         </label>
-        <button type="submit" style="background:#0f6d54;color:#fff;padding:14px;border:none;border-radius:11px;font-weight:600;font-size:15px;font-family:'Manrope';cursor:pointer"data-hv="3">Book an intro call →</button>
+        <button type="submit" style="background:#0f6d54;color:#fff;padding:14px;border:none;border-radius:11px;font-weight:600;font-size:15px;font-family:'Manrope';cursor:pointer"data-hv="3">Request an intro call →</button>
         <p style="font-size:12px;color:#6f8078;margin:2px 0 0;text-align:center">No spam. We reply from a real inbox, usually within two days.</p>
       </form>
       </div>
@@ -427,7 +416,7 @@ img[src^="docs/decks/previews/"]{aspect-ratio:1000/640;height:auto}
     </div>
     <div style="background:#0f1a16;border:1px solid #1b2c24;border-radius:18px;padding:28px;text-align:center">
       <div style="font-family:'Space Grotesk';font-weight:700;font-size:22px;color:#fff">Ready to see it on your code?</div>
-      <p style="font-size:15px;line-height:1.6;color:#93a89e;margin:12px 0 20px">Tell us what you're building and pick a time.</p>
+      <p style="font-size:15px;line-height:1.6;color:#93a89e;margin:12px 0 20px">Tell us what you're building and we'll set up a time.</p>
       <a href="#lead" style="display:inline-block;background:#0f6d54;color:#fff;padding:14px 22px;border-radius:11px;font-weight:600;font-size:15px"data-hv="9">Book an intro call →</a>
     </div>
   </div>
@@ -580,8 +569,10 @@ img[src^="docs/decks/previews/"]{aspect-ratio:1000/640;height:auto}
     chip.addEventListener('click', function () { chip.classList.toggle('is-active'); });
   });
 
-  /* ---- lead form: capture the lead, then open the booking calendar ---- */
-  var BOOKING_URL = "https://calendar.app.google/nma5u7ioDyXh6R426";
+  /* ---- lead form: capture the lead (and open the booking page, if one is set) ---- */
+  // Booking page opened on submit. Empty = no redirect: the form just thanks the
+  // visitor and someone replies by email. The old Google Calendar link is dead.
+  var BOOKING_URL = "";
   // Google Apps Script web-app /exec URL — logs every submission to a Google Sheet.
   // Requires the web-app deployment's "Who has access" set to "Anyone".
   // Empty = booking still works, nothing is logged.
@@ -592,7 +583,7 @@ img[src^="docs/decks/previews/"]{aspect-ratio:1000/640;height:auto}
       ev.preventDefault();
       var data = new FormData(form);
       // 1) open the booking page first, while still inside the click gesture
-      window.open(BOOKING_URL, '_blank', 'noopener');
+      if (BOOKING_URL) window.open(BOOKING_URL, '_blank', 'noopener');
       // 2) best-effort lead capture to a Google Sheet (never blocks the booking)
       if (LEAD_ENDPOINT) {
         var chips = Array.prototype.slice.call(document.querySelectorAll('.kai-chip.is-active'))
