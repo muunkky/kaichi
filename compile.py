@@ -154,6 +154,7 @@ CHIPS = [
     ("tests", "needTests", "needTestsStyle", False),
     ("trial", "needTrial", "needTrialStyle", False),
     ("milestone", "needMilestone", "needMilestoneStyle", False),
+    ("other", "needOther", "needOtherStyle", False),
     ("delivery", "toggleDelivery", "deliveryStyle", True),   # active by default
     ("enable", "toggleEnable", "enableStyle", False),
     ("license", "toggleLicense", "licenseStyle", False),
