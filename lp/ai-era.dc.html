@@ -101,7 +101,8 @@
           <div style="display:flex;flex-wrap:wrap;gap:8px">
             <button type="button" onClick="{{ needProto }}" style="{{ needProtoStyle }}">Productionize a prototype</button>
             <button type="button" onClick="{{ needRewrite }}" style="{{ needRewriteStyle }}">Reverse engineer an old codebase</button>
-            <button type="button" onClick="{{ needBacklog }}" style="{{ needBacklogStyle }}">Reduce outsourced development costs</button>
+            <button type="button" onClick="{{ needBacklog }}" style="{{ needBacklogStyle }}">Cut outsourcing costs</button>
+            <button type="button" onClick="{{ needOther }}" style="{{ needOtherStyle }}">Something else</button>
           </div>
         </div>
         <label style="display:flex;flex-direction:column;gap:6px;font-family:'JetBrains Mono';font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:#7d918a">What are you building?
@@ -493,12 +494,14 @@ class Component extends DCLogic {
       needTests: () => this.toggleNeed("tests"),
       needTrial: () => this.toggleNeed("trial"),
       needMilestone: () => this.toggleNeed("milestone"),
+      needOther: () => this.toggleNeed("other"),
       needProtoStyle: this.chip(!!this.state.needs.proto),
       needRewriteStyle: this.chip(!!this.state.needs.rewrite),
       needBacklogStyle: this.chip(!!this.state.needs.backlog),
       needTestsStyle: this.chip(!!this.state.needs.tests),
       needTrialStyle: this.chip(!!this.state.needs.trial),
       needMilestoneStyle: this.chip(!!this.state.needs.milestone),
+      needOtherStyle: this.chip(!!this.state.needs.other),
     };
   }
 }
