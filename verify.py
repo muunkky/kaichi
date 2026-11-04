@@ -63,6 +63,10 @@ with sync_playwright() as p:
     print("form submit -> thank-you, firstName:", "Ada" in thanks)
 
 
+    # The download section lives on the engineer page (/lp/engineers/), the
+    # previous homepage; the service-first homepage has no download section.
+    pg.goto((root / "lp" / "engineers" / "index.html").as_uri(), wait_until="networkidle")
+
     # ---- UNSGNMW1 step 6: macOS/Windows nightlies + the unsigned label -------
     NIGHTLY = "https://github.com/muunkky/kaichi-releases/releases/download/nightly/"
 

@@ -47,12 +47,8 @@ ANALYTICS = (
     "<!-- End Cloudflare Web Analytics -->"
 )
 
-HOME_TITLE = "Kaichi — AI code you can ship"
-HOME_DESC = (
-    "Kaichi is a context manager and state-governance MCP that uses AI to build "
-    "production-grade software — architected, tested, reviewed, and fully documented. "
-    "Merge-ready PRs your team can own, not prototypes to rebuild."
-)
+HOME_TITLE = "Kaichi — Ship at the speed of accountability"
+HOME_DESC = "Reliable software. Priced for the AI era."
 
 # Test landing pages. Naming convention:
 #   source      lp/<slug>.dc.html     (edit this in Claude Design)
@@ -63,6 +59,15 @@ HOME_DESC = (
 # Test pages are noindex and canonicalise to the home page, so they never
 # compete with it in search.
 PAGES = {
+    # The previous homepage: engineer-facing, self-serve dev tool + free download.
+    "engineers": {
+        "title": "Kaichi — AI code you can ship",
+        "desc": (
+            "Kaichi is a context manager and state-governance MCP that uses AI to build "
+            "production-grade software — architected, tested, reviewed, and fully documented. "
+            "Merge-ready PRs your team can own, not prototypes to rebuild."
+        ),
+    },
     "ai-era": {
         "title": "Kaichi — Ship at the speed of accountability",
         "desc": "Reliable software. Priced for the AI era.",
