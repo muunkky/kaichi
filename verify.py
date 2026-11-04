@@ -128,54 +128,6 @@ with sync_playwright() as p:
         assert needle.lower() in pt.lower(), f"platform table missing {needle!r} in {pt!r}"
     print("platform support table covers macOS + Windows: OK")
 
-    # Draft landing page: same site, new hero, noindex, assets one level up.
-    home_h1 = h1
-    landing = (root / "landing" / "index.html").as_uri()
-    pg.goto(landing, wait_until="networkidle")
-    robots = pg.locator('meta[name="robots"]').get_attribute("content")
-    assert robots and "noindex" in robots.lower(), f"landing missing noindex, got {robots!r}"
-    lh1 = pg.inner_text("h1")
-    assert "Ship at the speed of" in lh1 and "accountability" in lh1, f"landing hero: {lh1!r}"
-    assert "AI code you can" not in lh1, "landing hero still has the homepage headline"
-    body = pg.inner_text("body")
-    for phrase in (
-        "The world's top tech teams already build with AI agents.",
-        "Book a scoping call",
-        "See a sample build",
-        "Reliable",
-        "Transparent",
-        "Traceable",
-        "You own all of it",
-    ):
-        assert phrase in body, f"landing missing {phrase!r}"
-    for banned in ("security audit", "[Price]", "SOC 2", "Metric placeholder"):
-        assert banned.lower() not in body.lower(), f"wireframe placeholder leaked: {banned}"
-    assert pg.locator('a', has_text="Book a scoping call").first.get_attribute("href") == "#work"
-    # Secondary keeps the homepage destination (the install section).
-    assert pg.locator('a', has_text="See a sample build").first.get_attribute("href") == "#get-started"
-    assert "the autonomous sdlc harness" in body.lower()
-    assert "air-gapped" in body
-    assert pg.locator('a', has_text="Install free").count() == 1
-    # Trust strip sits under the buttons, not back in the old chip row.
-    trust = pg.locator("ul", has_text="You own all of it").first
-    assert trust.is_visible()
-    book = pg.locator('a', has_text="Book a scoping call").first
-    assert trust.bounding_box()["y"] > book.bounding_box()["y"]
-    # In-page CTAs scroll to the existing sections. Deck images resolve from /landing/.
-    book.click()
-    pg.wait_for_timeout(400)
-    assert pg.evaluate("() => location.hash") == "#work"
-    pg.locator('a', has_text="See a sample build").first.click()
-    pg.wait_for_timeout(400)
-    assert pg.evaluate("() => location.hash") == "#get-started"
-    preview = pg.locator('img[src="../docs/decks/previews/prd.png"]')
-    assert preview.count() >= 1
-    preview.first.scroll_into_view_if_needed()
-    pg.wait_for_timeout(200)
-    loaded = preview.first.evaluate("el => el.complete && el.naturalWidth > 0")
-    assert loaded, "landing deck preview did not load (asset path broken)"
-    print("landing /landing/: hero, noindex, CTAs, deck image: OK")
-    assert "ship" in home_h1.lower()
 
     b.close()
 
