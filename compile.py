@@ -20,20 +20,21 @@ This compiler resolves all of that statically:
 
 Output loads instantly, needs no React/Babel/CDN, and is directly editable.
 Re-run after editing the .dc source in Claude Design:  python3 compile.py
+
+Test landing pages (see PAGES below) compile from lp/<slug>.dc.html to
+lp/<slug>/index.html:  python3 compile.py <slug>
 """
 import re
 import sys
 import pathlib
 
-SRC = pathlib.Path(__file__).parent / "Kaichi.dc.html"
-OUT = pathlib.Path(__file__).parent / "index.html"
+ROOT = pathlib.Path(__file__).parent
 
 # Absolute base URL where the site is published — used ONLY for the social-card
 # tags (og:url / og:image / twitter:image) and <link rel=canonical>, which must
 # be absolute. Every other asset path is relative, so it works under any subpath.
-# If the repo stays named `gitban-site`, change this to
-# "https://muunkky.github.io/gitban-site/" and recompile.
-BASE_URL = "https://muunkky.github.io/kaichi/"
+# Must match the custom domain in CNAME.
+BASE_URL = "https://kaichi-mcp.com/"
 
 # Cloudflare Web Analytics — cookieless and privacy-first, so it needs no consent
 # banner and doesn't undercut the product's zero-telemetry positioning. Kept as a
@@ -46,12 +47,47 @@ ANALYTICS = (
     "<!-- End Cloudflare Web Analytics -->"
 )
 
-PAGE_TITLE = "Kaichi — AI code you can ship"
-PAGE_DESC = (
+HOME_TITLE = "Kaichi — AI code you can ship"
+HOME_DESC = (
     "Kaichi is a context manager and state-governance MCP that uses AI to build "
     "production-grade software — architected, tested, reviewed, and fully documented. "
     "Merge-ready PRs your team can own, not prototypes to rebuild."
 )
+
+# Test landing pages. Naming convention:
+#   source      lp/<slug>.dc.html     (edit this in Claude Design)
+#   output      lp/<slug>/index.html  (served at BASE_URL + "lp/<slug>/")
+#   lead tag    lp-<slug>             (the `page` column in the lead sheet)
+# Slugs name the angle or audience under test, lowercase-kebab; add -a / -b for
+# head-to-head variants. Traffic source belongs in utm_* params, not the slug.
+# Test pages are noindex and canonicalise to the home page, so they never
+# compete with it in search.
+PAGES = {
+    "ai-era": {
+        "title": "Kaichi — Ship at the speed of accountability",
+        "desc": "Reliable software. Priced for the AI era.",
+    },
+}
+
+slug = sys.argv[1] if len(sys.argv) > 1 else None
+if slug is None:
+    SRC = ROOT / "Kaichi.dc.html"
+    OUT = ROOT / "index.html"
+    PAGE_TITLE, PAGE_DESC = HOME_TITLE, HOME_DESC
+    PAGE_ID = "kaichi-landing"   # existing lead-sheet rows use this; keep it
+    PAGE_URL = BASE_URL
+    ASSET_PREFIX = ""            # relative path from the page back to the site root
+    ROBOTS = ""
+elif slug in PAGES:
+    SRC = ROOT / "lp" / f"{slug}.dc.html"
+    OUT = ROOT / "lp" / slug / "index.html"
+    PAGE_TITLE, PAGE_DESC = PAGES[slug]["title"], PAGES[slug]["desc"]
+    PAGE_ID = f"lp-{slug}"
+    PAGE_URL = BASE_URL + f"lp/{slug}/"
+    ASSET_PREFIX = "../../"
+    ROBOTS = '<meta name="robots" content="noindex">\n'
+else:
+    sys.exit(f"unknown page {slug!r}; known: {', '.join(sorted(PAGES))}")
 
 src = SRC.read_text(encoding="utf-8")
 
@@ -158,6 +194,14 @@ body = body.replace('src="{{ activeSrc }}"', 'data-lb="frame"')
 # the iframe also had title="{{ activeTitle }}" — clear it (JS sets nothing critical)
 body = body.replace('title="{{ activeTitle }}"', 'title="deck preview"')
 
+# --- 7. relative asset paths → resolve from the page's own directory ---------
+if ASSET_PREFIX:
+    body = re.sub(
+        r'\b(href|src)="(?![a-z]+:|#|/)([^"]+)"',
+        lambda m: f'{m.group(1)}="{ASSET_PREFIX}{m.group(2)}"',
+        body,
+    )
+
 # --- assemble generated CSS --------------------------------------------------
 gen_css = ["/* generated pseudo-class rules (from the design container's hover and focus attributes) */"]
 for idx, css in hover_rules:
@@ -241,9 +285,9 @@ runtime = r"""
 
   /* ---- deck lightbox ---- */
   var DECKS = {
-    prd:    { src: "docs/decks/PRD-011-live-html-roadmap-view.html",              type: "Product Requirements",   title: "PRD-011 · Live HTML Roadmap View" },
-    design: { src: "docs/decks/DD-021-cwd-pin-git-operations.html",               type: "Design Document",        title: "DD-021 · CWD-Pin Git Operations" },
-    adr:    { src: "docs/decks/ADR-078-lifecycle-deck-generation-as-skill-pair.html", type: "Architecture Decision", title: "ADR-078 · Deck Generation as a Skill Pair" }
+    prd:    { src: "__ASSETS__docs/decks/PRD-011-live-html-roadmap-view.html",              type: "Product Requirements",   title: "PRD-011 · Live HTML Roadmap View" },
+    design: { src: "__ASSETS__docs/decks/DD-021-cwd-pin-git-operations.html",               type: "Design Document",        title: "DD-021 · CWD-Pin Git Operations" },
+    adr:    { src: "__ASSETS__docs/decks/ADR-078-lifecycle-deck-generation-as-skill-pair.html", type: "Architecture Decision", title: "ADR-078 · Deck Generation as a Skill Pair" }
   };
   var lb        = document.querySelector('[data-if="lightbox"]');
   var lbType    = lb && lb.querySelector('[data-lb="type"]');
@@ -330,7 +374,7 @@ runtime = r"""
           payload.append(k, (data.get(k) || '').toString());
         });
         payload.append('interests', chips);
-        payload.append('page', 'kaichi-landing');
+        payload.append('page', '__PAGE_ID__');
         fetch(LEAD_ENDPOINT, { method: 'POST', mode: 'no-cors', body: payload }).catch(function () {});
       }
       // 3) swap the form for the confirmation state
@@ -347,15 +391,16 @@ runtime = r"""
 })();
 </script>
 """
+runtime = runtime.replace("__ASSETS__", ASSET_PREFIX).replace("__PAGE_ID__", PAGE_ID)
 
 # --- write out ---------------------------------------------------------------
 og_image = BASE_URL + "og.png"
-social = f"""<meta name="description" content="{PAGE_DESC}">
+social = f"""{ROBOTS}<meta name="description" content="{PAGE_DESC}">
 <link rel="canonical" href="{BASE_URL}">
 <meta property="og:title" content="{PAGE_TITLE}">
 <meta property="og:description" content="{PAGE_DESC}">
 <meta property="og:type" content="website">
-<meta property="og:url" content="{BASE_URL}">
+<meta property="og:url" content="{PAGE_URL}">
 <meta property="og:image" content="{og_image}">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -385,6 +430,7 @@ html = f"""<!DOCTYPE html>
 </html>
 """
 
+OUT.parent.mkdir(parents=True, exist_ok=True)
 OUT.write_text(html, encoding="utf-8")
 
 # --- self-check: no unresolved authoring constructs should remain ------------
