@@ -11,12 +11,13 @@ retired.
 
 | File | Role |
 |------|------|
-| `index.html` | The deployable page. Self-contained (fonts from Google Fonts; everything else inline). GitHub Pages serves this. |
+| `index.html` | The homepage (service-first: "Ship at the speed of accountability"). Self-contained (fonts from Google Fonts; everything else inline). GitHub Pages serves this. |
+| `lp/<slug>.dc.html` → `lp/<slug>/index.html` | Landing pages, compiled with `python3 compile.py <slug>` and registered in `PAGES` in `compile.py`. Served at `/lp/<slug>/`, `noindex`, leads tagged `lp-<slug>`. `lp/engineers/` is the previous homepage (engineer-facing, self-serve download); `lp/ai-era/` is the draft the current homepage came from. |
 | `landing/index.html` | Draft duplicate of the homepage, served at `/landing/`. A copy of `index.html` with a different hero and `noindex`. Not produced by `compile.py`. |
 | `og.png` | Social-card image (1200×630). **Placeholder — still the old gitban card; regenerate for Kaichi.** |
 | `docs/decks/*.html` | The three real lifecycle decks (PRD-011, DD-021, ADR-078), shown as live iframe previews + click-to-open lightbox. |
 | `Kaichi.dc.html` | The **design source** — the Claude Design container. Keep editing this in Claude Design, then re-compile. |
-| `compile.py` | Compiles `Kaichi.dc.html` → `index.html` (`BASE_URL`, title, description at the top). |
+| `compile.py` | Compiles `Kaichi.dc.html` → `index.html`, or `lp/<slug>.dc.html` → `lp/<slug>/index.html` (`BASE_URL`, titles, descriptions and the `PAGES` registry at the top). |
 | `verify.py` | Headless-browser smoke test (hero, deck lightbox, Esc-to-close, chip toggles, form submit). |
 | `.nojekyll` | Serve files as-is (no Jekyll processing). |
 
@@ -41,12 +42,14 @@ change made to it directly. `landing/index.html` is a separate copy for the draf
 at `/landing/`; recompiling does not refresh it.
 
 ```bash
-python3 compile.py     # regenerates index.html; fails loudly on any unresolved dc construct
+python3 compile.py            # regenerates index.html; fails loudly on any unresolved dc construct
+python3 compile.py engineers  # regenerates lp/engineers/index.html (same for any slug in PAGES)
 python3 verify.py      # smoke test — needs: pip install playwright && playwright install chromium
 ```
 
 `verify.py` is not optional for a change to the download section: it asserts the nightly
-asset links, the unsigned label and the platform table against the rendered page.
+asset links, the unsigned label and the platform table against the rendered page. The
+download section now lives on `lp/engineers/` (edit `lp/engineers.dc.html`), not the homepage.
 
 ## Deploy
 
