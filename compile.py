@@ -63,13 +63,9 @@ HOME_DESC = (
 # Test pages are noindex and canonicalise to the home page, so they never
 # compete with it in search.
 PAGES = {
-    "vs-dev-shop": {
+    "ai-era": {
         "title": "Kaichi — Ship at the speed of accountability",
-        "desc": (
-            "Production-grade PRs, fully documented — and you only pay for the ones "
-            "your team merges. No retainer, no statement of work, no dev-shop invoice "
-            "for code you didn't ship."
-        ),
+        "desc": "Reliable software. Priced for the AI era.",
     },
 }
 
