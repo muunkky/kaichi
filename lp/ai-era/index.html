@@ -44,16 +44,10 @@
 [data-hv="6"]:hover{border-color:#2f7d90 !important;transform:translateY(-3px) !important;box-shadow:0 20px 46px -24px rgba(47,125,144,.55) !important;}
 [data-hv="7"]:hover{border-color:#b5730a !important;transform:translateY(-3px) !important;box-shadow:0 20px 46px -24px rgba(181,115,10,.5) !important;}
 [data-hv="8"]:hover{border-color:#0f6d54 !important;transform:translateY(-3px) !important;box-shadow:0 20px 46px -24px rgba(15,109,84,.4) !important;}
-[data-hv="9"]:hover{border-color:#0f6d54 !important;}
-[data-hv="10"]:hover{border-color:#0f6d54 !important;}
-[data-hv="11"]:hover{border-color:#0f6d54 !important;}
-[data-hv="12"]:hover{border-color:#0f6d54 !important;}
-[data-hv="13"]:hover{border-color:#0f6d54 !important;}
-[data-hv="14"]:hover{border-color:#0f6d54 !important;}
-[data-hv="15"]:hover{background:#12805f !important;color:#fff !important;}
-[data-hv="16"]:hover{background:#0c5a45 !important;color:#fff !important;}
-[data-hv="17"]:hover{color:#0f6d54 !important;}
-[data-hv="18"]:hover{border-color:#0f6d54 !important;color:#0f6d54 !important;}
+[data-hv="9"]:hover{background:#12805f !important;color:#fff !important;}
+[data-hv="10"]:hover{background:#0c5a45 !important;color:#fff !important;}
+[data-hv="11"]:hover{color:#0f6d54 !important;}
+[data-hv="12"]:hover{border-color:#0f6d54 !important;color:#0f6d54 !important;}
 [data-fc="1"]:focus{border-color:#0f6d54 !important;outline:none !important;}
 [data-fc="2"]:focus{border-color:#0f6d54 !important;outline:none !important;}
 [data-fc="3"]:focus{border-color:#0f6d54 !important;outline:none !important;}
@@ -111,9 +105,7 @@ img[src^="docs/decks/previews/"]{aspect-ratio:1000/640;height:auto}
       </svg>
     </a>
     <nav style="display:flex;align-items:center;gap:22px;font-size:14.5px;font-weight:500;flex-wrap:nowrap">
-      <a href="#product" style="color:#4b5262">Product</a>
       <a href="#how" style="color:#4b5262">How it works</a>
-      <a href="#features" style="color:#4b5262">Features</a>
       <a href="https://discord.gg/JmphFWUvBw" target="_blank" rel="noopener" style="color:#4b5262">Discord</a>
       <a href="#lead" style="background:#0f6d54;color:#fff;padding:9px 16px;border-radius:9px;font-weight:600;white-space:nowrap"data-hv="1">Book a call</a>
     </nav>
@@ -146,7 +138,7 @@ img[src^="docs/decks/previews/"]{aspect-ratio:1000/640;height:auto}
   <div style="padding-top:28px">
   <div style="display:inline-flex;align-items:center;gap:9px;font-family:'JetBrains Mono';font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#0f6d54;border:1px solid #cfe9de;background:#f2faf6;padding:6px 12px;border-radius:999px">
     <span style="width:6px;height:6px;border-radius:50%;background:#0f6d54;animation:kaiPulse 2.4s ease-in-out infinite"></span>
-    <span>Software delivery, minus the <span style="white-space:nowrap">dev-shop</span> markup</span>
+    <span>Managed AI software delivery</span>
   </div>
   <h1 style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(40px,5.4vw,66px);line-height:1.02;letter-spacing:-.03em;margin:26px 0 0;max-width:15ch">Ship at the speed of <span style="color:#0f6d54">accountability.</span></h1>
   <p style="font-size:clamp(18px,1.9vw,22px);line-height:1.5;color:#4b5262;max-width:40ch;margin:24px 0 0">Reliable software. Priced for the AI era.</p>
@@ -290,40 +282,6 @@ img[src^="docs/decks/previews/"]{aspect-ratio:1000/640;height:auto}
   <p style="text-align:center;font-size:15px;color:#7c8390;margin:36px auto 0;max-width:64ch">Every stage passes a hard gate before the next begins — the work has to match its spec to advance. That's the difference between an agent that <em>runs</em> and an agent you can <em>leave running</em>: what lands is reliable because the process, not luck, produced it.</p>
 </section>
 
-<!-- PRODUCT SECTION 1: ships real code -->
-<a id="product"></a>
-<section data-reveal style="max-width:1160px;margin:0 auto;padding:64px 24px">
-  <div style="display:grid;grid-template-columns:1.05fr 1fr;gap:56px;align-items:center">
-    <div>
-      <div style="font-family:'JetBrains Mono';font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#0f6d54">Merge-ready</div>
-      <h2 style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(28px,3.6vw,42px);line-height:1.06;letter-spacing:-.02em;margin:14px 0 0">It ships <span style="font-style:italic;color:#0f6d54">real code.</span></h2>
-      <p style="font-size:17px;line-height:1.6;color:#4b5262;margin:18px 0 26px">Production-grade and ready to merge — no drift, no context rot, and nothing for your engineering team to clean up and productionize. The output isn't a draft of the work; it's the work.</p>
-      <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:16px">
-        <li style="display:flex;gap:12px"><span style="color:#0f6d54;flex:none;margin-top:2px">✓</span><span style="font-size:15.5px;line-height:1.55;color:#3a414d"><strong style="color:#14161a">No drift</strong> — a no-code, deterministic state-management system keeps the LLM on track across tens of thousands of lines of code.</span></li>
-        <li style="display:flex;gap:12px"><span style="color:#0f6d54;flex:none;margin-top:2px">✓</span><span style="font-size:15.5px;line-height:1.55;color:#3a414d"><strong style="color:#14161a">No context rot</strong> — Kaichi digests context at scale into memory-wiped stages with verifiable proofs that guarantee the definition of done.</span></li>
-        <li style="display:flex;gap:12px"><span style="color:#0f6d54;flex:none;margin-top:2px">✓</span><span style="font-size:15.5px;line-height:1.55;color:#3a414d"><strong style="color:#14161a">No productionizing phase</strong> — it lands production-grade; your team merges it, they don't rewrite it.</span></li>
-      </ul>
-    </div>
-    <div style="background:#0c1411;border-radius:16px;padding:20px;box-shadow:0 24px 60px -24px rgba(10,20,16,.55);border:1px solid #16241d">
-      <div style="display:flex;align-items:center;gap:8px;padding-bottom:14px;border-bottom:1px solid #1b2c24">
-        <span style="width:10px;height:10px;border-radius:50%;background:#e05c5c"></span>
-        <span style="width:10px;height:10px;border-radius:50%;background:#e0b64c"></span>
-        <span style="width:10px;height:10px;border-radius:50%;background:#4cc98a"></span>
-        <span style="margin-left:8px;font-family:'JetBrains Mono';font-size:12px;color:#6f8078">kaichi — capstone complete</span>
-      </div>
-      <div style="font-family:'JetBrains Mono';font-size:12.5px;line-height:1.75;color:#a9bcb2;margin-top:14px">
-        <div style="color:#7ee0b0">✅ m1/s8/hubspot-merge-redirect-resilience</div>
-        <div style="color:#6f8078">   completed through the full Kaichi lifecycle</div>
-        <div style="margin-top:10px;color:#cdd9d2">Draft PR #95 — open, ready for code review</div>
-        <div style="color:#6f8078">base main · 111 files</div>
-        <div style="margin-top:4px"><span style="color:#7ee0b0">+13,081</span> <span style="color:#e07b7b">−1,159</span></div>
-        <div style="margin-top:12px;color:#8fa39a">Closed the merge-redirect blind spot behind the 374 floaters — now enforced platform-wide: every merge / dedup / reverse-ETL path routes through the _merge_lib seam, with a CI gate over the whole tool surface.</div>
-        <div style="margin-top:12px;color:#7ee0b0">~474 tests green · gate exit 0<span style="animation:kaiBlink 1.1s step-end infinite">▊</span></div>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- PRODUCT SECTION 2: documented -->
 <section data-reveal style="background:#f7f6f3;border-top:1px solid #ecebe6;border-bottom:1px solid #ecebe6">
 <div style="max-width:1160px;margin:0 auto;padding:80px 24px">
@@ -358,43 +316,6 @@ img[src^="docs/decks/previews/"]{aspect-ratio:1000/640;height:auto}
     </div>
   </div>
 </div>
-</section>
-
-<!-- PRODUCT SECTION 3: git-native -->
-<section data-reveal style="max-width:1160px;margin:0 auto;padding:80px 24px">
-  <div style="display:grid;grid-template-columns:1.05fr 1fr;gap:56px;align-items:center">
-    <div>
-      <div style="font-family:'JetBrains Mono';font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#0f6d54">Collaborative</div>
-      <h2 style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(28px,3.6vw,42px);line-height:1.06;letter-spacing:-.02em;margin:14px 0 0">One plan. <span style="font-style:italic;color:#0f6d54">Versioned in git.</span></h2>
-      <p style="font-size:17px;line-height:1.6;color:#4b5262;margin:18px 0 26px">Kaichi's state — the roadmap, every card, the reasoning — lives in git, right next to your code. Your team collaborates the way it already does: branch, review, merge. There's no second system to keep in sync.</p>
-      <ul style="list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:16px">
-        <li style="display:flex;gap:12px"><span style="color:#0f6d54;flex:none;margin-top:2px">✓</span><span style="font-size:15.5px;line-height:1.55;color:#3a414d"><strong style="color:#14161a">A real roadmap</strong> — milestones, stories, and cards in a navigable plan of record that humans and agents both work from.</span></li>
-        <li style="display:flex;gap:12px"><span style="color:#0f6d54;flex:none;margin-top:2px">✓</span><span style="font-size:15.5px;line-height:1.55;color:#3a414d"><strong style="color:#14161a">Git-native</strong> — the whole board is version-controlled markdown. Share it with push/pull, review it in PRs, diff it like code.</span></li>
-        <li style="display:flex;gap:12px"><span style="color:#0f6d54;flex:none;margin-top:2px">✓</span><span style="font-size:15.5px;line-height:1.55;color:#3a414d"><strong style="color:#14161a">One source of truth</strong> — people and agents work off the same plan, so what's planned and what ships never drift apart.</span></li>
-      </ul>
-    </div>
-    <div style="background:#0c1411;border-radius:16px;padding:20px;box-shadow:0 24px 60px -24px rgba(10,20,16,.5);border:1px solid #16241d">
-      <div style="display:flex;align-items:center;gap:8px;padding-bottom:14px;border-bottom:1px solid #1b2c24">
-        <span style="width:10px;height:10px;border-radius:50%;background:#e05c5c"></span>
-        <span style="width:10px;height:10px;border-radius:50%;background:#e0b64c"></span>
-        <span style="width:10px;height:10px;border-radius:50%;background:#4cc98a"></span>
-        <span style="margin-left:8px;font-family:'JetBrains Mono';font-size:12px;color:#6f8078">git status — the board lives in git</span>
-      </div>
-      <div style="font-family:'JetBrains Mono';font-size:12.5px;line-height:1.7;color:#a9bcb2;margin-top:14px">
-        <div><span style="color:#7ee0b0">$</span> git status</div>
-        <div style="color:#8fa39a">On branch feat/checkout-flow</div>
-        <div style="color:#8fa39a">Changes to be committed:</div>
-        <div style="color:#7ee0b0">  new file:  .kaichi/roadmap/roadmap.yaml</div>
-        <div style="color:#7ee0b0">  new file:  .kaichi/cards/todo/CHKOUT-a3f-webhook-retries.md</div>
-        <div style="color:#e0b64c">  renamed:   .kaichi/cards/{todo → in_progress}/CHKOUT-b7c-idempotency.md</div>
-        <div style="color:#e0b64c">  modified:  docs/adr/ADR-014-payment-fulfillment.md</div>
-        <div style="color:#e0b64c">  modified:  src/fulfillment/webhook.py</div>
-        <div style="color:#e0b64c">  modified:  tests/test_webhook.py</div>
-        <div style="margin-top:10px;color:#6f8078"># the plan, the decisions, and the code —</div>
-        <div style="color:#6f8078"># one commit, one history<span style="animation:kaiBlink 1.1s step-end infinite">▊</span></div>
-      </div>
-    </div>
-  </div>
 </section>
 
 <!-- WHY / MANIFESTO -->
@@ -464,45 +385,6 @@ img[src^="docs/decks/previews/"]{aspect-ratio:1000/640;height:auto}
 </div>
 </section>
 
-<!-- FEATURES -->
-<a id="features"></a>
-<section data-reveal style="max-width:1160px;margin:0 auto;padding:96px 24px">
-  <div style="font-family:'JetBrains Mono';font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:#0f6d54">Features</div>
-  <h2 style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(28px,4vw,46px);line-height:1.05;letter-spacing:-.02em;margin:14px 0 40px">What's in the box.</h2>
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px">
-    <div style="border:1px solid #e7e5e0;border-radius:16px;padding:26px"data-hv="9">
-      <div style="width:36px;height:36px;border-radius:9px;background:#f2faf6;border:1px solid #cfe9de;display:grid;place-items:center;color:#0f6d54;font-family:'JetBrains Mono';font-weight:600">◈</div>
-      <div style="font-family:'Space Grotesk';font-weight:700;font-size:18px;margin:16px 0 8px">Human documentation</div>
-      <p style="font-size:14.5px;line-height:1.6;color:#5a616e;margin:0">Complete engineering documentation, specs, and reasoning — written for people, checked in with the code.</p>
-    </div>
-    <div style="border:1px solid #e7e5e0;border-radius:16px;padding:26px"data-hv="10">
-      <div style="width:36px;height:36px;border-radius:9px;background:#f2faf6;border:1px solid #cfe9de;display:grid;place-items:center;color:#0f6d54;font-family:'JetBrains Mono';font-weight:600">⛓</div>
-      <div style="font-family:'Space Grotesk';font-weight:700;font-size:18px;margin:16px 0 8px">Air-gapped &amp; hermetic</div>
-      <p style="font-size:14.5px;line-height:1.6;color:#5a616e;margin:0">Runs fully offline with zero telemetry. Nothing leaves your machine — built for regulated and air-gapped systems.</p>
-    </div>
-    <div style="border:1px solid #e7e5e0;border-radius:16px;padding:26px"data-hv="11">
-      <div style="width:36px;height:36px;border-radius:9px;background:#f2faf6;border:1px solid #cfe9de;display:grid;place-items:center;color:#0f6d54;font-family:'JetBrains Mono';font-weight:600">⏻</div>
-      <div style="font-family:'Space Grotesk';font-weight:700;font-size:18px;margin:16px 0 8px">Drop-in install</div>
-      <p style="font-size:14.5px;line-height:1.6;color:#5a616e;margin:0">No-code setup that drops straight into your Claude Code CLI. No new runtime, no rewrite.</p>
-    </div>
-    <div style="border:1px solid #e7e5e0;border-radius:16px;padding:26px"data-hv="12">
-      <div style="width:36px;height:36px;border-radius:9px;background:#f2faf6;border:1px solid #cfe9de;display:grid;place-items:center;color:#0f6d54;font-family:'JetBrains Mono';font-weight:600">⑃</div>
-      <div style="font-family:'Space Grotesk';font-weight:700;font-size:18px;margin:16px 0 8px">Isolated worktree agents</div>
-      <p style="font-size:14.5px;line-height:1.6;color:#5a616e;margin:0">Disposable agents each build in their own git worktree — parallel, scoped, and conflict-free by construction.</p>
-    </div>
-    <div style="border:1px solid #e7e5e0;border-radius:16px;padding:26px"data-hv="13">
-      <div style="width:36px;height:36px;border-radius:9px;background:#f2faf6;border:1px solid #cfe9de;display:grid;place-items:center;color:#0f6d54;font-family:'JetBrains Mono';font-weight:600">⊟</div>
-      <div style="font-family:'Space Grotesk';font-weight:700;font-size:18px;margin:16px 0 8px">Stage gates &amp; validation</div>
-      <p style="font-size:14.5px;line-height:1.6;color:#5a616e;margin:0">Deterministic gates between every stage. Work can't advance until it matches the spec — no silent drift.</p>
-    </div>
-    <div style="border:1px solid #e7e5e0;border-radius:16px;padding:26px"data-hv="14">
-      <div style="width:36px;height:36px;border-radius:9px;background:#f2faf6;border:1px solid #cfe9de;display:grid;place-items:center;color:#0f6d54;font-family:'JetBrains Mono';font-weight:600">✓</div>
-      <div style="font-family:'Space Grotesk';font-weight:700;font-size:18px;margin:16px 0 8px">Proof-of-thought</div>
-      <p style="font-size:14.5px;line-height:1.6;color:#5a616e;margin:0">The chain of reasoning is captured as code, alongside deterministic logs — every change is auditable after the fact.</p>
-    </div>
-  </div>
-</section>
-
 <!-- ECONOMICS -->
 <section data-reveal style="background:#0c1411;color:#e7efea">
 <div style="max-width:1160px;margin:0 auto;padding:92px 24px">
@@ -546,7 +428,7 @@ img[src^="docs/decks/previews/"]{aspect-ratio:1000/640;height:auto}
     <div style="background:#0f1a16;border:1px solid #1b2c24;border-radius:18px;padding:28px;text-align:center">
       <div style="font-family:'Space Grotesk';font-weight:700;font-size:22px;color:#fff">Ready to see it on your code?</div>
       <p style="font-size:15px;line-height:1.6;color:#93a89e;margin:12px 0 20px">Tell us what you're building and pick a time.</p>
-      <a href="#lead" style="display:inline-block;background:#0f6d54;color:#fff;padding:14px 22px;border-radius:11px;font-weight:600;font-size:15px"data-hv="15">Book an intro call →</a>
+      <a href="#lead" style="display:inline-block;background:#0f6d54;color:#fff;padding:14px 22px;border-radius:11px;font-weight:600;font-size:15px"data-hv="9">Book an intro call →</a>
     </div>
   </div>
 </div>
@@ -557,7 +439,7 @@ img[src^="docs/decks/previews/"]{aspect-ratio:1000/640;height:auto}
   <h2 style="font-family:'Space Grotesk';font-weight:700;font-size:clamp(30px,4.6vw,56px);line-height:1.04;letter-spacing:-.03em;margin:0 auto;max-width:20ch">See Kaichi ship on your codebase.</h2>
   <p style="font-size:17px;line-height:1.6;color:#4b5262;margin:18px auto 0;max-width:52ch">Book a 30-minute call. Tell us what you need shipped, and we'll show you what Kaichi delivers on your codebase.</p>
   <div style="display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-top:34px">
-    <a href="#lead" style="background:#0f6d54;color:#fff;padding:15px 28px;border-radius:11px;font-weight:600;font-size:16px;box-shadow:0 6px 20px rgba(15,109,84,.28)"data-hv="16">Book a call →</a>
+    <a href="#lead" style="background:#0f6d54;color:#fff;padding:15px 28px;border-radius:11px;font-weight:600;font-size:16px;box-shadow:0 6px 20px rgba(15,109,84,.28)"data-hv="10">Book a call →</a>
   </div>
   <p style="font-size:14.5px;color:#7c8390;margin-top:22px">Not ready to talk? <a href="https://discord.gg/JmphFWUvBw" target="_blank" rel="noopener" style="font-weight:600">Join the Discord</a> and lurk, ask questions, or watch what ships.</p>
 </section>
@@ -591,8 +473,8 @@ img[src^="docs/decks/previews/"]{aspect-ratio:1000/640;height:auto}
           <span style="font-family:'Space Grotesk';font-weight:600;font-size:15px;color:#14161a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis"><span data-lb="title"></span></span>
         </div>
         <div style="display:flex;align-items:center;gap:10px;flex:none">
-          <a href="#" data-lb="open" target="_blank" rel="noopener" style="font-size:13px;font-weight:600;color:#5a616e"data-hv="17">Open ↗</a>
-          <button data-close aria-label="Close" style="width:34px;height:34px;border:1px solid #e7e5e0;background:#fff;border-radius:9px;cursor:pointer;font-size:15px;color:#4b5262;line-height:1"data-hv="18">✕</button>
+          <a href="#" data-lb="open" target="_blank" rel="noopener" style="font-size:13px;font-weight:600;color:#5a616e"data-hv="11">Open ↗</a>
+          <button data-close aria-label="Close" style="width:34px;height:34px;border:1px solid #e7e5e0;background:#fff;border-radius:9px;cursor:pointer;font-size:15px;color:#4b5262;line-height:1"data-hv="12">✕</button>
         </div>
       </div>
       <iframe data-lb="frame" title="<span data-lb="title"></span>" style="flex:1;width:100%;border:none;background:#faf9f6"></iframe>
