@@ -12,6 +12,7 @@ retired.
 | File | Role |
 |------|------|
 | `index.html` | The deployable page. Self-contained (fonts from Google Fonts; everything else inline). GitHub Pages serves this. |
+| `landing/index.html` | Draft duplicate of the homepage, served at `/landing/`. A copy of `index.html` with a different hero and `noindex`. Not produced by `compile.py`. |
 | `og.png` | Social-card image (1200×630). **Placeholder — still the old gitban card; regenerate for Kaichi.** |
 | `docs/decks/*.html` | The three real lifecycle decks (PRD-011, DD-021, ADR-078), shown as live iframe previews + click-to-open lightbox. |
 | `Kaichi.dc.html` | The **design source** — the Claude Design container. Keep editing this in Claude Design, then re-compile. |
@@ -36,7 +37,8 @@ reveal) is preserved exactly.
 
 Edit `Kaichi.dc.html` — the design source — then re-compile. **Do not edit
 `index.html`**: it is generated, and the next `compile.py` run silently destroys any
-change made to it directly.
+change made to it directly. `landing/index.html` is a separate copy for the draft
+at `/landing/`; recompiling does not refresh it.
 
 ```bash
 python3 compile.py     # regenerates index.html; fails loudly on any unresolved dc construct
